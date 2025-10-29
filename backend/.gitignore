@@ -1,0 +1,7 @@
+pb_data/
+
+.env
+.env*
+
+svelteOut/
+backend
