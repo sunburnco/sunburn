@@ -12,7 +12,7 @@ pre_bump_hooks = [
   "jq '.version |= \"{{version}}\"' app/package.json > app/package.json.tmp && mv app/package.json.tmp app/package.json",
   "cd ./app && pnpm prettier --write package.json src/lib/version.ts",
   "sed -i.bak \"s/const VERSION = '.*';/const VERSION = \"{{version}}\";/\" backend/lib/version.go",
-  "cd ./backend && gofmt -s -w lib/version.go"
+  "cd ./backend && gofmt -s -w lib/version.go",
   "git add :/app/package.json",
   "git add :/backend/lib/version.go"
 ]
