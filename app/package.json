@@ -45,6 +45,12 @@
 		"vite": "^7.1.7",
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"@tailwindcss/oxide",
+			"esbuild"
+		]
+	},
 	"dependencies": {
 		"@fontsource-variable/playwrite-us-trad": "^5.2.7",
 		"@fontsource-variable/quicksand": "^5.2.10",

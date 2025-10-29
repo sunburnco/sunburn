@@ -6,6 +6,9 @@ import devtoolsJson from 'vite-plugin-devtools-json';
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
 	optimizeDeps: {
-		exclude: []
+		include: ['@nozbe/microfuzz']
 	},
+	ssr: {
+		noExternal: ['@nozbe/microfuzz']
+	}
 });
