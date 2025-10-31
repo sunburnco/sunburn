@@ -68,7 +68,7 @@
 <WindowBase slim>
 	<div class="flex h-full w-full items-stretch">
 		<div
-			class="bg-base-100 border-base-content/50 flex shrink-0 flex-col justify-center gap-2 overflow-y-auto overflow-x-hidden border-r p-3"
+			class="flex shrink-0 flex-col justify-center gap-2 overflow-x-hidden overflow-y-auto border-r border-base-content/50 bg-base-100 p-3"
 		>
 			<div class="size-10">
 				<Avatar client={owner} {user} />
@@ -76,7 +76,7 @@
 			<div class="divider my-0"></div>
 			<input
 				type="range"
-				class="range-vertical range-sm h-auto min-h-4 self-center"
+				class="range-vertical h-auto min-h-4 self-center range-sm"
 				min={0}
 				max={100}
 				bind:value={voiceSettings[owner][user].screenshareVolume}
@@ -92,7 +92,7 @@
 				}}
 			/>
 			<button
-				class="btn btn-primary btn-square"
+				class="btn btn-square btn-primary"
 				title="Stop Watching"
 				onclick={() => closeWindowAndChildren(windowID)}
 			>

@@ -20,13 +20,13 @@
 <WindowBase slim>
 	<div class="flex h-full grow items-stretch">
 		<div
-			class="border-base-content/50 min-w-19 w-19 bg-base-100 flex flex-col overflow-y-auto overflow-x-visible border-e p-2"
+			class="flex w-19 min-w-19 flex-col overflow-x-visible overflow-y-auto border-e border-base-content/50 bg-base-100 p-2"
 		>
 			{#each sunburn.visibleServers[owner].values() as server (server)}
 				<button
 					class={[
-						'btn btn-ghost min-h-fit p-2',
-						activeServer === server && 'btn-neutral btn-active'
+						'btn min-h-fit p-2 btn-ghost',
+						activeServer === server && 'btn-active btn-neutral'
 					]}
 					onclick={() => onServer(server)}
 				>

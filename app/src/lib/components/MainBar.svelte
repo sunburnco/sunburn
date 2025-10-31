@@ -8,7 +8,7 @@
 </script>
 
 <div
-	class="bg-base-100 border-base-content/50 max-w-dvw flex min-h-10 w-dvw flex-none items-center gap-2 overflow-auto border-t shadow-md"
+	class="flex min-h-10 w-dvw max-w-dvw flex-none items-center gap-2 overflow-auto border-t border-base-content/50 bg-base-100 shadow-md"
 	style="scrollbar-width:thin;"
 >
 	<MainBarLogoButton {kbarModal} />

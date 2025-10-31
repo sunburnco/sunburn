@@ -47,7 +47,7 @@
 
 {#if sunburn.visibleChannels[owner].has(channel)}
 	<div class="flex h-full w-full flex-col items-stretch justify-center">
-		<div class="bg-base-100 border-base-content/50 flex items-center gap-2 border-b px-3 py-3.5">
+		<div class="flex items-center gap-2 border-b border-base-content/50 bg-base-100 px-3 py-3.5">
 			<div class="grow">
 				<div class="flex items-center gap-1 font-bold">
 					<LucideHash size="1rem" />
@@ -56,7 +56,7 @@
 			</div>
 		</div>
 		{#if channel in sunburn.channelMessages && sunburn.channelMessages[channel].length === 0}
-			<div class="text-base-content/50 flex w-full grow items-center justify-center gap-1 px-2">
+			<div class="flex w-full grow items-center justify-center gap-1 px-2 text-base-content/50">
 				<LucidePackageOpen size="1.25rem" /> Nothing to display
 			</div>
 		{:else}
@@ -87,7 +87,7 @@
 				placeholder="Send a message..."
 				autocomplete={null}
 			/>
-			<button type="submit" class="btn btn-primary btn-square">
+			<button type="submit" class="btn btn-square btn-primary">
 				<LucideSend size="1.25rem" />
 			</button>
 		</form>

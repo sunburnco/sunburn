@@ -101,8 +101,8 @@
 
 {#if sunburn.visibleServers[owner].has(server)}
 	<PaneGroup autoSaveId={windowID} direction="horizontal">
-		<Pane defaultSize={30} class="bg-base-200 flex min-w-16 overflow-visible">
-			<div class="flex w-full flex-col overflow-y-auto overflow-x-hidden">
+		<Pane defaultSize={30} class="flex min-w-16 overflow-visible bg-base-200">
+			<div class="flex w-full flex-col overflow-x-hidden overflow-y-auto">
 				<div class="flex justify-between">
 					<div class="flex items-center gap-3 p-5">
 						<div class="size-8 min-h-0 min-w-0">
@@ -117,7 +117,7 @@
 							title="Favorite"
 							onclick={togglePin}
 							class={[
-								'btn btn-sm btn-square',
+								'btn btn-square btn-sm',
 								sunburn.pinnedServers[owner]?.has(server) ? 'btn-neutral' : 'btn-ghost'
 							]}
 						>
@@ -125,7 +125,7 @@
 						</button>
 					</div>
 				</div>
-				<ul class="menu w-full grow flex-nowrap overflow-y-auto overflow-x-hidden">
+				<ul class="menu w-full grow flex-nowrap overflow-x-hidden overflow-y-auto">
 					<li class="menu-title">Channels</li>
 					{#each serverChannels as channel (channel)}
 						<li>
@@ -154,8 +154,8 @@
 								<ul>
 									{#each sunburn.channelVoiceParticipants[channel].values() as participant (participant)}
 										<li>
-											<div class="text-base-content/80 flex flex-nowrap whitespace-nowrap text-sm">
-												<div class="size-5 min-w-5 max-w-5">
+											<div class="flex flex-nowrap text-sm whitespace-nowrap text-base-content/80">
+												<div class="size-5 max-w-5 min-w-5">
 													<Avatar client={owner} user={participant} textSize="sm" />
 												</div>
 												{nameOrHandle(participant)}
@@ -167,9 +167,9 @@
 						</li>
 					{/each}
 				</ul>
-				<div class="flex justify-start pb-2 ps-2">
+				<div class="flex justify-start ps-2 pb-2">
 					<button
-						class="btn btn-ghost btn-square btn-sm"
+						class="btn btn-square btn-ghost btn-sm"
 						disabled={!activeChannel}
 						title="Pop out active channel"
 						onclick={() =>
@@ -192,7 +192,7 @@
 			onpointerup={() => {
 				rndWindows[windowID].locked = wasLocked;
 			}}
-			class="bg-base-200 text-base-content hover:bg-base-100 border-base-content/50 flex w-3 items-center justify-center border-e"
+			class="flex w-3 items-center justify-center border-e border-base-content/50 bg-base-200 text-base-content hover:bg-base-100"
 		>
 			<LucideGripVertical />
 		</PaneResizer>

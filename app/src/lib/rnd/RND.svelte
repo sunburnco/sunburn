@@ -167,8 +167,8 @@
 	style={`left:${x}px;top:${y}px;width:${w}px;height:${h}px;z-index:${z}`}
 	class={[
 		'@container',
-		'rounded-box absolute',
-		'bg-base-300 border-base-content/50 overflow-hidden border',
+		'absolute rounded-box',
+		'overflow-hidden border border-base-content/50 bg-base-300',
 		'flex flex-col items-stretch',
 		'shadow-sm',
 		'select-none'
@@ -178,14 +178,14 @@
 >
 	<div
 		class={[
-			'bg-base-100 px-0.25 flex h-7 w-full min-w-0 shrink-0 grow-0 items-center justify-between',
-			'font-display relative text-sm',
-			'border-b-base-content/50 border-b'
+			'flex h-7 w-full min-w-0 shrink-0 grow-0 items-center justify-between bg-base-100 px-0.25',
+			'relative font-display text-sm',
+			'border-b border-b-base-content/50'
 			// activeID === id && 'border-b-primary'
 		]}
 	>
 		<div class="flex min-w-0 shrink flex-nowrap items-center">
-			{#if activeID === id}<div class="status status-primary ms-1.5"></div>{/if}
+			{#if activeID === id}<div class="ms-1.5 status status-primary"></div>{/if}
 			<span class="ms-1.5 text-nowrap">
 				{#if dragging}
 					{w}x{h} ({x},{y})
@@ -195,11 +195,11 @@
 			</span>
 		</div>
 
-		<div class="bg-base-100 flex items-center">
+		<div class="flex items-center bg-base-100">
 			<button
 				type="button"
 				tabindex={-1}
-				class="btn btn-xs btn-square btn-ghost"
+				class="btn btn-square btn-ghost btn-xs"
 				onclick={() => {
 					locked = !locked;
 					saveRNDWindows();
@@ -219,7 +219,7 @@
 					if (locked) return;
 					if (onclose) onclose();
 				}}
-				class="btn btn-xs btn-ghost btn-square"
+				class="btn btn-square btn-ghost btn-xs"
 			>
 				<LucideX size="0.75rem" />
 			</button>

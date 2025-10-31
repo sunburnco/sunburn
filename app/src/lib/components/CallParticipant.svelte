@@ -73,8 +73,8 @@
 			<Avatar client={owner} user={participant.participant.identity} />
 			<div
 				class={[
-					'rounded-box absolute left-0 top-0 box-border h-full w-full',
-					speaking && 'border-base-content border-2'
+					'absolute top-0 left-0 box-border h-full w-full rounded-box',
+					speaking && 'border-2 border-base-content'
 				]}
 			></div>
 		</div>
@@ -82,7 +82,7 @@
 			<input
 				type="range"
 				class={[
-					'range-vertical range-xs h-auto min-h-4',
+					'range-vertical h-auto min-h-4 range-xs',
 					voiceSettings[owner][participant.participant.identity].muted && 'opacity-50'
 				]}
 				min={0}
@@ -102,7 +102,7 @@
 		</div>
 		<button
 			class={[
-				'btn btn-sm btn-square',
+				'btn btn-square btn-sm',
 				voiceSettings[owner][participant.participant.identity].muted && 'btn-accent'
 			]}
 			title={voiceSettings[owner][participant.participant.identity].muted
@@ -135,7 +135,7 @@
 			<LucideVideo size="1rem" />
 		</button>
 		<button
-			class="btn btn-sm btn-square"
+			class="btn btn-square btn-sm"
 			title="View Screenshare"
 			onclick={() =>
 				spawnCallScreenShareWindow(

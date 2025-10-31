@@ -645,7 +645,7 @@
 <WindowBase slim>
 	<div class="flex h-full w-full items-stretch">
 		<div
-			class="bg-base-100 border-base-content/50 flex shrink-0 flex-col flex-wrap justify-center gap-2 overflow-y-auto overflow-x-hidden border-r p-3"
+			class="flex shrink-0 flex-col flex-wrap justify-center gap-2 overflow-x-hidden overflow-y-auto border-r border-base-content/50 bg-base-100 p-3"
 		>
 			<button
 				class={['btn btn-square', roomMe?.micUnmuted && 'btn-neutral']}

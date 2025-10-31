@@ -150,18 +150,18 @@
 					<kbd class="kbd kbd-sm">Enter</kbd>
 					to
 				</span>
-				<span class="badge badge-primary font-display text-sm">
+				<span class="badge font-display text-sm badge-primary">
 					{chosenCommand.title}
 				</span>
 				{#each args as arg, i (i)}
 					{chosenCommand.args[i].prefix}
-					<span class="badge badge-neutral badge-soft font-display text-sm">
+					<span class="badge badge-soft font-display text-sm badge-neutral">
 						{arg.display ?? arg.value}
 					</span>
 					{chosenCommand.args[i].suffix}
 				{/each}
 				<button
-					class="btn btn-xs btn-square btn-neutral ms-1 justify-center"
+					class="btn ms-1 btn-square justify-center btn-xs btn-neutral"
 					onclick={handleShiftEnter}
 				>
 					<LucideArrowRight size="0.75rem" />
@@ -184,14 +184,14 @@
 					}
 				}}
 			/>
-			<span class="select-none text-sm">
+			<span class="text-sm select-none">
 				<kbd class="kbd kbd-sm">Tab</kbd>
 				to cycle
 			</span>
 		</label>
 
 		{#if !chosenCommand}
-			<div class="mt-4 flex max-h-60 select-none flex-col items-stretch gap-1 overflow-y-auto p-1">
+			<div class="mt-4 flex max-h-60 flex-col items-stretch gap-1 overflow-y-auto p-1 select-none">
 				{#if !inputValue}
 					{#each commands as command (command.title)}
 						{@render commandSnippet(command)}
@@ -203,7 +203,7 @@
 				{/if}
 			</div>
 		{:else}
-			<div class="mt-4 flex max-h-60 select-none flex-col items-stretch gap-1 overflow-y-auto p-1">
+			<div class="mt-4 flex max-h-60 flex-col items-stretch gap-1 overflow-y-auto p-1 select-none">
 				<!-- TODO test with variadic commands; may break -->
 				{#if args.length < chosenCommand.args.length || (chosenCommand.args.length > 0 && chosenCommand.args[chosenCommand.args.length - 1].variadic)}
 					{#await argsList then awaitArgsList}
@@ -247,16 +247,16 @@
 
 {#snippet commandSnippet(c: KBarCommand_t)}
 	<button
-		class="btn btn-ghost group h-auto flex-col items-start text-start"
+		class="group btn h-auto flex-col items-start text-start btn-ghost"
 		onclick={() => {
 			chosenCommand = c;
 			inputValue = '';
 			input.focus();
 		}}
 	>
-		<div class="font-display flex items-center gap-2 text-xl font-bold">
+		<div class="flex items-center gap-2 font-display text-xl font-bold">
 			{c.title}
-			<kbd class="kbd kbd-sm hidden font-mono font-normal group-first:inline">Enter</kbd>
+			<kbd class="kbd hidden font-mono kbd-sm font-normal group-first:inline">Enter</kbd>
 		</div>
 		{#if c.description}<div class="text-base-content/50">{c.description}</div>{/if}
 	</button>
@@ -264,16 +264,16 @@
 
 {#snippet argSnippet(arg: Arg_t)}
 	<button
-		class="btn btn-ghost group h-auto flex-col items-start"
+		class="group btn h-auto flex-col items-start btn-ghost"
 		onclick={() => {
 			args.push(arg);
 			inputValue = '';
 			input.focus();
 		}}
 	>
-		<div class="font-display flex items-center gap-2 text-xl font-bold">
+		<div class="flex items-center gap-2 font-display text-xl font-bold">
 			{arg.display ?? arg.value}
-			<kbd class="kbd kbd-sm group-nth-2:inline ms-2 hidden font-mono font-normal">Enter</kbd>
+			<kbd class="ms-2 kbd hidden font-mono kbd-sm font-normal group-nth-2:inline">Enter</kbd>
 		</div>
 	</button>
 {/snippet}

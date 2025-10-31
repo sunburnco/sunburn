@@ -3,7 +3,7 @@
 </script>
 
 <WindowBase>
-	<div class="flex w-full select-none flex-col gap-2">
+	<div class="flex w-full flex-col gap-2 select-none">
 		<h1 class="font-display text-2xl font-bold">Welcome to Sunburn</h1>
 		<p>Click the icon in the bottom-left to get started.</p>
 	</div>

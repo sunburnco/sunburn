@@ -42,7 +42,7 @@
 <div
 	bind:clientWidth={windowAreaDimensions.w}
 	bind:clientHeight={windowAreaDimensions.h}
-	class="dots-300 relative grow select-none overflow-hidden"
+	class="dots-300 relative grow overflow-hidden select-none"
 	style="box-shadow: inset 0 0 6rem rgb(0 0 0 / 0.2);"
 >
 	{#each wins as win (win.id)}

@@ -102,7 +102,7 @@
 <WindowBase>
 	{#if !success}
 		{#await maxServers}
-			<div class="flex w-full select-none flex-col gap-2">
+			<div class="flex w-full flex-col gap-2 select-none">
 				<h1 class="font-display text-2xl font-bold">
 					Loading <LucideLoaderCircle class="inline animate-spin" />
 				</h1>
@@ -121,7 +121,7 @@
 						/>
 						<p class={['label text-error', !errorText && 'hidden']}>{errorText}</p>
 					</fieldset>
-					<button type="submit" class="btn btn-primary mt-4">
+					<button type="submit" class="btn mt-4 btn-primary">
 						{#if loading}
 							<LucideLoaderCircle class="animate-spin" />
 						{:else}
@@ -130,7 +130,7 @@
 					</button>
 				</form>
 			{:else}
-				<div class="flex w-full select-none flex-col gap-2">
+				<div class="flex w-full flex-col gap-2 select-none">
 					<h1 class="font-display text-2xl font-bold">Quota Exceeded</h1>
 					<p>You have exceeded your server ownership quota.</p>
 					<p>Contact the instance admin for help.</p>
@@ -138,9 +138,9 @@
 			{/if}
 		{/await}
 	{:else}
-		<div class="flex w-full select-none flex-col gap-4">
+		<div class="flex w-full flex-col gap-4 select-none">
 			<h1 class="font-display text-2xl font-bold">Success</h1>
-			<button class="btn btn-primary w-full" onclick={() => spawnServerWindow(owner, serverID)}>
+			<button class="btn w-full btn-primary" onclick={() => spawnServerWindow(owner, serverID)}>
 				View Server
 			</button>
 		</div>

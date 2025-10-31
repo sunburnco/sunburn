@@ -65,8 +65,8 @@
 		style={`anchor-name:--mainbar_auth_${authKey}_anchor`}
 		popovertarget={`mainbar_auth_${authKey}_popovertarget`}
 		class={[
-			'rounded-box border-base-content/50 box-border flex shrink-0 items-center gap-2 overflow-hidden border pe-2 transition-[border-color]',
-			'hover:border-base-content select-none'
+			'box-border flex shrink-0 items-center gap-2 overflow-hidden rounded-box border border-base-content/50 pe-2 transition-[border-color]',
+			'select-none hover:border-base-content'
 		]}
 	>
 		<div class="size-6">
@@ -76,7 +76,7 @@
 			{sunburn.users[authKey].record.handle}@{authStoreKey(sunburn.clients[authKey].baseURL)}
 		</div>
 		{#if versionMismatch}
-			<LucideTriangleAlert class="text-warning size-4" />
+			<LucideTriangleAlert class="size-4 text-warning" />
 		{/if}
 	</button>
 
@@ -86,9 +86,9 @@
 		id={`mainbar_auth_${authKey}_popovertarget`}
 		style={`position-anchor:--mainbar_auth_${authKey}_anchor`}
 		class={[
-			'dropdown dropdown-top dropdown-center mb-1.25',
-			'menu rounded-box bg-base-200 w-56',
-			'border-base-content/50 box-border border drop-shadow-md'
+			'dropdown dropdown-center dropdown-top mb-1.25',
+			'menu w-56 rounded-box bg-base-200',
+			'box-border border border-base-content/50 drop-shadow-md'
 		]}
 	>
 		{#if versionMismatch}

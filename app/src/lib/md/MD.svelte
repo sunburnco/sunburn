@@ -8,6 +8,7 @@
 
 	onMount(async () => {
 		output = await messageToHTML(text);
+		// eslint-disable-next-line no-console
 		console.log(output);
 	});
 </script>

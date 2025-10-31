@@ -23,7 +23,7 @@
 
 {#if item.from in sunburn.users}
 	<div
-		class={['flex items-center gap-2', 'hover:bg-base-200 group px-2', !cozy && !first && 'mt-2']}
+		class={['flex items-center gap-2', 'group px-2 hover:bg-base-200', !cozy && !first && 'mt-2']}
 	>
 		<div class="w-9 min-w-9 select-none">
 			{#if first || !cozy}
@@ -32,7 +32,7 @@
 				</div>
 			{:else}
 				<div
-					class="text-base-content/50 hidden w-full text-nowrap text-center text-[0.55rem] font-normal group-hover:block"
+					class="hidden w-full text-center text-[0.55rem] font-normal text-nowrap text-base-content/50 group-hover:block"
 				>
 					{createdAt.toLocaleString({ hour: 'numeric', minute: '2-digit' })}
 				</div>
@@ -42,7 +42,7 @@
 			{#if !cozy}
 				<div class="flex items-baseline gap-2">
 					<div class="font-bold">{nameOrHandle(item.from)}</div>
-					<div class="text-base-content/50 select-none text-nowrap text-xs font-bold">
+					<div class="text-xs font-bold text-nowrap text-base-content/50 select-none">
 						{createdAt.toLocaleString(
 							createdAt.diffNow().as('days') < -1 ? DateTime.DATETIME_SHORT : DateTime.TIME_SIMPLE
 						)}

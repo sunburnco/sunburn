@@ -34,7 +34,7 @@
 	};
 </script>
 
-<div class="bg-base-100 sticky left-0 flex h-full w-10 shrink-0 items-center px-2">
+<div class="sticky left-0 flex h-full w-10 shrink-0 items-center bg-base-100 px-2">
 	<button
 		style="anchor-name:--mainbar_logobutton_anchor"
 		popovertarget="mainbar_logobutton_popovertarget"
@@ -43,7 +43,7 @@
 		<img
 			src="/sunburn.svg"
 			class={[
-				'rounded-box border-base-content/50 box-border size-6 select-none border transition-[border-color]',
+				'box-border size-6 rounded-box border border-base-content/50 transition-[border-color] select-none',
 				'hover:border-base-content'
 			]}
 			alt="Sunburn Logo"
@@ -56,16 +56,16 @@
 		id="mainbar_logobutton_popovertarget"
 		style="position-anchor:--mainbar_logobutton_anchor"
 		class={[
-			'dropdown dropdown-top dropdown-start mb-1.25',
-			'menu rounded-box bg-base-200 w-56',
-			'border-base-content/50 box-border border drop-shadow-md'
+			'dropdown dropdown-start dropdown-top mb-1.25',
+			'menu w-56 rounded-box bg-base-200',
+			'box-border border border-base-content/50 drop-shadow-md'
 		]}
 	>
 		<li class="menu-title">KBar</li>
 		<li>
 			<button onclick={() => kbarModal?.showModal()}>
 				<LucideTerminal size={iconSize} /> Show KBar
-				<kbd class="kbd kbd-xs -mr-1.5">Ctrl</kbd>
+				<kbd class="-mr-1.5 kbd kbd-xs">Ctrl</kbd>
 				<kbd class="kbd kbd-xs">K</kbd>
 			</button>
 		</li>
@@ -84,7 +84,7 @@
 			</button>
 		</li>
 
-		<li class="menu-title mt-4">Theme</li>
+		<li class="mt-4 menu-title">Theme</li>
 		<li>
 			<button data-set-theme="sunburn-day" data-act-class="font-bold">
 				<LucideSun size={iconSize} /> Day
@@ -123,7 +123,7 @@
 			</details>
 		</li>
 
-		<li class="menu-title mt-4">Accounts</li>
+		<li class="mt-4 menu-title">Accounts</li>
 		<li>
 			<button onclick={addAccount}>
 				<LucideUserPlus size={iconSize} /> Add Account

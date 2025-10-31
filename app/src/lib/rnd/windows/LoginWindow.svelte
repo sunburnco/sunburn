@@ -92,19 +92,19 @@
 						chosenAuthMethod = 'password';
 						rndWindows[windowID].title = `Add Account (Password Auth)`;
 					}}
-					class="btn btn-primary w-full"
+					class="btn w-full btn-primary"
 				>
 					Password
 				</button>
 			{/if}
-			<button class="btn btn-primary w-full" disabled>OAuth2 (coming soon)</button>
+			<button class="btn w-full btn-primary" disabled>OAuth2 (coming soon)</button>
 			<button
 				onclick={() => {
 					authMethods = null;
 					chosenAuthMethod = '';
 					rndWindows[windowID].title = `Add Account (Instance Discovery)`;
 				}}
-				class="btn-neutral btn btn-outline mt-2"
+				class="btn mt-2 btn-outline btn-neutral"
 			>
 				<LucideArrowLeft size={16} /> Go Back
 			</button>
@@ -134,7 +134,7 @@
 				/>
 				<p class={['label text-error', !authErrorText && 'hidden']}>{authErrorText}</p>
 			</fieldset>
-			<button type="submit" class="btn btn-primary mt-4">
+			<button type="submit" class="btn mt-4 btn-primary">
 				{#if loading}
 					<LucideLoaderCircle class="animate-spin" />
 				{:else}
@@ -146,7 +146,7 @@
 					chosenAuthMethod = '';
 					rndWindows[windowID].title = `Add Account (Auth Method)`;
 				}}
-				class="btn-neutral btn btn-outline mt-2"
+				class="btn mt-2 btn-outline btn-neutral"
 			>
 				<LucideArrowLeft size={16} /> Go Back
 			</button>

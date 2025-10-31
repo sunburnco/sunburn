@@ -1,3 +1,17 @@
 {
-  "prettier.configPath": "app/.prettierrc"
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+  "prettier.configPath": "app/.prettierrc",
+  "eslint.workingDirectories": [
+    "app"
+  ],
+  "eslint.validate": [
+    "html",
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "typescriptreact",
+    "svelte"
+  ]
 }

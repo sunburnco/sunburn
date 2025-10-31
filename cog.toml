@@ -10,7 +10,7 @@ skip_ci = "[skip ci]"
 skip_untracked = false
 pre_bump_hooks = [
   "jq '.version |= \"{{version}}\"' app/package.json > app/package.json.tmp && mv app/package.json.tmp app/package.json",
-  "cd ./app && pnpm prettier --write package.json src/lib/version.ts",
+  "cd ./app && pnpm prettier --write package.json",
   "sed -i.bak \"s/const VERSION = '.*';/const VERSION = \"{{version}}\";/\" backend/lib/version.go",
   "cd ./backend && gofmt -s -w lib/version.go",
   "git add :/app/package.json",
@@ -29,9 +29,8 @@ script = """#!/bin/sh
 set -e
 cog verify --file $1
 cog check
-cd app && pnpm lint
-cd backend && go vet
-cd backend && gofmt -l . | grep -q . && exit 1 || exit 0
+cd app && pnpm lint && cd ..
+cd backend && go vet && (gofmt -l . | grep -q . && exit 1 || exit 0) && cd ..
 """
 
 [commit_types]

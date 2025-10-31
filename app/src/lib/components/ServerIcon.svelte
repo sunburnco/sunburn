@@ -24,19 +24,19 @@
 <div
 	role="img"
 	class={[
-		'font-display flex aspect-square items-center justify-center',
+		'flex aspect-square items-center justify-center font-display',
 		{ xs: 'text-xs', sm: 'text-sm', md: 'text-md', lg: 'text-lg', xl: 'text-xl' }[textSize]
 	]}
 >
 	{#if !server || typeof avatarFilename === 'undefined'}
 		<div
-			class="bg-accent text-accent-content rounded-box flex h-full w-full items-center justify-center"
+			class="flex h-full w-full items-center justify-center rounded-box bg-accent text-accent-content"
 		>
 			?
 		</div>
 	{:else if avatarFilename === ''}
 		<div
-			class="bg-accent text-accent-content rounded-box flex h-full w-full items-center justify-center"
+			class="flex h-full w-full items-center justify-center rounded-box bg-accent text-accent-content"
 		>
 			{(sunburn.servers[server].name || '')
 				.split(' ')

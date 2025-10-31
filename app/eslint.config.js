@@ -12,9 +12,13 @@ import ts from 'typescript-eslint';
 import svelteConfig from './svelte.config.js';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
+const playgroundPath = fileURLToPath(
+	new URL('./src/lib/rnd/windows/PlaygroundWindow.svelte', import.meta.url)
+);
 
 export default ts.config(
 	includeIgnoreFile(gitignorePath),
+	includeIgnoreFile(playgroundPath),
 	js.configs.recommended,
 	...ts.configs.recommended,
 	...svelte.configs.recommended,
@@ -46,7 +50,8 @@ export default ts.config(
 					args: 'after-used',
 					argsIgnorePattern: '^_'
 				}
-			]
+			],
+			'svelte/no-navigation-without-resolve': 'off'
 		}
 	},
 	{

@@ -115,8 +115,8 @@
 
 <WindowBase slim>
 	<PaneGroup autoSaveId={windowID} direction="horizontal">
-		<Pane defaultSize={30} class="bg-base-200 flex min-w-16 overflow-visible">
-			<div class="flex w-full flex-col overflow-y-auto overflow-x-hidden">
+		<Pane defaultSize={30} class="flex min-w-16 overflow-visible bg-base-200">
+			<div class="flex w-full flex-col overflow-x-hidden overflow-y-auto">
 				<form class="group mb-2 flex w-full max-w-full overflow-visible px-2 pt-2" {onsubmit}>
 					<input
 						name="searchbar"
@@ -126,7 +126,7 @@
 					/>
 					<button
 						class={[
-							'btn btn-sm btn-ghost btn-primary btn-square ms-0 w-0 border-0 transition-[width]',
+							'btn ms-0 btn-square w-0 border-0 btn-ghost transition-[width] btn-sm btn-primary',
 							'group-focus-within:ms-2 group-focus-within:w-8 group-hover:ms-2 group-hover:w-8'
 						]}
 					>
@@ -155,7 +155,7 @@
 										{username(owner, recipient.recipient)}
 									</div>
 									{#if sunburn.dms[owner][recipient.recipient]?.messages.length > 0}
-										<div class="text-nowrap text-xs">
+										<div class="text-xs text-nowrap">
 											{#if sunburn.dms[owner][recipient.recipient].messages.at(-1)!.from === owner}
 												You:
 											{/if}
@@ -179,9 +179,9 @@
 						</div>
 					{/each}
 				</ul>
-				<div class="flex justify-start pb-2 ps-2">
+				<div class="flex justify-start ps-2 pb-2">
 					<button
-						class="btn btn-ghost btn-square btn-sm"
+						class="btn btn-square btn-ghost btn-sm"
 						disabled={!activeThread}
 						title="Pop out active thread"
 						onclick={() =>
@@ -204,7 +204,7 @@
 			onpointerup={() => {
 				rndWindows[windowID].locked = wasLocked;
 			}}
-			class="bg-base-200 text-base-content hover:bg-base-100 border-base-content/50 flex w-3 items-center justify-center border-e"
+			class="flex w-3 items-center justify-center border-e border-base-content/50 bg-base-200 text-base-content hover:bg-base-100"
 		>
 			<LucideGripVertical />
 		</PaneResizer>
