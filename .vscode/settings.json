@@ -1,10 +1,10 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.configPath": "app/.prettierrc",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always",
   },
-  "prettier.configPath": "app/.prettierrc",
   "eslint.workingDirectories": [
     "app"
   ],
@@ -15,5 +15,8 @@
     "javascriptreact",
     "typescriptreact",
     "svelte"
-  ]
+  ],
+  "[svelte]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

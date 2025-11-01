@@ -114,7 +114,7 @@
 
 <WindowBase slim>
 	<PaneGroup autoSaveId={windowID} direction="horizontal">
-		<Pane defaultSize={30} class="flex min-w-16 overflow-visible bg-base-200">
+		<Pane defaultSize={30} class="flex min-w-15 overflow-visible bg-base-200">
 			<div class="flex w-full flex-col overflow-x-hidden overflow-y-auto">
 				<form class="group mb-2 flex w-full max-w-full overflow-visible px-2 pt-2" {onsubmit}>
 					<input
