@@ -42,8 +42,7 @@
 			return;
 		}
 
-		rndWindows[windowID].title =
-			`${recipientDisplay || 'DM List'} (${handleAtHost(owner, activeThread)})`;
+		rndWindows[windowID].title = `${recipientDisplay || 'DM List'} (${handleAtHost(owner, owner)})`;
 	});
 
 	const recipients = $derived(
@@ -140,7 +139,8 @@
 								class={[
 									activeThread === recipient.recipient && 'menu-active',
 									// TODO bold when unread
-									'font-normal'
+									'font-normal',
+									'p-2'
 								]}
 								onclick={() => {
 									(rndWindows[windowID].data as TypeMultiDM_t).activeRecipient =

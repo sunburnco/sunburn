@@ -29,8 +29,8 @@ script = """#!/bin/sh
 set -e
 cog verify --file $1
 cog check
-cd app && pnpm lint && cd ..
-cd backend && go vet && (gofmt -l . | grep -q . && exit 1 || exit 0) && cd ..
+cd app && pnpm lint
+cd backend && go vet && (gofmt -l . | grep -q . && exit 1 || exit 0)
 """
 
 [commit_types]
