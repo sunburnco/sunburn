@@ -23,10 +23,13 @@
 	let authErrorText = $state('');
 	let loggedInAs = $state('');
 
+	const defaultInstanceURL = 'https://sunburn.gg';
+
 	const queryInstanceForAuthMethods = async () => {
 		loading = true;
 		errorText = '';
 		try {
+			instanceURL = instanceURL || defaultInstanceURL;
 			authMethods = await (new PocketBase(instanceURL) as TypedPocketBase)
 				.collection('users')
 				.listAuthMethods();
@@ -67,10 +70,9 @@
 			<fieldset class="fieldset grow" disabled={loading}>
 				<legend class="fieldset-legend">IP or Hostname</legend>
 				<input
-					required
 					type="text"
 					class="input w-full"
-					placeholder="https://sunburn.gg"
+					placeholder={defaultInstanceURL}
 					bind:value={instanceURL}
 				/>
 				<p class="label text-error">{errorText}</p>

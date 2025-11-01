@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { LucideArrowRight } from '@lucide/svelte';
-	import createFuzzySearch from '@nozbe/microfuzz';
 	import { shortcut, type ShortcutEventDetail } from '@svelte-put/shortcut';
 
 	import { debugPrefix } from '$lib/logPrefixes';
+	import { createFuzzySearch } from '$lib/microfuzz/microfuzz';
 
 	import { type Arg_t, commands, countRequiredArguments, type KBarCommand_t } from './commands';
 

@@ -76,7 +76,7 @@
 			</a>
 		</li>
 		<li>
-			<span><LucideLaptop size={iconSize} /> Client v{process.env.npm_package_version}</span>
+			<span><LucideLaptop size={iconSize} /> Client v{__SB_VERSION__}</span>
 		</li>
 		<li>
 			<button onclick={clearCaches}>

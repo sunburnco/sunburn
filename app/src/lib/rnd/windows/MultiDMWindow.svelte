@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { LucideArrowRight, LucideGripVertical, LucidePictureInPicture } from '@lucide/svelte';
-	import createFuzzySearch from '@nozbe/microfuzz';
 	import { Pane, PaneGroup, PaneResizer } from 'paneforge';
 	import { ClientResponseError } from 'pocketbase';
 
 	import Avatar from '$lib/components/Avatar.svelte';
 	import DMView from '$lib/components/DMView.svelte';
 	import { debugPrefix, errorPrefix } from '$lib/logPrefixes';
+	import { createFuzzySearch } from '$lib/microfuzz/microfuzz';
 	import type { UsersRecord } from '$lib/pb-types';
 	import { sunburn } from '$lib/sunburn.svelte';
 	import { emptyDM } from '$lib/sunburn/empty';

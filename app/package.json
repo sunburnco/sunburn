@@ -57,7 +57,6 @@
 		"@fontsource/league-mono": "^5.2.5",
 		"@fontsource/oxygen-mono": "^5.2.8",
 		"@lucide/svelte": "^0.548.0",
-		"@nozbe/microfuzz": "^1.0.0",
 		"idb-keyval": "^6.2.2",
 		"interactjs": "^1.10.27",
 		"livekit-client": "^2.15.14",

@@ -27,7 +27,7 @@
 	let popover = $state<HTMLElement | null>(null);
 	const iconSize = '1.125rem';
 	const serverVersion = sunburn.instances[sunburn.clients[authKey].baseURL].version;
-	const versionMismatch = serverVersion !== process.env.nvm_package_version;
+	const versionMismatch = serverVersion !== __SB_VERSION__;
 
 	const logOut = async () => {
 		await spawnLogoutWindow(authKey);
@@ -96,7 +96,7 @@
 			<li>
 				<span><LucideTriangleAlert size={iconSize} class="text-warning" /> Version Mismatch</span>
 			</li>
-			<li><span><LucideLaptop size={iconSize} /> Client v{version}</span></li>
+			<li><span><LucideLaptop size={iconSize} /> Client v{__SB_VERSION__}</span></li>
 			<li><span><LucideServer size={iconSize} /> Server v{serverVersion}</span></li>
 		{/if}
 		<li class="menu-title">DMs</li>
