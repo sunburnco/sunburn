@@ -16,6 +16,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        run_install: false
       
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -23,9 +28,6 @@ jobs:
         node-version: '22'
         cache: 'pnpm'
         cache-dependency-path: './app/pnpm-lock.yaml'
-        
-    - name: Install pnpm
-      run: npm install -g pnpm
       
     - name: Install dependencies
       run: pnpm install
