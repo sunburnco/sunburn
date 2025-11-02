@@ -16,8 +16,8 @@ export const username = (client: string, user: string) => {
 		return user;
 	}
 	const recipientName = sunburn.users[user].record.name;
-	const recipientAddress = handleAtHost(client, user);
-	return recipientName ?? recipientAddress;
+	const recipientAddress = sunburn.users[user].record.handle;
+	return recipientName || recipientAddress;
 };
 
 export const handleAtHost = (client: string, user: string) => {
