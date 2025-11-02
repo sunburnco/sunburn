@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.1.1 - 2025-11-02
+#### Bug Fixes
+- version not bumped in backend - (3def5f5) - twopyramids
+
+- - -
+
 ## v0.1.0 - 2025-11-02
 #### Features
 - add docker container build pipeline - (79e40d6) - twopyramids
