@@ -4,6 +4,7 @@
 	import Avatar from '$lib/components/Avatar.svelte';
 	import type { MessagesRecord } from '$lib/pb-types';
 	import { sunburn } from '$lib/sunburn.svelte';
+	import { fetchUser } from '$lib/sunburn/users';
 	import { nameOrHandle } from '$lib/utils/username';
 
 	const {
@@ -19,6 +20,10 @@
 	} = $props();
 
 	const createdAt = DateTime.fromSQL(item.created!);
+
+	if (!(item.from in sunburn.users)) {
+		fetchUser(sunburn.clients[client], item.from, [client, item.from].toString());
+	}
 </script>
 
 {#if item.from in sunburn.users}

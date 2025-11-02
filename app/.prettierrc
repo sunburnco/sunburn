@@ -14,5 +14,7 @@
 			}
 		}
 	],
+	"svelteSortOrder": "options-scripts-markup-styles",
+	"svelteStrictMode": false,
 	"tailwindStylesheet": "./src/app.css"
 }
