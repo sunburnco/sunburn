@@ -9,6 +9,7 @@ branch_whitelist = []
 skip_ci = "[skip ci]"
 skip_untracked = false
 pre_bump_hooks = [
+  "bash -c 'read -r -p \"Only bump if the most recent commit to master passed all checks. Did the most recent commit pass all checks? (y/N): \" response && [[ \"$response\" =~ ^[Yy]$ ]] || exit 1'",
   "jq '.version |= \"{{version}}\"' app/package.json > app/package.json.tmp && mv app/package.json.tmp app/package.json",
   "cd ./app && pnpm prettier --write package.json",
   "sed -i.bak \"s/const VERSION = '.*';/const VERSION = \"{{version}}\";/\" backend/lib/version.go",
