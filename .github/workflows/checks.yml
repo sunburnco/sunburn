@@ -1,0 +1,57 @@
+name: Format Checks
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  app-checks:
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: ./app
+        
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'pnpm'
+        cache-dependency-path: './app/pnpm-lock.yaml'
+        
+    - name: Install pnpm
+      run: npm install -g pnpm
+      
+    - name: Install dependencies
+      run: pnpm install
+      
+    - name: Run lintstaged
+      run: pnpm lintstaged
+
+  backend-checks:
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: ./backend
+        
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+        cache: true
+        cache-dependency-path: './backend/go.sum'
+        
+    - name: Run Go vet
+      run: go vet
+      
+    - name: Check Go formatting
+      run: gofmt -l
