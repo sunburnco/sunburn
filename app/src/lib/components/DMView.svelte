@@ -99,15 +99,11 @@
 				</span>
 			</div>
 			<div class="flex">
-				<button
-					title="Favorite"
-					onclick={togglePin}
-					class={[
-						'btn btn-square btn-sm',
-						sunburn.pinnedDMs[owner]?.has(recipient) ? 'btn-neutral' : 'btn-ghost'
-					]}
-				>
-					<LucideStar size="1rem" />
+				<button title="Favorite" onclick={togglePin} class="btn btn-square btn-ghost btn-sm">
+					<LucideStar
+						size="1rem"
+						class={sunburn.pinnedDMs[owner]?.has(recipient) ? 'fill-neutral' : 'fill-none'}
+					/>
 				</button>
 			</div>
 		</div>
