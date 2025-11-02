@@ -113,15 +113,11 @@
 						</div>
 					</div>
 					<div class="flex items-center gap-1 p-2">
-						<button
-							title="Favorite"
-							onclick={togglePin}
-							class={[
-								'btn btn-square btn-sm',
-								sunburn.pinnedServers[owner]?.has(server) ? 'btn-neutral' : 'btn-ghost'
-							]}
-						>
-							<LucideStar size="1rem" />
+						<button title="Favorite" onclick={togglePin} class="btn btn-square btn-ghost btn-sm">
+							<LucideStar
+								size="1rem"
+								class={sunburn.pinnedServers[owner]?.has(server) ? 'fill-neutral' : 'fill-none'}
+							/>
 						</button>
 					</div>
 				</div>
