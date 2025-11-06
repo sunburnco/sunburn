@@ -93,8 +93,7 @@
 			"prettier --check"
 		],
 		"*.css": [
-			"prettier --check",
-			"eslint --max-warnings=0"
+			"prettier --check"
 		],
 		"*.md": [
 			"prettier --check"
