@@ -178,7 +178,7 @@
 >
 	<div
 		class={[
-			'flex h-7 w-full min-w-0 shrink-0 grow-0 items-center justify-between bg-base-100 px-0.25',
+			'flex h-7 w-full min-w-0 shrink-0 grow-0 items-center justify-between bg-base-100 px-px',
 			'relative font-display text-sm',
 			'border-b border-b-base-content/50'
 			// activeID === id && 'border-b-primary'
