@@ -18,7 +18,7 @@
 		user && user in sunburn.users ? sunburn.users[user].record.avatar : undefined
 	);
 	const avatarURL = $derived(
-		user && avatarFilename
+		user && avatarFilename && sunburn.readyClients.has(client)
 			? sunburn.clients[client].files.getURL(sunburn.users[user].record, avatarFilename)
 			: undefined
 	);
