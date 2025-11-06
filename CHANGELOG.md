@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.2.0 - 2025-11-06
+#### Features
+- prompt user to log in if window owner is not logged in - (e9c717d) - twopyramids
+- change to MIT license - (4689ef3) - twopyramids
+#### Bug Fixes
+- check if client is ready before loading pfp url - (919cd5d) - twopyramids
+- accessible contrast for sunburn-day - (53edcfc) - twopyramids
+
+- - -
+
 ## v0.1.2 - 2025-11-02
 #### Bug Fixes
 - username display bug - (a5a88a2) - twopyramids
