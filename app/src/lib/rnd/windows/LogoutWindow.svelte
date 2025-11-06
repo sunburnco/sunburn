@@ -23,6 +23,7 @@
 			console.debug(...debugPrefix, 'removing account', owner);
 
 			sunburn.clients[owner].collection('*').unsubscribe();
+			sunburn.readyClients.delete(owner);
 			sunburn.clients[owner].authStore.clear();
 			delete sunburn.clients[owner];
 			delete sunburn.auths[owner];

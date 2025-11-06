@@ -5,6 +5,7 @@
 	import { loadVoiceSettings } from '$lib/sunburn/voiceSettings.svelte';
 	import { resolveTheme } from '$lib/utils/resolveTheme';
 
+	import PromptLogin from './PromptLogin.svelte';
 	import RND from './RND.svelte';
 	import {
 		activeWindowID,
@@ -86,6 +87,8 @@
 			{:else if win.data.t === 'dm'}
 				{#if sunburn.readyClients.has(win.data.owner)}
 					<DMWindow windowID={win.id} owner={win.data.owner} recipient={win.data.recipient} />
+				{:else}
+					<PromptLogin windowTitle={win.title} />
 				{/if}
 			{:else if win.data.t === 'multiDM'}
 				{#if sunburn.readyClients.has(win.data.owner)}
@@ -94,14 +97,20 @@
 						owner={win.data.owner}
 						activeThread={win.data.activeRecipient}
 					/>
+				{:else}
+					<PromptLogin windowTitle={win.title} />
 				{/if}
 			{:else if win.data.t === 'createServer'}
 				{#if sunburn.readyClients.has(win.data.owner)}
 					<CreateServerWindow owner={win.data.owner} windowID={win.id} />
+				{:else}
+					<PromptLogin windowTitle={win.title} />
 				{/if}
 			{:else if win.data.t === 'server'}
 				{#if sunburn.readyClients.has(win.data.owner) && win.data.server in sunburn.servers}
 					<ServerWindow owner={win.data.owner} server={win.data.server} windowID={win.id} />
+				{:else}
+					<PromptLogin windowTitle={win.title} />
 				{/if}
 			{:else if win.data.t === 'serverChannel'}
 				{#if sunburn.readyClients.has(win.data.owner) && win.data.channel in sunburn.channels}
@@ -110,14 +119,20 @@
 						channel={win.data.channel}
 						windowID={win.id}
 					/>
+				{:else}
+					<PromptLogin windowTitle={win.title} />
 				{/if}
 			{:else if win.data.t === 'serverPicker'}
 				{#if sunburn.readyClients.has(win.data.owner)}
 					<ServerPickerWindow owner={win.data.owner} windowID={win.id} />
+				{:else}
+					<PromptLogin windowTitle={win.title} />
 				{/if}
 			{:else if win.data.t === 'call'}
 				{#if sunburn.readyClients.has(win.data.owner)}
 					<CallWindow owner={win.data.owner} channel={win.data.channel} windowID={win.id} />
+				{:else}
+					<PromptLogin windowTitle={win.title} />
 				{/if}
 			{:else if win.data.t === 'callCamera'}
 				{#if sunburn.readyClients.has(win.data.owner)}
@@ -127,6 +142,8 @@
 						windowID={win.id}
 						user={win.data.user}
 					/>
+				{:else}
+					<PromptLogin windowTitle={win.title} />
 				{/if}
 			{:else if win.data.t === 'callScreenShare'}
 				{#if sunburn.readyClients.has(win.data.owner)}
@@ -136,6 +153,8 @@
 						windowID={win.id}
 						user={win.data.user}
 					/>
+				{:else}
+					<PromptLogin windowTitle={win.title} />
 				{/if}
 			{/if}
 		</RND>
