@@ -11,6 +11,7 @@
 	} from '@lucide/svelte';
 	import {
 		ConnectionState,
+		createLocalAudioTrack,
 		LocalParticipant,
 		LocalTrackPublication,
 		MediaDeviceFailure,
@@ -27,6 +28,7 @@
 
 	import CallParticipant from '$lib/components/CallParticipant.svelte';
 	import { debugPrefix, errorPrefix, infoPrefix, warnPrefix } from '$lib/logPrefixes';
+	import { RNNoiseProcessor } from '$lib/streamProcessors/rnnoise';
 	import { sunburn } from '$lib/sunburn.svelte';
 	import { type CallLocalParticipant_t, type CallParticipants_t } from '$lib/utils/callTypes';
 	import { handleAtHost, logFriendly } from '$lib/utils/username';
@@ -391,9 +393,14 @@
 			return;
 		}
 
-		let micTrack: LocalTrackPublication | undefined = undefined;
+		let localMicTrack: LocalTrackPublication | undefined = undefined;
 		try {
-			micTrack = await roomMe.participant.setMicrophoneEnabled(true);
+			const micTrack = await createLocalAudioTrack();
+
+			micTrack.setProcessor(new RNNoiseProcessor(owner));
+			// micTrack.setProcessor(new SpeexProcessor(owner));
+
+			localMicTrack = await roomMe.participant.publishTrack(micTrack);
 		} catch (err) {
 			switch (MediaDeviceFailure.getFailure(err)) {
 				case MediaDeviceFailure.PermissionDenied:
@@ -423,17 +430,21 @@
 						err
 					);
 					break;
+				default:
+					// eslint-disable-next-line no-console
+					console.error(...errorPrefix, logFriendly(owner), 'unknown error', err);
+					break;
 			}
 
 			return;
 		}
-		if (!micTrack) {
+		if (!localMicTrack) {
 			// eslint-disable-next-line no-console
 			console.warn(...warnPrefix, logFriendly(owner), 'could not publish mic track');
 			return;
 		}
 
-		roomMe.tracks[micTrack.trackSid] = micTrack;
+		roomMe.tracks[localMicTrack.trackSid] = localMicTrack;
 		// TODO play sound
 		roomMe.micUnmuted = true;
 
