@@ -28,8 +28,9 @@
 
 	import CallParticipant from '$lib/components/CallParticipant.svelte';
 	import { debugPrefix, errorPrefix, infoPrefix, warnPrefix } from '$lib/logPrefixes';
-	import { RNNoiseProcessor } from '$lib/streamProcessors/rnnoise';
+	import { CompoundProcessor } from '$lib/streamProcessors/compound';
 	import { sunburn } from '$lib/sunburn.svelte';
+	import { localSettings } from '$lib/sunburn/localSettings.svelte';
 	import { type CallLocalParticipant_t, type CallParticipants_t } from '$lib/utils/callTypes';
 	import { handleAtHost, logFriendly } from '$lib/utils/username';
 
@@ -59,6 +60,27 @@
 
 	let roomMe = $state<CallLocalParticipant_t | null>(null);
 	let roomParticipants = $state<CallParticipants_t>({});
+
+	const processor = new CompoundProcessor(owner, localSettings.compoundProcessor);
+	$effect(() =>
+		processor.setSpeexOptions({ enabled: localSettings.compoundProcessor.speexEnabled })
+	);
+	$effect(() =>
+		processor.setRNNoiseOptions({ enabled: localSettings.compoundProcessor.rnNoiseEnabled })
+	);
+	$effect(() =>
+		processor.setNoiseGateOptions({
+			enabled: localSettings.compoundProcessor.noiseGateEnabled,
+			closeThreshold: localSettings.compoundProcessor.noiseGateCloseThreshold,
+			openThreshold: localSettings.compoundProcessor.noiseGateOpenThreshold,
+			holdMS: localSettings.compoundProcessor.noiseGateHoldMS
+		})
+	);
+	$effect(() => {
+		processor.setGainOptions({
+			gain: localSettings.compoundProcessor.gain
+		});
+	});
 
 	const cameraWindowID = (p: Participant) => `${windowID}_${p.identity}_camera`;
 	const cameraWindowOpen = (p: Participant) => cameraWindowID(p) in rndWindows;
@@ -397,8 +419,7 @@
 		try {
 			const micTrack = await createLocalAudioTrack();
 
-			micTrack.setProcessor(new RNNoiseProcessor(owner));
-			// micTrack.setProcessor(new SpeexProcessor(owner));
+			micTrack.setProcessor(processor);
 
 			localMicTrack = await roomMe.participant.publishTrack(micTrack);
 		} catch (err) {

@@ -11,7 +11,7 @@ export class SpeexProcessor implements TrackProcessor<Track.Kind.Audio, AudioPro
 	name: string;
 	audioContext: AudioContext | null;
 	sourceNode: MediaStreamAudioSourceNode | null;
-	rnNoiseNode: SpeexWorkletNode | null;
+	speexNode: SpeexWorkletNode | null;
 	destinationNode: MediaStreamAudioDestinationNode | null;
 	processedTrack?: MediaStreamTrack;
 
@@ -20,7 +20,7 @@ export class SpeexProcessor implements TrackProcessor<Track.Kind.Audio, AudioPro
 		this.name = 'SpeexProcessor';
 		this.audioContext = null;
 		this.sourceNode = null;
-		this.rnNoiseNode = null;
+		this.speexNode = null;
 		this.destinationNode = null;
 		this.processedTrack = undefined;
 	}
@@ -34,19 +34,19 @@ export class SpeexProcessor implements TrackProcessor<Track.Kind.Audio, AudioPro
 
 		const wns = await import('@sapphi-red/web-noise-suppressor');
 		const { loadSpeex, SpeexWorkletNode } = wns;
-		const rnNoiseBinary = await loadSpeex({
+		const speexBinary = await loadSpeex({
 			url: speexWasmPath
 		});
 		await this.audioContext.audioWorklet.addModule(speexWorkletPath);
-		this.rnNoiseNode = new SpeexWorkletNode(this.audioContext, {
-			wasmBinary: rnNoiseBinary,
+		this.speexNode = new SpeexWorkletNode(this.audioContext, {
+			wasmBinary: speexBinary,
 			maxChannels: 2
 		});
 
 		this.destinationNode = audioContext.createMediaStreamDestination();
 
-		this.sourceNode.connect(this.rnNoiseNode);
-		this.rnNoiseNode.connect(this.destinationNode);
+		this.sourceNode.connect(this.speexNode);
+		this.speexNode.connect(this.destinationNode);
 
 		this.processedTrack = this.destinationNode.stream.getAudioTracks()[0];
 
@@ -59,9 +59,9 @@ export class SpeexProcessor implements TrackProcessor<Track.Kind.Audio, AudioPro
 		if (this.sourceNode) {
 			this.sourceNode.disconnect();
 		}
-		if (this.rnNoiseNode) {
-			this.rnNoiseNode.disconnect();
-			this.rnNoiseNode.destroy();
+		if (this.speexNode) {
+			this.speexNode.disconnect();
+			this.speexNode.destroy();
 		}
 	}
 }
