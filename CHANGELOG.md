@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.3.0 - 2025-11-09
+#### Features
+- noise cancellation and local settings - (68b0fab) - twopyramids
+- add local settings, remove tailwind forms, fix call window height - (ccf34bb) - twopyramids
+- settings pane foundation - (d33e74f) - twopyramids
+- add noise cancellation via speex and rnnoise - (c62fa68) - twopyramids
+#### Style
+- change tw 0.25 to px - (49e6d32) - twopyramids
+
+- - -
+
 ## v0.2.0 - 2025-11-06
 #### Features
 - prompt user to log in if window owner is not logged in - (e9c717d) - twopyramids
