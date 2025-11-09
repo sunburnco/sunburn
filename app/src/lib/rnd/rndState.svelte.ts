@@ -21,7 +21,8 @@ export type Window_t = {
 		| TypeServerPicker_t
 		| TypeCall_t
 		| TypeCallCamera_t
-		| TypeScreenShare_t;
+		| TypeScreenShare_t
+		| TypeLocalSettings_t;
 	locked: boolean;
 	x: number;
 	y: number;
@@ -58,9 +59,10 @@ export const windowExtrema: Record<
 	server: defaultExtrema,
 	serverChannel: defaultExtrema,
 	serverPicker: defaultExtrema,
-	call: { ...defaultExtrema, minH: 368 },
+	call: { ...defaultExtrema, minH: 240 },
 	callCamera: defaultExtrema,
-	callScreenShare: defaultExtrema
+	callScreenShare: defaultExtrema,
+	localSettings: defaultExtrema
 };
 
 export type TypeLogin_t = {
@@ -138,6 +140,10 @@ export type TypeScreenShare_t = {
 	user: string;
 };
 
+export type TypeLocalSettings_t = {
+	t: 'localSettings';
+};
+
 export const activeWindowID = $state({ id: '' });
 export const rndWindows = $state<Record<WindowID_t, Window_t>>({});
 export const windowAreaDimensions = $state({ w: 0, h: 0 });
@@ -166,6 +172,8 @@ export const bringIDToTop = (id: string) => {
 		rndWindows[winID].z = --currentZ;
 	}
 	rndWindows[id].z = winIDs.length;
+
+	saveRNDWindows();
 };
 
 export const moveIDToBottom = (id: string) => {
@@ -179,6 +187,8 @@ export const moveIDToBottom = (id: string) => {
 		rndWindows[winID].z = ++currentZ;
 	}
 	rndWindows[id].z = 0;
+
+	saveRNDWindows();
 };
 
 export const closeWindowAndChildren = (windowID: string, depth = 0) => {

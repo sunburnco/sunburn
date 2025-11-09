@@ -16,7 +16,11 @@ import { sunburn } from '$lib/sunburn.svelte';
 import { clamp } from '$lib/utils/clamp';
 import { handleAtHost } from '$lib/utils/username';
 
+import { openLocalSettingsWindowCommand } from './commandOpenLocalSettingsWindow';
+
 const noAutoFills = async () => [];
+
+// TODO refactor this into individual files
 
 export type Arg_t = {
 	// value will be displayed unless `display` is provided, in which case `display` will be provided
@@ -380,5 +384,6 @@ export const commands = [
 	openServerPickerWindowCommand,
 	reorderWindowCommand,
 	setWindowDimensionsCommand,
-	setWindowThemeCommand
+	setWindowThemeCommand,
+	openLocalSettingsWindowCommand
 ];

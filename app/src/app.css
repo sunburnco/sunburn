@@ -2,7 +2,6 @@
 @plugin "daisyui" {
 	logs: false;
 }
-@plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
 @theme {

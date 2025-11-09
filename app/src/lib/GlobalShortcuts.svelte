@@ -12,6 +12,7 @@
 		rndWindows,
 		saveRNDWindows
 	} from './rnd/rndState.svelte';
+	import { spawnLocalSettingsWindow } from './rnd/spawn/spawnLocalSettingsWindow';
 	import { spawnPlaygroundWindow } from './rnd/spawn/spawnPlaygroundWindow';
 
 	const globalModifiers = [
@@ -27,7 +28,6 @@
 		}
 
 		closeWindowAndChildren(activeWindowID.id);
-		saveRNDWindows();
 	};
 
 	const toggleActiveWindowLock = (e: ShortcutEventDetail) => {
@@ -41,6 +41,7 @@
 		saveRNDWindows();
 	};
 
+	// TODO what calls saveRNDWindows??
 	const openPlaygroundWindow = (e: ShortcutEventDetail) => {
 		e.originalEvent.preventDefault();
 
@@ -55,7 +56,6 @@
 		}
 
 		bringIDToTop(activeWindowID.id);
-		saveRNDWindows();
 	};
 
 	const moveActiveWindowToBottom = (e: ShortcutEventDetail) => {
@@ -66,7 +66,12 @@
 		}
 
 		moveIDToBottom(activeWindowID.id);
-		saveRNDWindows();
+	};
+
+	const openLocalSettingsWindow = (e: ShortcutEventDetail) => {
+		e.originalEvent.preventDefault();
+
+		spawnLocalSettingsWindow();
 	};
 </script>
 
@@ -101,6 +106,11 @@
 				key: 'ArrowDown',
 				modifier: globalModifiers,
 				callback: moveActiveWindowToBottom
+			},
+			{
+				key: ',',
+				modifier: globalModifiers,
+				callback: openLocalSettingsWindow
 			}
 		]
 	}}

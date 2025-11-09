@@ -5,6 +5,7 @@
 		LucideLaptop,
 		LucideMoonStar,
 		LucidePalette,
+		LucideSettings,
 		LucideSprout,
 		LucideSun,
 		LucideSunMoon,
@@ -16,6 +17,7 @@
 
 	import LucideSunburn from '$lib/LucideSunburn.svelte';
 	import { spawnClearCachesWindow } from '$lib/rnd/spawn/spawnClearCachesWindow';
+	import { spawnLocalSettingsWindow } from '$lib/rnd/spawn/spawnLocalSettingsWindow';
 	import { spawnLoginWindow } from '$lib/rnd/spawn/spawnLoginWindow';
 
 	const { kbarModal }: { kbarModal: HTMLDialogElement | null } = $props();
@@ -30,6 +32,11 @@
 
 	const clearCaches = async () => {
 		await spawnClearCachesWindow();
+		popover.hidePopover();
+	};
+
+	const openLocalSettings = async () => {
+		await spawnLocalSettingsWindow();
 		popover.hidePopover();
 	};
 </script>
@@ -69,18 +76,26 @@
 				<kbd class="kbd kbd-xs">K</kbd>
 			</button>
 		</li>
-		<li class="menu-title">About</li>
+
+		<li class="mt-4 menu-title">About</li>
 		<li>
 			<a href="https://sunburn.co" target="_blank">
 				<LucideSunburn size={iconSize} /> sunburn.co <LucideExternalLink size="0.75rem" />
 			</a>
 		</li>
 		<li>
-			<span><LucideLaptop size={iconSize} /> Client v{__SB_VERSION__}</span>
+			<span>
+				<LucideLaptop size={iconSize} /> Client v{__SB_VERSION__}
+			</span>
 		</li>
 		<li>
 			<button onclick={clearCaches}>
 				<LucideZapOff size={iconSize} /> Clear Caches
+			</button>
+		</li>
+		<li>
+			<button onclick={openLocalSettings}>
+				<LucideSettings size={iconSize} /> Local Settings
 			</button>
 		</li>
 

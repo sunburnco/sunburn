@@ -21,7 +21,7 @@ Generally, the kbar should call a window `spawn` function
 
 Follow these steps to create a new command called `pingpong`:
 
-1. Create a new object in `commands.ts` of type `KBarCommand_t` following the `camelCase` naming convention
+1. Create a new file with an object of type `KBarCommand_t` following the `camelCase` naming convention
    1. In this example, the object is called `pingPongCommand`
 1. Set the title and description
 1. Set arguments

@@ -11,6 +11,7 @@
 	} from '@lucide/svelte';
 	import {
 		ConnectionState,
+		createLocalAudioTrack,
 		LocalParticipant,
 		LocalTrackPublication,
 		MediaDeviceFailure,
@@ -27,7 +28,9 @@
 
 	import CallParticipant from '$lib/components/CallParticipant.svelte';
 	import { debugPrefix, errorPrefix, infoPrefix, warnPrefix } from '$lib/logPrefixes';
+	import { CompoundProcessor } from '$lib/streamProcessors/compound';
 	import { sunburn } from '$lib/sunburn.svelte';
+	import { localSettings } from '$lib/sunburn/localSettings.svelte';
 	import { type CallLocalParticipant_t, type CallParticipants_t } from '$lib/utils/callTypes';
 	import { handleAtHost, logFriendly } from '$lib/utils/username';
 
@@ -57,6 +60,27 @@
 
 	let roomMe = $state<CallLocalParticipant_t | null>(null);
 	let roomParticipants = $state<CallParticipants_t>({});
+
+	const processor = new CompoundProcessor(owner, localSettings.compoundProcessor);
+	$effect(() =>
+		processor.setSpeexOptions({ enabled: localSettings.compoundProcessor.speexEnabled })
+	);
+	$effect(() =>
+		processor.setRNNoiseOptions({ enabled: localSettings.compoundProcessor.rnNoiseEnabled })
+	);
+	$effect(() =>
+		processor.setNoiseGateOptions({
+			enabled: localSettings.compoundProcessor.noiseGateEnabled,
+			closeThreshold: localSettings.compoundProcessor.noiseGateCloseThreshold,
+			openThreshold: localSettings.compoundProcessor.noiseGateOpenThreshold,
+			holdMS: localSettings.compoundProcessor.noiseGateHoldMS
+		})
+	);
+	$effect(() => {
+		processor.setGainOptions({
+			gain: localSettings.compoundProcessor.gain
+		});
+	});
 
 	const cameraWindowID = (p: Participant) => `${windowID}_${p.identity}_camera`;
 	const cameraWindowOpen = (p: Participant) => cameraWindowID(p) in rndWindows;
@@ -391,9 +415,13 @@
 			return;
 		}
 
-		let micTrack: LocalTrackPublication | undefined = undefined;
+		let localMicTrack: LocalTrackPublication | undefined = undefined;
 		try {
-			micTrack = await roomMe.participant.setMicrophoneEnabled(true);
+			const micTrack = await createLocalAudioTrack();
+
+			micTrack.setProcessor(processor);
+
+			localMicTrack = await roomMe.participant.publishTrack(micTrack);
 		} catch (err) {
 			switch (MediaDeviceFailure.getFailure(err)) {
 				case MediaDeviceFailure.PermissionDenied:
@@ -423,17 +451,21 @@
 						err
 					);
 					break;
+				default:
+					// eslint-disable-next-line no-console
+					console.error(...errorPrefix, logFriendly(owner), 'unknown error', err);
+					break;
 			}
 
 			return;
 		}
-		if (!micTrack) {
+		if (!localMicTrack) {
 			// eslint-disable-next-line no-console
 			console.warn(...warnPrefix, logFriendly(owner), 'could not publish mic track');
 			return;
 		}
 
-		roomMe.tracks[micTrack.trackSid] = micTrack;
+		roomMe.tracks[localMicTrack.trackSid] = localMicTrack;
 		// TODO play sound
 		roomMe.micUnmuted = true;
 
@@ -732,7 +764,7 @@
 					<LucideLoaderCircle size="1rem" class="inline animate-spin" />
 				</div>
 			{:else if roomState === ConnectionState.Connected}
-				<div class="flex h-full items-center justify-start gap-2 overflow-y-auto p-2">
+				<div class="flex h-full items-stretch justify-start gap-2 overflow-y-auto p-2">
 					{#each Object.keys(roomParticipants) as participantID (participantID)}
 						<CallParticipant
 							{owner}
