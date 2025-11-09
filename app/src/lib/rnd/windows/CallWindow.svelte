@@ -764,7 +764,7 @@
 					<LucideLoaderCircle size="1rem" class="inline animate-spin" />
 				</div>
 			{:else if roomState === ConnectionState.Connected}
-				<div class="flex h-full items-center justify-start gap-2 overflow-y-auto p-2">
+				<div class="flex h-full items-stretch justify-start gap-2 overflow-y-auto p-2">
 					{#each Object.keys(roomParticipants) as participantID (participantID)}
 						<CallParticipant
 							{owner}

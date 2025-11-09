@@ -23,6 +23,7 @@
 	import ClearCachesWindow from './windows/ClearCachesWindow.svelte';
 	import CreateServerWindow from './windows/CreateServerWindow.svelte';
 	import DMWindow from './windows/DMWindow.svelte';
+	import LocalSettingsWindow from './windows/LocalSettingsWindow.svelte';
 	import LoginWindow from './windows/LoginWindow.svelte';
 	import LogoutWindow from './windows/LogoutWindow.svelte';
 	import MultiDMWindow from './windows/MultiDMWindow.svelte';
@@ -156,6 +157,8 @@
 				{:else}
 					<PromptLogin windowTitle={win.title} />
 				{/if}
+			{:else if win.data.t === 'localSettings'}
+				<LocalSettingsWindow windowID={win.id} />
 			{/if}
 		</RND>
 	{/each}

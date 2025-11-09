@@ -66,97 +66,93 @@
 	});
 </script>
 
-<div class="flex h-[99%] items-stretch justify-start gap-2">
-	<div class="flex flex-col items-center justify-center gap-2">
-		<!-- TODO tooltip username with mute indicator in tooltip -->
-		<div class={['relative size-8', !micUnmuted && 'scale-80 opacity-50']}>
-			<Avatar client={owner} user={participant.participant.identity} />
-			<div
-				class={[
-					'absolute top-0 left-0 box-border h-full w-full rounded-box',
-					speaking && 'border-2 border-base-content'
-				]}
-			></div>
-		</div>
-		<div class="flex shrink grow items-stretch">
-			<input
-				type="range"
-				class={[
-					'range-vertical h-auto min-h-4 range-xs',
-					voiceSettings[owner][participant.participant.identity].muted && 'opacity-50'
-				]}
-				min={0}
-				max={100}
-				bind:value={voiceSettings[owner][participant.participant.identity].micVolume}
-				onchange={() => saveVoiceSettings()}
-				onpointerdown={() => {
-					wasLocked = rndWindows[windowID].locked;
-					rndWindows[windowID].locked = true;
-					saveRNDWindows();
-				}}
-				onpointerup={() => {
-					rndWindows[windowID].locked = wasLocked;
-					saveRNDWindows();
-				}}
-			/>
-		</div>
-		<button
+<div class="flex flex-col items-center justify-center gap-2">
+	<!-- TODO tooltip username with mute indicator in tooltip -->
+	<div class={['relative size-8', !micUnmuted && 'scale-80 opacity-50']}>
+		<Avatar client={owner} user={participant.participant.identity} />
+		<div
 			class={[
-				'btn btn-square btn-sm',
-				voiceSettings[owner][participant.participant.identity].muted && 'btn-accent'
+				'absolute top-0 left-0 box-border h-full w-full rounded-box',
+				speaking && 'border-2 border-base-content'
 			]}
-			title={voiceSettings[owner][participant.participant.identity].muted
-				? 'Muted for me'
-				: 'Unmuted for me'}
-			onclick={() => {
-				voiceSettings[owner][participant.participant.identity].muted =
-					!voiceSettings[owner][participant.participant.identity].muted;
-				saveVoiceSettings();
-			}}
-		>
-			{#if voiceSettings[owner][participant.participant.identity].muted}
-				<LucideHeadphoneOff size="1rem" />
-			{:else}
-				<LucideHeadphones size="1rem" />
-			{/if}
-		</button>
-		<button
-			class="btn btn-square btn-sm"
-			title="View Camera"
-			onclick={() =>
-				spawnCallCameraWindow(
-					owner,
-					channel,
-					participant.participant.identity,
-					cameraTrack,
-					windowID
-				)}
-		>
-			<LucideVideo size="1rem" />
-		</button>
-		<button
-			class="btn btn-square btn-sm"
-			title="View Screenshare"
-			onclick={() =>
-				spawnCallScreenShareWindow(
-					owner,
-					channel,
-					participant.participant.identity,
-					screenshareTrack,
-					screenshareAudioTrack,
-					windowID
-				)}
-		>
-			<LucideWallpaper size="1rem" />
-		</button>
-
-		{#if micTrack}
-			<AudioTrackPlayer
-				volume={voiceSettings[owner][participant.participant.identity].muted
-					? 0
-					: voiceSettings[owner][participant.participant.identity].micVolume}
-				track={micTrack}
-			/>
-		{/if}
+		></div>
 	</div>
+	<input
+		type="range"
+		class={[
+			'range-vertical h-auto min-h-4 grow range-sm',
+			voiceSettings[owner][participant.participant.identity].muted && 'opacity-50'
+		]}
+		min={0}
+		max={100}
+		bind:value={voiceSettings[owner][participant.participant.identity].micVolume}
+		onchange={() => saveVoiceSettings()}
+		onpointerdown={() => {
+			wasLocked = rndWindows[windowID].locked;
+			rndWindows[windowID].locked = true;
+			saveRNDWindows();
+		}}
+		onpointerup={() => {
+			rndWindows[windowID].locked = wasLocked;
+			saveRNDWindows();
+		}}
+	/>
+	<button
+		class={[
+			'btn btn-square btn-sm',
+			voiceSettings[owner][participant.participant.identity].muted && 'btn-accent'
+		]}
+		title={voiceSettings[owner][participant.participant.identity].muted
+			? 'Muted for me'
+			: 'Unmuted for me'}
+		onclick={() => {
+			voiceSettings[owner][participant.participant.identity].muted =
+				!voiceSettings[owner][participant.participant.identity].muted;
+			saveVoiceSettings();
+		}}
+	>
+		{#if voiceSettings[owner][participant.participant.identity].muted}
+			<LucideHeadphoneOff size="1rem" />
+		{:else}
+			<LucideHeadphones size="1rem" />
+		{/if}
+	</button>
+	<button
+		class="btn btn-square btn-sm"
+		title="View Camera"
+		onclick={() =>
+			spawnCallCameraWindow(
+				owner,
+				channel,
+				participant.participant.identity,
+				cameraTrack,
+				windowID
+			)}
+	>
+		<LucideVideo size="1rem" />
+	</button>
+	<button
+		class="btn btn-square btn-sm"
+		title="View Screenshare"
+		onclick={() =>
+			spawnCallScreenShareWindow(
+				owner,
+				channel,
+				participant.participant.identity,
+				screenshareTrack,
+				screenshareAudioTrack,
+				windowID
+			)}
+	>
+		<LucideWallpaper size="1rem" />
+	</button>
+
+	{#if micTrack}
+		<AudioTrackPlayer
+			volume={voiceSettings[owner][participant.participant.identity].muted
+				? 0
+				: voiceSettings[owner][participant.participant.identity].micVolume}
+			track={micTrack}
+		/>
+	{/if}
 </div>

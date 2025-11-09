@@ -6,6 +6,8 @@ import { infoPrefix } from '$lib/logPrefixes';
 import type { TypedPocketBase } from '$lib/pb-types';
 import { localAuthStoreKeys } from '$lib/sunburn.svelte';
 
+import { loadLocalSettings } from './localSettings.svelte';
+
 export const applicationStart = async () => {
 	const ks = (await get('sbLocalAuthStoreKeys')) ?? {};
 
@@ -17,6 +19,9 @@ export const applicationStart = async () => {
 	}
 
 	await Promise.all(wait);
+
+	await loadLocalSettings();
+
 	// eslint-disable-next-line no-console
 	console.info(...infoPrefix, 'welcome to Sunburn');
 };
