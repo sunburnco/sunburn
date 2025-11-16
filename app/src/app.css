@@ -621,3 +621,17 @@ code.hljs {
 }
 
 /* #endregion */
+
+/* #region messages */
+
+.sb-message {
+	img {
+		@apply my-1.5 max-h-80 max-w-80 rounded-box;
+	}
+
+	.hljs {
+		@apply my-1.5;
+	}
+}
+
+/* #endregion */

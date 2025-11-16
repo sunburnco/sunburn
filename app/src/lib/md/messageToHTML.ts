@@ -9,7 +9,8 @@ import { unified } from 'unified';
 const parser = unified()
 	.use(remarkParse)
 	.use(remarkMath)
-	.use(remarkRehype, { allowDangerousHtml: true })
+	// TODO why was this true?
+	.use(remarkRehype, { allowDangerousHtml: false })
 	.use(rehypeKatex)
 	.use(rehypeHighlight)
 	.use(rehypeStringify);

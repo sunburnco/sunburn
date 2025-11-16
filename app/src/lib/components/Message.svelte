@@ -2,12 +2,13 @@
 	import { DateTime } from 'luxon';
 
 	import Avatar from '$lib/components/Avatar.svelte';
+	import MD from '$lib/md/MD.svelte';
 	import type { MessagesRecord } from '$lib/pb-types';
 	import { sunburn } from '$lib/sunburn.svelte';
 	import { fetchUser } from '$lib/sunburn/users';
 	import { nameOrHandle } from '$lib/utils/username';
 
-	const {
+	let {
 		client,
 		item,
 		cozy,
@@ -28,11 +29,11 @@
 
 {#if item.from in sunburn.users}
 	<div
-		class={['flex items-center gap-2', 'group px-2 hover:bg-base-200', !cozy && !first && 'mt-2']}
+		class={['flex items-stretch gap-2', 'group px-2 hover:bg-base-200', !cozy && !first && 'mt-2']}
 	>
-		<div class="w-9 min-w-9 select-none">
+		<div class="flex w-9 min-w-9 items-center select-none">
 			{#if first || !cozy}
-				<div class="size-9">
+				<div class="my-1.5 size-9 self-start">
 					<Avatar {client} user={item.from} />
 				</div>
 			{:else}
@@ -54,9 +55,15 @@
 					</div>
 				</div>
 			{/if}
-			<div class="select-text">
-				{item.content}
+			<div class="sb-message select-text">
+				<!-- {item.content} -->
+				<MD text={item.content} />
 			</div>
 		</div>
+		{#if item.edited}
+			<div class="my-1.5 flex items-end">
+				<div class="text-xs text-base-content/50" title="Edited">(e)</div>
+			</div>
+		{/if}
 	</div>
 {/if}
