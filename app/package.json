@@ -50,6 +50,7 @@
 	"pnpm": {
 		"onlyBuiltDependencies": [
 			"@tailwindcss/oxide",
+			"core-js",
 			"esbuild"
 		]
 	},
@@ -64,8 +65,11 @@
 		"interactjs": "^1.10.27",
 		"livekit-client": "^2.15.14",
 		"luxon": "^3.7.2",
+		"mdast-util-gfm-autolink-literal": "^2.0.1",
+		"micromark-extension-gfm-autolink-literal": "^2.1.0",
 		"paneforge": "^1.0.2",
 		"pocketbase": "^0.26.3",
+		"rehype-external-links": "^3.0.0",
 		"rehype-highlight": "^7.0.2",
 		"rehype-katex": "^7.0.1",
 		"rehype-stringify": "^10.0.1",
@@ -73,6 +77,7 @@
 		"remark-parse": "^11.0.0",
 		"remark-rehype": "^11.1.2",
 		"theme-change": "^2.5.0",
+		"tiny-markdown-editor": "^0.2.10",
 		"unified": "^11.0.5",
 		"uuid": "^13.0.0"
 	},
