@@ -632,6 +632,54 @@ code.hljs {
 	.hljs {
 		@apply my-1.5;
 	}
+
+	blockquote {
+		@apply box-border border-s-4 border-base-content/50 ps-1.5;
+	}
+
+	p:has(> .katex) {
+		@apply my-1;
+	}
+
+	h1 {
+		@apply font-display text-xl;
+	}
+
+	h2 {
+		@apply font-display text-lg;
+	}
+
+	h3 {
+		@apply text-xl;
+	}
+
+	h4 {
+		@apply text-lg;
+	}
+
+	hr {
+		@apply my-3;
+	}
+
+	ul {
+		@apply ms-2 list-inside list-disc;
+	}
+
+	ul li::marker {
+		content: '•  ';
+	}
+
+	ol {
+		@apply ms-2 list-inside list-decimal;
+	}
+
+	a {
+		@apply link;
+	}
+
+	code {
+		@apply rounded-box bg-base-100 px-0.75 font-mono;
+	}
 }
 
 /* #endregion */
