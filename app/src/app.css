@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@plugin "daisyui" {
+@plugin 'daisyui' {
 	logs: false;
 }
 @plugin '@tailwindcss/typography';
@@ -15,7 +15,6 @@
 		writing-mode: vertical-lr;
 		direction: rtl;
 		appearance: none;
-		webkit-appearance: none;
 		--range-thumb: var(--color-base-100) /* var(--color-base-100) */;
 		--range-thumb-size: calc(var(--size-selector, 0.25rem /* 4px */) * 6);
 		--range-progress: currentColor;
@@ -80,7 +79,6 @@
 			width: var(--range-thumb-size);
 			border: var(--range-p) solid;
 			appearance: none;
-			webkit-appearance: none;
 			color: var(--range-progress);
 			left: 50%;
 			transform: translateX(-50%);
@@ -198,7 +196,7 @@
 	}
 }
 
-@plugin "daisyui/theme" {
+@plugin 'daisyui/theme' {
 	name: 'sunburn-night';
 	default: false;
 	prefersdark: true;
@@ -248,7 +246,7 @@
 	--hljs-attribute: oklch(0.68 0.1 50);
 }
 
-@plugin "daisyui/theme" {
+@plugin 'daisyui/theme' {
 	name: 'sunburn-day';
 	default: true;
 	prefersdark: false;
@@ -298,7 +296,7 @@
 	--hljs-attribute: oklch(0.6 0.12 50);
 }
 
-@plugin "daisyui/theme" {
+@plugin 'daisyui/theme' {
 	name: 'sunburn-sunset';
 	default: false;
 	prefersdark: false;
@@ -348,7 +346,7 @@
 	--hljs-attribute: oklch(0.68 0.2 38);
 }
 
-@plugin "daisyui/theme" {
+@plugin 'daisyui/theme' {
 	name: 'sunburn-oasis';
 	default: false;
 	prefersdark: false;
