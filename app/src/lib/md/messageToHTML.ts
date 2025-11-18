@@ -1,3 +1,6 @@
+import { gfmAutolinkLiteralFromMarkdown } from 'mdast-util-gfm-autolink-literal';
+import { gfmAutolinkLiteral } from 'micromark-extension-gfm-autolink-literal';
+import rehypeExternalLinks from 'rehype-external-links';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeKatex from 'rehype-katex';
 import rehypeStringify from 'rehype-stringify';
@@ -9,10 +12,24 @@ import { unified } from 'unified';
 const parser = unified()
 	.use(remarkParse)
 	.use(remarkMath)
+	.use(function () {
+		const data = this.data();
+
+		const micromarkExtensions = data.micromarkExtensions || (data.micromarkExtensions = []);
+		const fromMarkdownExtensions =
+			data.fromMarkdownExtensions || (data.fromMarkdownExtensions = []);
+
+		micromarkExtensions.push(gfmAutolinkLiteral());
+		fromMarkdownExtensions.push(gfmAutolinkLiteralFromMarkdown());
+	})
 	// TODO why was this true?
 	.use(remarkRehype, { allowDangerousHtml: false })
 	.use(rehypeKatex)
 	.use(rehypeHighlight)
+	.use(rehypeExternalLinks, {
+		rel: 'nofollow',
+		target: '_blank'
+	})
 	.use(rehypeStringify);
 
 export const messageToHTML = (text: string) => parser.process(text).then((res) => res.toString());

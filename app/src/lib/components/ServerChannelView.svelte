@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LucideHash, LucidePackageOpen, LucideSend } from '@lucide/svelte';
+	import { LucideHash, LucidePackageOpen } from '@lucide/svelte';
 	import { DateTime } from 'luxon';
 	import { onMount } from 'svelte';
 
@@ -9,6 +9,7 @@
 	import { fetchChannel } from '$lib/sunburn/channels';
 	import { fetchInitialMessagesForChannel } from '$lib/sunburn/messages';
 
+	import Editor from './Editor.svelte';
 	import Message from './Message.svelte';
 
 	const { owner, channel }: { owner: string; channel: string } = $props();
@@ -22,16 +23,11 @@
 		await fetchInitialMessagesForChannel(sunburn.clients[owner], channel);
 	});
 
-	let textboxContent = $state('');
-	const sendMessage = async (e: SubmitEvent) => {
-		e.preventDefault();
-
-		if (textboxContent === '') {
+	const sendMessage = async (content: string) => {
+		if (content === '') {
 			return;
 		}
 
-		const content = textboxContent;
-		textboxContent = '';
 		await sunburn.clients[owner].collection('messages').create(
 			{
 				content,
@@ -79,7 +75,7 @@
 				{/each}
 			</div>
 		{/if}
-		<form onsubmit={sendMessage} class="mt-2 flex w-full items-center gap-2 px-2 pb-2">
+		<!-- <form onsubmit={sendMessage} class="mt-2 flex w-full items-center gap-2 px-2 pb-2">
 			<input
 				name="editor"
 				class="input grow"
@@ -90,6 +86,7 @@
 			<button type="submit" class="btn btn-square btn-primary">
 				<LucideSend size="1.25rem" />
 			</button>
-		</form>
+		</form> -->
+		<Editor onSend={sendMessage} />
 	</div>
 {/if}
