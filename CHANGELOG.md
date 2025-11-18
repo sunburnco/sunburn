@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.4.0 - 2025-11-18
+#### Features
+- tinymde editor - (aba5e27) - twopyramids
+- tinymde editor - (b39ba48) - twopyramids
+- add more styles for md messages - (f6f80c4) - twopyramids
+- render markdown messages - (4254d97) - twopyramids
+#### Miscellaneous Chores
+- update deps - (0a3adad) - twopyramids
+- update deps - (3fbef48) - twopyramids
+
+- - -
+
 ## v0.3.0 - 2025-11-09
 #### Features
 - noise cancellation and local settings - (68b0fab) - twopyramids
