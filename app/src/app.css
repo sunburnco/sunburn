@@ -648,11 +648,11 @@ code.hljs {
 	}
 
 	h3 {
-		@apply text-xl;
+		@apply text-xl font-semibold;
 	}
 
 	h4 {
-		@apply text-lg;
+		@apply text-lg font-semibold;
 	}
 
 	hr {
@@ -685,50 +685,34 @@ code.hljs {
 /* #region tinyMDE */
 
 .TinyMDE {
-	background-color: inherit;
-	color: inherit;
-	/* font-size: 16px;
-	line-height: 24px; */
-	@apply h-full px-1 py-1.5 text-base;
-	outline: none;
+	@apply h-full bg-inherit px-1 py-1.5 text-base text-inherit outline-none;
 }
 
 .TMBlankLine {
-	height: 24px;
+	@apply h-6;
 }
 
 .TMH1,
 .TMSetextH1 {
-	/* font-size: 22px;
-	line-height: 32px;
-	font-weight: bold; 
-	margin-bottom: 8px; */
-	@apply mb-2 font-display text-xl;
+	@apply font-display text-xl;
 }
 
 .TMSetextH1 {
-	/* margin-bottom: 0px; */
 	@apply mb-0;
 }
 
 .TMSetextH1Marker {
-	/* margin-bottom: 8px; */
-	@apply mb-2;
+	@apply mb-0;
 }
 
 .TMH2,
 .TMSetextH2 {
-	/* font-size: 20px;
-	line-height: 28px;
-	font-weight: bold; 
-	margin-bottom: 4px;
-	*/
-	@apply mb-1 font-display text-lg;
+	@apply mb-0 font-display text-lg;
 }
 
 .TMH3,
 .TMSetextH3 {
-	@apply mb-2 text-xl;
+	@apply mb-0 text-xl font-semibold;
 }
 
 .TMSetextH3 {
@@ -736,17 +720,15 @@ code.hljs {
 }
 
 .TMSetextH3Marker {
-	@apply mb-2;
+	@apply mb-0;
 }
 
 .TMH4,
 .TMSetextH4 {
-	@apply mb-1 text-lg;
+	@apply mb-0 text-lg font-semibold;
 }
 
 .TMMark_TMCode {
-	/* font-family: monospace;
-	font-size: 0.9em; */
 	@apply font-mono;
 }
 
@@ -754,49 +736,32 @@ code.hljs {
 .TMFencedCodeTilde,
 .TMIndentedCode,
 .TMCode {
-	/* font-family: monospace;
-	font-size: 0.9em;
-	background-color: #e0e0e0; */
 	@apply rounded-box bg-base-300 font-mono;
 }
 
 .TMCodeFenceBacktickOpen,
 .TMCodeFenceTildeOpen {
-	/* border-bottom: 1px solid #c0c0c0;
-	font-family: monospace;
-	font-size: 0.9em; */
 	@apply font-mono;
 }
 
 .TMCodeFenceBacktickClose,
 .TMCodeFenceTildeClose {
-	/* border-top: 1px solid #c0c0c0;
-	font-family: monospace;
-	font-size: 0.9em; */
 	@apply font-mono;
 }
 
 .TMInfoString {
-	/* color: #0000ff; */
 	@apply text-success;
 }
 
 .TMCode {
-	/* border: 1px solid #c0c0c0;
-	border-radius: 2px; */
 	@apply rounded-box bg-base-300 px-0.75 font-mono;
 }
 
 .TMBlockquote {
-	/* font-style: italic;
-	border-left: 2px solid #c0c0c0;
-	padding-left: 10px;
-	margin-left: 10px; */
 	@apply box-border border-s-4 border-base-content/50 ps-1.5;
 }
 
 .TMMark {
-	/* color: #a0a0a0; */
 	/* TODO what is this for? */
 	@apply text-base-content;
 }
@@ -805,25 +770,19 @@ code.hljs {
 .TMMark_TMH2,
 .TMMark_TMH3,
 .TMMark_TMH4 {
-	/* color: #ff8080; */
 	@apply text-accent;
 }
 
 .TMMark_TMUL,
 .TMMark_TMOL {
-	/* color: #ff8080; */
 	@apply text-secondary;
 }
 
 .TMImage {
-	/* text-decoration: underline;
-	text-decoration-color: #00ff00; */
 	@apply underline decoration-success;
 }
 
 .TMLink {
-	/* text-decoration: underline;
-	text-decoration-color: #0000ff; */
 	@apply underline;
 }
 

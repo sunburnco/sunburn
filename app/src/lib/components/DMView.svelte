@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LucidePackageOpen, LucideSend, LucideStar } from '@lucide/svelte';
+	import { LucidePackageOpen, LucideStar } from '@lucide/svelte';
 	import { DateTime } from 'luxon';
 	import { onMount } from 'svelte';
 
@@ -12,6 +12,8 @@
 	import { fetchInitialMessagesForDM } from '$lib/sunburn/messages';
 	import { fetchUser } from '$lib/sunburn/users';
 	import { handleAtHost, logFriendly, username } from '$lib/utils/username';
+
+	import Editor from './Editor.svelte';
 
 	const { owner, recipient }: { owner: string; recipient: string } = $props();
 
@@ -31,16 +33,7 @@
 		return sunburn.dms[owner][recipient].messages;
 	});
 
-	let textboxContent = $state('');
-	const sendMessage = async (e: SubmitEvent) => {
-		e.preventDefault();
-
-		if (textboxContent === '') {
-			return;
-		}
-
-		const content = textboxContent;
-		textboxContent = '';
+	const sendMessage = async (content: string) => {
 		try {
 			await sunburn.clients[owner].collection('messages').create(
 				{
@@ -141,16 +134,5 @@
 		<!-- {/snippet} -->
 		<!-- </SvelteVirtualList> -->
 	{/if}
-	<form onsubmit={sendMessage} class="mt-2 flex w-full items-center gap-2 px-2 pb-2">
-		<input
-			name="editor"
-			class="input grow"
-			bind:value={textboxContent}
-			placeholder="Send a message..."
-			autocomplete={null}
-		/>
-		<button type="submit" class="btn btn-square btn-primary">
-			<LucideSend size="1.25rem" />
-		</button>
-	</form>
+	<Editor onSend={sendMessage} />
 </div>
