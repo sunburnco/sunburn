@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.4.1 - 2025-11-19
+#### Bug Fixes
+- (**app**) add markdown editor to DMs - (4919a9e) - twopyramids
+- (**app**) add markdown editor to DMs - (8eabd6e) - twopyramids
+
+- - -
+
 ## v0.4.0 - 2025-11-18
 #### Features
 - tinymde editor - (aba5e27) - twopyramids
