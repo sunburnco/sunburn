@@ -75,18 +75,6 @@
 				{/each}
 			</div>
 		{/if}
-		<!-- <form onsubmit={sendMessage} class="mt-2 flex w-full items-center gap-2 px-2 pb-2">
-			<input
-				name="editor"
-				class="input grow"
-				bind:value={textboxContent}
-				placeholder="Send a message..."
-				autocomplete={null}
-			/>
-			<button type="submit" class="btn btn-square btn-primary">
-				<LucideSend size="1.25rem" />
-			</button>
-		</form> -->
 		<Editor onSend={sendMessage} />
 	</div>
 {/if}
