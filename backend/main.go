@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"sunburn.co/backend/hooks"
+	"sunburn.co/backend/lib"
 	"sunburn.co/backend/livekit"
 
 	"github.com/joho/godotenv"
@@ -28,6 +29,14 @@ func main() {
 
 	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{})
 
+	app.OnBootstrap().BindFunc(func(e *core.BootstrapEvent) error {
+		if err := e.Next(); err != nil {
+			return err
+		}
+
+		return lib.MakePermissions(e.App)
+	})
+
 	// soft delete
 	app.OnRecordDelete().BindFunc(hooks.OnRecordDelete)
 	app.Cron().Add("cleanSoftDelete", "0 0 * * *", func() {
@@ -46,7 +55,9 @@ func main() {
 	app.OnRecordUpdate("channels").BindFunc(hooks.LockedColumns_Channels)
 	app.OnRecordUpdate("messages").BindFunc(hooks.LockedColumns_Messages)
 	app.OnRecordUpdate("serverRoleAssignments").BindFunc(hooks.LockedColumns_ServerRoleAssignments)
+	app.OnRecordUpdate("serverRolePermissions").BindFunc(hooks.LockedColumns_ServerRolePermissions)
 	app.OnRecordUpdate("serverRoles").BindFunc(hooks.LockedColumns_ServerRoles)
+	app.OnRecordUpdate("voiceParticipants").BindFunc(hooks.LockedColumns_VoiceParticipants)
 
 	app.OnRecordUpdate("messages").BindFunc(hooks.SetMessageEdited)
 
