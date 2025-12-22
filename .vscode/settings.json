@@ -2,6 +2,7 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.configPath": "app/.prettierrc",
+  "prettier.prettierPath": "app/node_modules/prettier",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always",
   },
@@ -35,5 +36,17 @@
   ],
   "[go]": {
     "editor.defaultFormatter": "golang.go"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.wordWrap": "off",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
   }
 }

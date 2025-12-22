@@ -1,8 +1,6 @@
 package lib
 
 import (
-	"database/sql"
-
 	"github.com/pocketbase/pocketbase/core"
 )
 
@@ -25,6 +23,7 @@ func MakePermissions(app core.App) error {
 		{"MANAGE_CALL_PARTICIPANTS", 8, false},
 		{"MANAGE_WEBHOOKS", 9, false},
 		{"CHANNEL_MUTED", 10, false},
+		{"MANAGE_ROLE_PERMISSIONS", 44, true},
 		{"MANAGE_ROLES", 45, true},
 		{"SERVER_MUTED", 46, true},
 		{"MENTION_EVERYONE", 47, true},
@@ -37,14 +36,12 @@ func MakePermissions(app core.App) error {
 
 	collection, err := app.FindCollectionByNameOrId("_permissions")
 	if err != nil {
-		return err
+		app.Logger().Warn("could not make _permissions", "error", err)
+		return nil
 	}
 
 	for _, perm := range perms {
-		rec, err := app.FindRecordById("_permissions", perm.id)
-		if err != nil && err != sql.ErrNoRows {
-			return err
-		}
+		rec, _ := app.FindRecordById("_permissions", perm.id)
 		if rec != nil {
 			continue
 		}

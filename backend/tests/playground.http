@@ -1,0 +1,48 @@
+@base = http://127.0.0.1:8090/api/collections
+@owner = bu1su6gbztlmqnj
+@admin = 9qe7sewkopyln0q
+@mod = oy32bjdqf88kpsp
+@alice = 31i4auu6luhku4g
+@charlie = ik07uc61rs1jtd4
+@charlieadmin = vf87y4zomdmiv0x
+@charliemod = ghpo8auxwfudur9
+@bob = jd7jctu3ldvq2d7
+@serverMain = 9xgxhpjvl2mky6u
+@aliceToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2xsZWN0aW9uSWQiOiJfcGJfdXNlcnNfYXV0aF8iLCJleHAiOjE3NjY5ODMxOTksImlkIjoiMzFpNGF1dTZsdWhrdTRnIiwicmVmcmVzaGFibGUiOnRydWUsInR5cGUiOiJhdXRoIn0.SGTElTeEL8Xlw5M5jthKRiPwG3yCPWsZe6AsBXjpXVo
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2xsZWN0aW9uSWQiOiJfcGJfdXNlcnNfYXV0aF8iLCJleHAiOjE3NjY5ODI0MTIsImlkIjoiYnUxc3U2Z2J6dGxtcW5qIiwicmVmcmVzaGFibGUiOnRydWUsInR5cGUiOiJhdXRoIn0.j86_EgpCtzxPQ8VNVXwkWuoIl4AN9kCyKAvV2nw3wyE
+
+POST {{base}}/users/auth-with-password
+Content-Type: application/json
+
+{
+  "identity": "alice",
+  "password": "password"
+}
+
+###
+
+DELETE {{base}}/servers/records/d01e4mor8rufxn6
+Authorization: {{token}}
+
+###
+
+POST {{base}}/messages/records
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "from": "{{alice}}",
+  "to": "{{bob}}",
+  "content": "test"
+}
+
+###
+
+POST {{base}}/servers/records
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "test",
+  "owner": "{{alice}}"
+}

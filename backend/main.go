@@ -65,6 +65,8 @@ func main() {
 	app.OnRecordValidate("users").BindFunc(hooks.LowercaseHandle)
 	app.OnRecordValidate("channelRoleAssignments").BindFunc(hooks.ChannelRoles_MatchingServerID)
 	app.OnRecordValidate("messages").BindFunc(hooks.Messages_MutuallyExclusiveDestinations)
+	app.OnRecordAfterCreateSuccess("serverRoles").BindFunc(hooks.AdjustRoleOrdinals)
+	app.OnRecordAfterUpdateSuccess("serverRoles").BindFunc(hooks.AdjustRoleOrdinals)
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		se.Router.BindFunc(hooks.SendVersionHeader)
