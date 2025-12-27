@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/pocketbase/dbx"
-	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tests"
 )
 
@@ -16,25 +14,16 @@ func TestServersMeta(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	factory := func(t testing.TB) *tests.TestApp {
-		testApp, err := tests.NewTestApp(testDataDir)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		return testApp
-	}
-
 	userArray := []string{USER_BOB, USER_ALICE, USER_MOD, USER_ADMIN, USER_OWNER, USER_CHARLIE_MOD, USER_CHARLIE_ADMIN, USER_CHARLIE}
 
 	expectedStatuses := [][]int{
 		// each column is the same as the user const (e.g. BOB, ALICE, etc)
-		{http.StatusBadRequest, http.StatusBadRequest, http.StatusBadRequest, http.StatusBadRequest, http.StatusOK, http.StatusBadRequest, http.StatusBadRequest, http.StatusBadRequest},
-		{http.StatusBadRequest, http.StatusBadRequest, http.StatusBadRequest, http.StatusBadRequest, http.StatusBadRequest, http.StatusBadRequest, http.StatusBadRequest, http.StatusBadRequest},
-		{http.StatusNotFound, http.StatusOK, http.StatusOK, http.StatusOK, http.StatusOK, http.StatusOK, http.StatusOK, http.StatusOK},
-		{http.StatusNotFound, http.StatusNotFound, http.StatusOK, http.StatusOK, http.StatusOK, http.StatusNotFound, http.StatusNotFound, http.StatusNotFound},
-		{http.StatusNotFound, http.StatusNotFound, http.StatusNotFound, http.StatusNotFound, http.StatusOK, http.StatusNotFound, http.StatusNotFound, http.StatusNotFound},
-		{http.StatusNotFound, http.StatusNotFound, http.StatusNotFound, http.StatusNotFound, http.StatusNoContent, http.StatusNotFound, http.StatusNotFound, http.StatusNotFound},
+		{_400, _400, _400, _400, _200, _400, _400, _400},
+		{_400, _400, _400, _400, _400, _400, _400, _400},
+		{_404, _200, _200, _200, _200, _200, _200, _200},
+		{_404, _404, _200, _200, _200, _404, _404, _404},
+		{_404, _404, _404, _404, _200, _404, _404, _404},
+		{_404, _404, _404, _404, _202, _404, _404, _404},
 	}
 
 	scenarios := []func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario{
@@ -52,32 +41,9 @@ func TestServersMeta(t *testing.T) {
 				}`, args[0]),
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: []string{""},
-				BeforeTestFunc: func(t testing.TB, app *tests.TestApp, _ *core.ServeEvent) {
-					_, err := app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID1,
-						"role":       ROLE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-
-					_, err = app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID2,
-						"role":       ROLE_CHARLIE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				AfterTestFunc: func(t testing.TB, app *tests.TestApp, _ *http.Response) {
-					_, err := app.DB().Delete("serverRolePermissions", dbx.Like("id", DUMMY_ID_WILDCARD)).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				TestAppFactory: factory,
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_SERVER"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				AfterTestFunc:   cleanupPermissions(),
+				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
@@ -94,32 +60,9 @@ func TestServersMeta(t *testing.T) {
 				}`, USER_BOB),
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: []string{""},
-				BeforeTestFunc: func(t testing.TB, app *tests.TestApp, _ *core.ServeEvent) {
-					_, err := app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID1,
-						"role":       ROLE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-
-					_, err = app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID2,
-						"role":       ROLE_CHARLIE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				AfterTestFunc: func(t testing.TB, app *tests.TestApp, _ *http.Response) {
-					_, err := app.DB().Delete("serverRolePermissions", dbx.Like("id", DUMMY_ID_WILDCARD)).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				TestAppFactory: factory,
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_SERVER"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				AfterTestFunc:   cleanupPermissions(),
+				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
@@ -132,32 +75,9 @@ func TestServersMeta(t *testing.T) {
 				},
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: []string{""},
-				BeforeTestFunc: func(t testing.TB, app *tests.TestApp, _ *core.ServeEvent) {
-					_, err := app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID1,
-						"role":       ROLE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-
-					_, err = app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID2,
-						"role":       ROLE_CHARLIE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				AfterTestFunc: func(t testing.TB, app *tests.TestApp, _ *http.Response) {
-					_, err := app.DB().Delete("serverRolePermissions", dbx.Like("id", DUMMY_ID_WILDCARD)).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				TestAppFactory: factory,
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_SERVER"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				AfterTestFunc:   cleanupPermissions(),
+				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
@@ -173,32 +93,9 @@ func TestServersMeta(t *testing.T) {
 				},
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: []string{""},
-				BeforeTestFunc: func(t testing.TB, app *tests.TestApp, _ *core.ServeEvent) {
-					_, err := app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID1,
-						"role":       ROLE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-
-					_, err = app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID2,
-						"role":       ROLE_CHARLIE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				AfterTestFunc: func(t testing.TB, app *tests.TestApp, _ *http.Response) {
-					_, err := app.DB().Delete("serverRolePermissions", dbx.Like("id", DUMMY_ID_WILDCARD)).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				TestAppFactory: factory,
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_SERVER"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				AfterTestFunc:   cleanupPermissions(),
+				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
@@ -214,32 +111,9 @@ func TestServersMeta(t *testing.T) {
 				},
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: []string{""},
-				BeforeTestFunc: func(t testing.TB, app *tests.TestApp, _ *core.ServeEvent) {
-					_, err := app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID1,
-						"role":       ROLE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-
-					_, err = app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID2,
-						"role":       ROLE_CHARLIE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				AfterTestFunc: func(t testing.TB, app *tests.TestApp, _ *http.Response) {
-					_, err := app.DB().Delete("serverRolePermissions", dbx.Like("id", DUMMY_ID_WILDCARD)).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				TestAppFactory: factory,
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_SERVER"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				AfterTestFunc:   cleanupPermissions(),
+				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
@@ -252,32 +126,9 @@ func TestServersMeta(t *testing.T) {
 				},
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: []string{""},
-				BeforeTestFunc: func(t testing.TB, app *tests.TestApp, _ *core.ServeEvent) {
-					_, err := app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID1,
-						"role":       ROLE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-
-					_, err = app.DB().Insert("serverRolePermissions", dbx.Params{
-						"id":         DUMMY_ID2,
-						"role":       ROLE_CHARLIE_MOD,
-						"permission": "MANAGE_SERVER",
-					}).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				AfterTestFunc: func(t testing.TB, app *tests.TestApp, _ *http.Response) {
-					_, err := app.DB().Delete("serverRolePermissions", dbx.Like("id", DUMMY_ID_WILDCARD)).Execute()
-					if err != nil {
-						t.Fatal(err)
-					}
-				},
-				TestAppFactory: factory,
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_SERVER"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				AfterTestFunc:   cleanupPermissions(),
+				TestAppFactory:  makeFactory,
 			}
 		},
 	}

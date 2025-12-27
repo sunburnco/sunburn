@@ -8,6 +8,7 @@
 @charliemod = ghpo8auxwfudur9
 @bob = jd7jctu3ldvq2d7
 @serverMain = 9xgxhpjvl2mky6u
+@channelGeneral=96j1fueqxvu8kei
 @aliceToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2xsZWN0aW9uSWQiOiJfcGJfdXNlcnNfYXV0aF8iLCJleHAiOjE3NjY5ODMxOTksImlkIjoiMzFpNGF1dTZsdWhrdTRnIiwicmVmcmVzaGFibGUiOnRydWUsInR5cGUiOiJhdXRoIn0.SGTElTeEL8Xlw5M5jthKRiPwG3yCPWsZe6AsBXjpXVo
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2xsZWN0aW9uSWQiOiJfcGJfdXNlcnNfYXV0aF8iLCJleHAiOjE3NjY5ODI0MTIsImlkIjoiYnUxc3U2Z2J6dGxtcW5qIiwicmVmcmVzaGFibGUiOnRydWUsInR5cGUiOiJhdXRoIn0.j86_EgpCtzxPQ8VNVXwkWuoIl4AN9kCyKAvV2nw3wyE
 
@@ -18,6 +19,11 @@ Content-Type: application/json
   "identity": "alice",
   "password": "password"
 }
+
+###
+
+DELETE {{base}}/messages/records/ledqx8v7ubed07a
+Authorization: {{aliceToken}}
 
 ###
 

@@ -11,6 +11,7 @@
   - "alice" is an unprivileged member
   - "bob" is a nonmember
 - Roles:
+  - "channelMuted" = 6
   - "dummymax" = 5
   - "admin" = 4
   - "dummyplus" = 3
@@ -59,20 +60,20 @@ utilization/quota: owner 1/2, others 0/0
 
 |                                             | Bob (.1) | Alice (.2) | Mod (.3) | Admin (.4) | Owner (.5) | CharlieMod (.6) | CharlieAdmin (.7) | Charlie (owner) (.8) |
 | ------------------------------------------- | :------: | :--------: | :------: | :--------: | :--------: | :-------------: | :---------------: | :------------------: |
-| (1) Read messages in #general               |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (2) Send messages to #general               |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (3) Read messages in #muted                 |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (1) Read 2 messages in #general             |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       🟩        |        🟩         |          🟩          |
+| (2) Send messages to #general               |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       🟩        |        🟩         |          🟩          |
+| (3) Read 2 messages in #muted               |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       🟩        |        🟩         |          🟩          |
 | (4) Send messages to #muted                 |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (5) Read messages in #modOnly               |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (6) Send messages to #modOnly               |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (7) Read messages in #ownerOnly             |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (5) Read 2 messages in #modOnly             |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (6) Send messages to #modOnly               |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (7) Read 1 message in #ownerOnly            |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (8) Send messages to #ownerOnly             |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (9) Delete a message from Alice in #general |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (10) Delete a message from Alice in #muted  |    ⛔    |     🟩     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (11) Edit a message from Alice in #general  |    ⛔    |     🟩     |    ⛔    |     ⛔     |     ⛔     |       ⛔        |        ⛔         |          ⛔          |
 
-🟩 x28<br />
-⛔ x60
+🟩 x39<br />
+⛔ x49
 
 ## Servers (Channels)
 
