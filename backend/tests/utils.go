@@ -25,7 +25,7 @@ const (
 const testDataDir = "../test_data"
 
 const _200 = http.StatusOK
-const _202 = http.StatusNoContent
+const _204 = http.StatusNoContent
 const _400 = http.StatusBadRequest
 const _404 = http.StatusNotFound
 
