@@ -11,12 +11,12 @@
   - "alice" is an unprivileged member
   - "bob" is a nonmember
 - Roles:
-  - "channelMuted" = 6
-  - "dummymax" = 5
-  - "admin" = 4
-  - "dummyplus" = 3
-  - "mod" = 2
-  - "dummy" = 1
+  - "dummymax" = 6
+  - "admin" = 5
+  - "dummyplus" = 4
+  - "mod" = 3
+  - "dummy" = 2
+  - "channelMuted" = 1
   - "everyone" = 0
 - Two servers: `server` and `charlieServer`
   - All "charlie\*" accounts are unprivileged members of "server" to test permission leaks (e.g., "charlieAdmin" is `ADMINISTRATOR` in "charlieServer" so he shouldn't have admin in "server")
@@ -100,14 +100,14 @@ utilization/quota: owner 1/2, others 0/0
 |                                               | Bob (.1) | Alice (.2) | Mod (.3) | Admin (.4) | Owner (.5) | CharlieMod (.6) | CharlieAdmin (.7) | Charlie (owner) (.8) |
 | --------------------------------------------- | :------: | :--------: | :------: | :--------: | :--------: | :-------------: | :---------------: | :------------------: |
 | (1) See roles for server                      |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (2) Create the "deleteme" role (ordinal 0.5)  |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (2) Create the "deleteme" role (ordinal 1.5)  |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (3) Change the color on the "deleteme" role   |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (4) Delete the "deleteme" role                |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (5) Create the "modplus" role (ordinal 2.5)   |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (5) Create the "modplus" role (ordinal 3.5)   |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (6) Change the color on the "modplus" role    |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (7) Assign user "mod" to "modplus" role       |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (8) Delete the "modplus" role                 |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (9) Create the "adminplus" role (ordinal 4.5) |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (9) Create the "adminplus" role (ordinal 5.5) |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (10) Delete the "adminplus" role              |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 
 🟩 x23<br />
