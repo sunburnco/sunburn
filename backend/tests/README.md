@@ -118,17 +118,19 @@ utilization/quota: owner 1/2, others 0/0
 
 "mod" roles need `MANAGE_ROLE_PERMISSIONS`
 
+> **DANGER** no checks are done on what permissions are being assigned. `MANAGE_ROLE_PERMISSIONS` is effectively the same as `ADMINISTRATOR`.
+
 |                                                                  | Bob (.1) | Alice (.2) | Mod (.3) | Admin (.4) | Owner (.5) | CharlieMod (.6) | CharlieAdmin (.7) | Charlie (owner) (.8) |
 | ---------------------------------------------------------------- | :------: | :--------: | :------: | :--------: | :--------: | :-------------: | :---------------: | :------------------: |
 | (1) See role permission assignments for server                   |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (2) Give `MANAGE_ROLE_PERMISSIONS` to the "dummy" role           |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (3) Remove `MANAGE_ROLE_PERMISSIONS` from the "dummy" role       |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (4) Give `MENTION_EVERYONE` to the "dummy" role                  |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (5) Remove `MENTION_EVERYONE` from the "dummy" role              |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (4) Give `MENTION_EVERYONE` to the "dummy" role                  |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (5) Remove `MENTION_EVERYONE` from the "dummy" role              |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (6) Give `MANAGE_ROLE_PERMISSIONS` to the "dummyplus" role       |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (7) Remove `MANAGE_ROLE_PERMISSIONS` from the "dummyplus" role ` |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (8) Give `MENTION_EVERYONE` to the "dummymax" role               |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (9) Remove `MENTION_EVERYONE` from the "dummymax" role           |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (7) Remove `MANAGE_ROLE_PERMISSIONS` from the "dummyplus" role   |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (8) Give `MANAGE_ROLE_PERMISSIONS` to the "dummymax" role        |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (9) Remove `MANAGE_ROLE_PERMISSIONS` from the "dummymax" role    |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 
-🟩 x12<br />
-⛔ x52
+🟩 x22<br />
+⛔ x50

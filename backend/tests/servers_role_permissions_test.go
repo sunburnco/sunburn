@@ -10,15 +10,14 @@ import (
 	"github.com/pocketbase/pocketbase/tests"
 )
 
-func makeRole(roleName string, roleOrdinal float32) func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-	makePerms := assignPermissions([]string{"MANAGE_ROLES", "MANAGE_MEMBERS"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD})
+func makeAssignment(role, permission string) func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
+	makePerms := assignPermissions([]string{"MANAGE_ROLE_PERMISSIONS"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD})
 
 	return func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
-		if _, err := app.DB().Insert("serverRoles", dbx.Params{
-			"id":      DUMMY_IDA,
-			"name":    roleName,
-			"ordinal": roleOrdinal,
-			"server":  SERVER_MAIN,
+		if _, err := app.DB().Insert("serverRolePermissions", dbx.Params{
+			"id":         DUMMY_IDA,
+			"role":       role,
+			"permission": permission,
 		}).Execute(); err != nil {
 			t.Fatal(err)
 		}
@@ -27,11 +26,11 @@ func makeRole(roleName string, roleOrdinal float32) func(t testing.TB, app *test
 	}
 }
 
-func cleanRole() func(t testing.TB, app *tests.TestApp, r *http.Response) {
+func cleanAssignment() func(t testing.TB, app *tests.TestApp, r *http.Response) {
 	cleanPerms := cleanupPermissions()
 
 	return func(t testing.TB, app *tests.TestApp, r *http.Response) {
-		if _, err := app.DB().Delete("serverRoles", dbx.Like("id", DUMMY_ID_WILDCARD)).Execute(); err != nil {
+		if _, err := app.DB().Delete("serverRolePermissions", dbx.Like("id", DUMMY_ID_WILDCARD)).Execute(); err != nil {
 			t.Fatal(err)
 		}
 
@@ -39,7 +38,7 @@ func cleanRole() func(t testing.TB, app *tests.TestApp, r *http.Response) {
 	}
 }
 
-func TestServersRolesAndAssignments(t *testing.T) {
+func TestServerRolePermissions(t *testing.T) {
 	tokens, err := generateTokens()
 	if err != nil {
 		t.Fatal(err)
@@ -51,21 +50,17 @@ func TestServersRolesAndAssignments(t *testing.T) {
 		// each column is the same as the user const (e.g. BOB, ALICE, etc)
 		{_200, _200, _200, _200, _200, _200, _200, _200},
 		{_400, _400, _200, _200, _200, _400, _400, _400},
-		{_404, _404, _200, _200, _200, _404, _404, _404},
+		{_404, _404, _204, _204, _204, _404, _404, _404},
+		{_400, _400, _200, _200, _200, _400, _400, _400},
 		{_404, _404, _204, _204, _204, _404, _404, _404},
 		{_400, _400, _400, _200, _200, _400, _400, _400},
-		{_404, _404, _404, _200, _200, _404, _404, _404},
-		{_400, _400, _400, _200, _200, _400, _400, _400},
-		{_404, _404, _404, _200, _200, _404, _404, _404},
 		{_404, _404, _404, _204, _204, _404, _404, _404},
 		{_400, _400, _400, _400, _200, _400, _400, _400},
 		{_404, _404, _404, _404, _204, _404, _404, _404},
 	}
 
 	expectedContents := [][][]string{
-		{{`"totalItems":0`}, {`"totalItems":7`}, {`"totalItems":7`}, {`"totalItems":7`}, {`"totalItems":7`}, {`"totalItems":7`}, {`"totalItems":7`}, {`"totalItems":7`}},
-		{{``}, {``}, {``}, {``}, {``}, {``}, {``}, {``}},
-		{{``}, {``}, {``}, {``}, {``}, {``}, {``}, {``}},
+		{{`"totalItems":0`}, {`"totalItems":9`}, {`"totalItems":9`}, {`"totalItems":9`}, {`"totalItems":9`}, {`"totalItems":9`}, {`"totalItems":9`}, {`"totalItems":9`}},
 		{{``}, {``}, {``}, {``}, {``}, {``}, {``}, {``}},
 		{{``}, {``}, {``}, {``}, {``}, {``}, {``}, {``}},
 		{{``}, {``}, {``}, {``}, {``}, {``}, {``}, {``}},
@@ -79,193 +74,152 @@ func TestServersRolesAndAssignments(t *testing.T) {
 	scenarios := []func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario{
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
 			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d See roles for server", testID+1, testColumn+1),
+				Name:   fmt.Sprintf("%d.%d See role permission assignments for server", testID+1, testColumn+1),
 				Method: http.MethodGet,
-				URL:    fmt.Sprintf("/api/collections/serverRoles/records?filter=(server='%s')", SERVER_MAIN),
+				URL:    fmt.Sprintf("/api/collections/serverRolePermissions/records?filter=(role.server='%s')", SERVER_MAIN),
 				Headers: map[string]string{
 					"Authorization": authToken,
 				},
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  assignPermissions([]string{"MANAGE_ROLES", "MANAGE_MEMBERS"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_ROLE_PERMISSIONS"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
 				AfterTestFunc:   cleanupPermissions(),
 				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
 			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d Create the \"deleteme\" role (ordinal 1.5)", testID+1, testColumn+1),
+				Name:   fmt.Sprintf("%d.%d Give `MANAGE_ROLE_PERMISSIONS` to the \"dummy\" role", testID+1, testColumn+1),
 				Method: http.MethodPost,
-				URL:    "/api/collections/serverRoles/records",
+				URL:    "/api/collections/serverRolePermissions/records",
 				Headers: map[string]string{
 					"Authorization": authToken,
 				},
 				Body: rprintf(`{
-					"server": "%s",
-					"name": "deleteme",
-					"ordinal": 1.5
-				}`, SERVER_MAIN),
+					"role": "%s",
+					"permission": "%s"
+				}`, ROLE_DUMMY, "MANAGE_ROLE_PERMISSIONS"),
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  assignPermissions([]string{"MANAGE_ROLES", "MANAGE_MEMBERS"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_ROLE_PERMISSIONS"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
 				AfterTestFunc:   cleanupPermissions(),
 				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
 			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d Change the color on the \"deleteme\" role", testID+1, testColumn+1),
-				Method: http.MethodPatch,
-				URL:    fmt.Sprintf("/api/collections/serverRoles/records/%s", DUMMY_IDA),
-				Headers: map[string]string{
-					"Authorization": authToken,
-				},
-				Body: rprintf(`{
-				  "color": "#ff0000"
-				}`),
-				ExpectedStatus:  expectedStatuses[testID][testColumn],
-				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  makeRole("deleteme", 1.5),
-				AfterTestFunc:   cleanRole(),
-				TestAppFactory:  makeFactory,
-			}
-		},
-		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
-			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d Delete the \"deleteme\" role", testID+1, testColumn+1),
+				Name:   fmt.Sprintf("%d.%d Remove `MANAGE_ROLE_PERMISSIONS` from the \"dummy\" role", testID+1, testColumn+1),
 				Method: http.MethodDelete,
-				URL:    fmt.Sprintf("/api/collections/serverRoles/records/%s", DUMMY_IDA),
+				URL:    fmt.Sprintf("/api/collections/serverRolePermissions/records/%s", DUMMY_IDA),
 				Headers: map[string]string{
 					"Authorization": authToken,
 				},
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  makeRole("deleteme", 1.5),
-				AfterTestFunc:   cleanRole(),
+				BeforeTestFunc:  makeAssignment(ROLE_DUMMY, "MANAGE_ROLE_PERMISSIONS"),
+				AfterTestFunc:   cleanAssignment(),
 				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
 			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d Create the \"modplus\" role (ordinal 3.5)", testID+1, testColumn+1),
+				Name:   fmt.Sprintf("%d.%d Give `MENTION_EVERYONE` to the \"dummy\" role", testID+1, testColumn+1),
 				Method: http.MethodPost,
-				URL:    "/api/collections/serverRoles/records",
+				URL:    "/api/collections/serverRolePermissions/records",
 				Headers: map[string]string{
 					"Authorization": authToken,
 				},
 				Body: rprintf(`{
-					"server": "%s",
-					"name": "modplus",
-					"ordinal": 3.5
-				}`, SERVER_MAIN),
+					"role": "%s",
+					"permission": "%s"
+				}`, ROLE_DUMMY, "MENTION_EVERYONE"),
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  assignPermissions([]string{"MANAGE_ROLES"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_ROLE_PERMISSIONS"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				AfterTestFunc:   cleanupPermissions(),
 				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
 			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d Change the color on the \"modplus\" role", testID+1, testColumn+1),
-				Method: http.MethodPatch,
-				URL:    fmt.Sprintf("/api/collections/serverRoles/records/%s", DUMMY_IDA),
-				Headers: map[string]string{
-					"Authorization": authToken,
-				},
-				Body: rprintf(`{
-				  "color": "#ff0000"
-				}`),
-				ExpectedStatus:  expectedStatuses[testID][testColumn],
-				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  makeRole("modplus", 3.5),
-				AfterTestFunc:   cleanRole(),
-				TestAppFactory:  makeFactory,
-			}
-		},
-		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
-			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d Assign the user \"mod\" to the \"modplus\" role", testID+1, testColumn+1),
-				Method: http.MethodPost,
-				URL:    "/api/collections/serverRoleAssignments/records",
-				Headers: map[string]string{
-					"Authorization": authToken,
-				},
-				Body: rprintf(`{
-					"id": "%s",
-					"user": "%s",
-					"role": "%s"
-				}`, DUMMY_IDB, USER_MOD, DUMMY_IDA),
-				ExpectedStatus:  expectedStatuses[testID][testColumn],
-				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  makeRole("modplus", 3.5),
-				AfterTestFunc:   cleanRole(),
-				TestAppFactory:  makeFactory,
-			}
-		},
-		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
-			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d Change the color on the \"mod\" role", testID+1, testColumn+1),
-				Method: http.MethodPatch,
-				URL:    fmt.Sprintf("/api/collections/serverRoles/records/%s", ROLE_MOD),
-				Headers: map[string]string{
-					"Authorization": authToken,
-				},
-				Body: rprintf(`{
-					"color": "#ff0000"
-				}`),
-				ExpectedStatus:  expectedStatuses[testID][testColumn],
-				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  assignPermissions([]string{"MANAGE_ROLES", "MANAGE_MEMBERS"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
-				AfterTestFunc:   cleanRole(),
-				TestAppFactory:  makeFactory,
-			}
-		},
-		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
-			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d Delete the \"modplus\" role", testID+1, testColumn+1),
+				Name:   fmt.Sprintf("%d.%d Remove `MENTION_EVERYONE` from the \"dummy\" role", testID+1, testColumn+1),
 				Method: http.MethodDelete,
-				URL:    fmt.Sprintf("/api/collections/serverRoles/records/%s", DUMMY_IDA),
+				URL:    fmt.Sprintf("/api/collections/serverRolePermissions/records/%s", DUMMY_IDA),
 				Headers: map[string]string{
 					"Authorization": authToken,
 				},
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  makeRole("modplus", 3.5),
-				AfterTestFunc:   cleanRole(),
+				BeforeTestFunc:  makeAssignment(ROLE_DUMMY, "MENTION_EVERYONE"),
+				AfterTestFunc:   cleanAssignment(),
 				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
 			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d Create the \"adminplus\" role (ordinal 5.5)", testID+1, testColumn+1),
+				Name:   fmt.Sprintf("%d.%d Give `MANAGE_ROLE_PERMISSIONS` to the \"dummyplus\" role", testID+1, testColumn+1),
 				Method: http.MethodPost,
-				URL:    "/api/collections/serverRoles/records",
+				URL:    "/api/collections/serverRolePermissions/records",
 				Headers: map[string]string{
 					"Authorization": authToken,
 				},
 				Body: rprintf(`{
-					"server": "%s",
-					"name": "adminplus",
-					"ordinal": 5.5
-				}`, SERVER_MAIN),
+					"role": "%s",
+					"permission": "%s"
+				}`, ROLE_DUMMYPLUS, "MANAGE_ROLE_PERMISSIONS"),
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  assignPermissions([]string{"MANAGE_ROLES"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_ROLE_PERMISSIONS"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				AfterTestFunc:   cleanupPermissions(),
 				TestAppFactory:  makeFactory,
 			}
 		},
 		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
 			return &tests.ApiScenario{
-				Name:   fmt.Sprintf("%d.%d Delete the \"adminplus\" role", testID+1, testColumn+1),
+				Name:   fmt.Sprintf("%d.%d Remove `MANAGE_ROLE_PERMISSIONS` from the \"dummyplus\" role", testID+1, testColumn+1),
 				Method: http.MethodDelete,
-				URL:    fmt.Sprintf("/api/collections/serverRoles/records/%s", DUMMY_IDA),
+				URL:    fmt.Sprintf("/api/collections/serverRolePermissions/records/%s", DUMMY_IDA),
 				Headers: map[string]string{
 					"Authorization": authToken,
 				},
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
 				ExpectedContent: expectedContents[testID][testColumn],
-				BeforeTestFunc:  makeRole("adminplus", 5.5),
-				AfterTestFunc:   cleanRole(),
+				BeforeTestFunc:  makeAssignment(ROLE_DUMMYPLUS, "MANAGE_ROLE_PERMISSIONS"),
+				AfterTestFunc:   cleanAssignment(),
+				TestAppFactory:  makeFactory,
+			}
+		},
+		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
+			return &tests.ApiScenario{
+				Name:   fmt.Sprintf("%d.%d Give `MANAGE_ROLE_PERMISSIONS` to the \"dummymax\" role", testID+1, testColumn+1),
+				Method: http.MethodPost,
+				URL:    "/api/collections/serverRolePermissions/records",
+				Headers: map[string]string{
+					"Authorization": authToken,
+				},
+				Body: rprintf(`{
+					"role": "%s",
+					"permission": "%s"
+				}`, ROLE_DUMMYMAX, "MANAGE_ROLE_PERMISSIONS"),
+				ExpectedStatus:  expectedStatuses[testID][testColumn],
+				ExpectedContent: expectedContents[testID][testColumn],
+				BeforeTestFunc:  assignPermissions([]string{"MANAGE_ROLE_PERMISSIONS"}, []string{ROLE_MOD, ROLE_CHARLIE_MOD}),
+				AfterTestFunc:   cleanupPermissions(),
+				TestAppFactory:  makeFactory,
+			}
+		},
+		func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario {
+			return &tests.ApiScenario{
+				Name:   fmt.Sprintf("%d.%d Remove `MANAGE_ROLE_PERMISSIONS` from the \"dummymax\" role", testID+1, testColumn+1),
+				Method: http.MethodDelete,
+				URL:    fmt.Sprintf("/api/collections/serverRolePermissions/records/%s", DUMMY_IDA),
+				Headers: map[string]string{
+					"Authorization": authToken,
+				},
+				ExpectedStatus:  expectedStatuses[testID][testColumn],
+				ExpectedContent: expectedContents[testID][testColumn],
+				BeforeTestFunc:  makeAssignment(ROLE_DUMMYMAX, "MANAGE_ROLE_PERMISSIONS"),
+				AfterTestFunc:   cleanAssignment(),
 				TestAppFactory:  makeFactory,
 			}
 		},
