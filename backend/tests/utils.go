@@ -78,7 +78,7 @@ func assignPermissions(permissions []string, roles []string) func(t testing.TB, 
 		for i, permission := range permissions {
 			for j, role := range roles {
 				if _, err := app.DB().Insert("serverRolePermissions", dbx.Params{
-					"id":         ids[i*j+j],
+					"id":         ids[i*len(roles)+j],
 					"role":       role,
 					"permission": permission,
 				}).Execute(); err != nil {

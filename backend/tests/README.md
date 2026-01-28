@@ -95,23 +95,24 @@ utilization/quota: owner 1/2, others 0/0
 
 ## Servers (Roles and Assignments)
 
-"mod" roles need `MANAGE_ROLES`
+"mod" roles need `MANAGE_ROLES` and `MANAGE_MEMBERS`
 
-|                                               | Bob (.1) | Alice (.2) | Mod (.3) | Admin (.4) | Owner (.5) | CharlieMod (.6) | CharlieAdmin (.7) | Charlie (owner) (.8) |
-| --------------------------------------------- | :------: | :--------: | :------: | :--------: | :--------: | :-------------: | :---------------: | :------------------: |
-| (1) See roles for server                      |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (2) Create the "deleteme" role (ordinal 1.5)  |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (3) Change the color on the "deleteme" role   |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (4) Delete the "deleteme" role                |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (5) Create the "modplus" role (ordinal 3.5)   |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (6) Change the color on the "modplus" role    |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (7) Assign user "mod" to "modplus" role       |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (8) Delete the "modplus" role                 |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (9) Create the "adminplus" role (ordinal 5.5) |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (10) Delete the "adminplus" role              |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+|                                                | Bob (.1) | Alice (.2) | Mod (.3) | Admin (.4) | Owner (.5) | CharlieMod (.6) | CharlieAdmin (.7) | Charlie (owner) (.8) |
+| ---------------------------------------------- | :------: | :--------: | :------: | :--------: | :--------: | :-------------: | :---------------: | :------------------: |
+| (1) See roles for server                       |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (2) Create the "deleteme" role (ordinal 1.5)   |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (3) Change the color on the "deleteme" role    |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (4) Delete the "deleteme" role                 |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (5) Create the "modplus" role (ordinal 3.5)    |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (6) Change the color on the "modplus" role     |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (7) Assign user "mod" to "modplus" role        |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (8) Change the color on the "mod" role         |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (9) Delete the "modplus" role                  |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (10) Create the "adminplus" role (ordinal 5.5) |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (11) Delete the "adminplus" role               |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 
-🟩 x23<br />
-⛔ x42
+🟩 x25<br />
+⛔ x63
 
 ## Servers (Role Permissions)
 
