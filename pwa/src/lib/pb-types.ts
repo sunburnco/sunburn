@@ -30,7 +30,7 @@ export enum Collections {
 	ServerRoles = 'serverRoles',
 	Servers = 'servers',
 	Users = 'users',
-	VoiceParticipants = 'voiceParticipants'
+	VoiceParticipants = 'voiceParticipants',
 }
 
 // Alias types for improved usability
@@ -292,11 +292,11 @@ export type ChannelsResponse<Texpand = unknown> = Required<ChannelsRecord> &
 	BaseSystemFields<Texpand>;
 export type CumulativeChannelPermissionsResponse<
 	Tpermissions = unknown,
-	Texpand = unknown
+	Texpand = unknown,
 > = Required<CumulativeChannelPermissionsRecord<Tpermissions>> & BaseSystemFields<Texpand>;
 export type CumulativeServerPermissionsResponse<
 	Tpermissions = unknown,
-	Texpand = unknown
+	Texpand = unknown,
 > = Required<CumulativeServerPermissionsRecord<Tpermissions>> & BaseSystemFields<Texpand>;
 export type DeletedResponse<Trecord = unknown, Texpand = unknown> = Required<
 	DeletedRecord<Trecord>
@@ -459,6 +459,6 @@ export type Update<T extends keyof CollectionResponses> =
 
 export type TypedPocketBase = {
 	collection<T extends keyof CollectionResponses>(
-		idOrName: T
+		idOrName: T,
 	): RecordService<CollectionResponses[T]>;
 } & PocketBase;

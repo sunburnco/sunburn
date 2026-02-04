@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
-import { defineConfig } from 'eslint/config';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import prettier from 'eslint-config-prettier';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import svelte from 'eslint-plugin-svelte';
@@ -16,6 +16,7 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
+	globalIgnores(['./src/lib/pb-types.ts']),
 	js.configs.recommended,
 	...ts.configs.recommended,
 	...svelte.configs.recommended,
@@ -24,7 +25,7 @@ export default defineConfig(
 	{
 		plugins: {
 			'simple-import-sort': simpleImportSort,
-			'unused-imports': unusedImports
+			'unused-imports': unusedImports,
 		},
 		languageOptions: { globals: { ...globals.browser, ...globals.node } },
 		rules: {
@@ -43,11 +44,11 @@ export default defineConfig(
 					vars: 'all',
 					varsIgnorePattern: '^_',
 					args: 'after-used',
-					argsIgnorePattern: '^_'
-				}
+					argsIgnorePattern: '^_',
+				},
 			],
-			'svelte/no-navigation-without-resolve': 'off'
-		}
+			'svelte/no-navigation-without-resolve': 'off',
+		},
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js', '**/*.ts'],
@@ -56,8 +57,8 @@ export default defineConfig(
 				projectService: true,
 				extraFileExtensions: ['.svelte'],
 				parser: ts.parser,
-				svelteConfig
-			}
-		}
-	}
+				svelteConfig,
+			},
+		},
+	},
 );
