@@ -2,6 +2,8 @@ import type { ServersRecord, TypedPocketBase } from '$lib/pb-types';
 import { debugPrefix } from '$lib/utils/logPrefixes';
 import { logFriendly } from '$lib/utils/username';
 
+import { fetchInitialMessagesForDM } from './data/dmMessages';
+import { setServerRecord } from './data/server';
 import { type Instance_t, sunburn } from './sunburn.svelte';
 
 const extractInstanceIDFromBaseURL = (baseURL: string) => {
@@ -9,12 +11,15 @@ const extractInstanceIDFromBaseURL = (baseURL: string) => {
 	return new URL(baseURL).host;
 };
 
+// TODO why did we have onAuthChange?
+
 export const initPB = async (pb: TypedPocketBase, noReauth?: boolean) => {
 	const instanceID = extractInstanceIDFromBaseURL(pb.baseURL);
 
 	const instance: Instance_t = {
 		id: instanceID,
 		version: (await fetch(pb.buildURL('/api/health'))).headers.get('x-sb-version') ?? '',
+		ready: false,
 
 		myID: '',
 		pb,
@@ -42,7 +47,7 @@ export const initPB = async (pb: TypedPocketBase, noReauth?: boolean) => {
 
 				// eslint-disable-next-line no-console
 				console.debug(...debugPrefix, `${logFriendly(instanceID)} fetching dm messages`, userID);
-				// TODO fetchInitialMessages
+				fetchInitialMessagesForDM(instanceID, userID, userID);
 			}
 		} catch {
 			// noop
@@ -64,7 +69,7 @@ export const initPB = async (pb: TypedPocketBase, noReauth?: boolean) => {
 					`${logFriendly(instanceID)} fetching dm messages (pt. 2)`,
 					userID,
 				);
-				// TODO fetchInitialMessages
+				fetchInitialMessagesForDM(instanceID, userID, userID);
 			}
 		} catch {
 			// noop
@@ -77,7 +82,9 @@ export const initPB = async (pb: TypedPocketBase, noReauth?: boolean) => {
 				.getFullList({ requestKey: null })) as ServersRecord[]) {
 				// eslint-disable-next-line no-console
 				console.debug(...debugPrefix, `${logFriendly(instanceID)} fetching server`, server.id);
+
 				// TODO fetch server
+				setServerRecord(instanceID, server.id, server);
 			}
 		} catch {
 			// noop

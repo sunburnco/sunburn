@@ -1,3 +1,4 @@
+import { ZonedDateTime } from '@internationalized/date';
 import { type SvelteSet } from 'svelte/reactivity';
 
 import type {
@@ -31,7 +32,7 @@ type ServerMember_t = {
 	roleIDs: SvelteSet<ServerRolesRecord['id']>;
 };
 
-type Server_t = {
+export type Server_t = {
 	record: ServersRecord;
 	permissionDefinitions: Record<PermissionsRecord['id'], PermissionsRecord>;
 	roles: Record<ServerRolesRecord['id'], Role_t>;
@@ -39,8 +40,9 @@ type Server_t = {
 	members: Record<ServerMember_t['id'], ServerMember_t>;
 };
 
-type DM_t = {
-	recipient: UsersRecord;
+export type DM_t = {
+	recipientID: UsersRecord['id'];
+	updated: ZonedDateTime;
 	messages: WithRequired<Omit<MessagesRecord, 'channel'>, 'to'>[];
 };
 
@@ -82,7 +84,7 @@ export type Instance_t = {
 	pb: TypedPocketBase;
 
 	servers: Record<Server_t['record']['id'], Server_t>;
-	dms: Record<DM_t['recipient']['id'], DM_t>;
+	dms: Record<DM_t['recipientID'], DM_t>;
 	users: Record<UsersRecord['id'], UsersRecord>;
 };
 
