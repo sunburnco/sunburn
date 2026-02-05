@@ -7,6 +7,7 @@ import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
 import { logFriendly } from '$lib/utils/username';
 
 import { type DM_t, type Instance_t, sunburn } from '../sunburn.svelte';
+import { fetchUser } from './users';
 
 export const setDMMessages = (
 	instanceID: Instance_t['id'],
@@ -53,6 +54,10 @@ export const fetchInitialMessagesForDM = async (
 				updated: fromAbsolute(0, getLocalTimeZone()),
 				messages: [],
 			};
+		}
+
+		if (!(recipientID in sunburn[instanceID].users)) {
+			fetchUser(instanceID, recipientID, recipientID);
 		}
 
 		let isFirst = true;

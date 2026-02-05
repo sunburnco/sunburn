@@ -16,25 +16,24 @@ type LocalAuthStoreKey_t = string; // x@localhost:8090
 type InstanceURL_t = string; // http://localhost:8090
 export const localAuthStoreKeys = {} as Record<LocalAuthStoreKey_t, InstanceURL_t>;
 
-type Role_t = {
+export type Role_t = {
 	record: ServerRolesRecord;
 	permissions: SvelteSet<string>;
 };
 
-type Channel_t = {
+export type Channel_t = {
 	record: ChannelsRecord;
 	assignedRolesIDs: SvelteSet<ServerRolesRecord['id']>;
 	messages: WithRequired<Omit<MessagesRecord, 'to'>, 'channel'>[];
 };
 
-type ServerMember_t = {
+export type ServerMember_t = {
 	id: UsersRecord['id'];
 	roleIDs: SvelteSet<ServerRolesRecord['id']>;
 };
 
 export type Server_t = {
 	record: ServersRecord;
-	permissionDefinitions: Record<PermissionsRecord['id'], PermissionsRecord>;
 	roles: Record<ServerRolesRecord['id'], Role_t>;
 	channels: Record<ChannelsRecord['id'], Channel_t>;
 	members: Record<ServerMember_t['id'], ServerMember_t>;
@@ -84,6 +83,7 @@ export type Instance_t = {
 	myID: UsersRecord['id'];
 	pb: TypedPocketBase;
 
+	permissionDefinitions: Record<PermissionsRecord['id'], PermissionsRecord>;
 	servers: Record<Server_t['record']['id'], Server_t>;
 	dms: Record<DM_t['recipientID'], DM_t>;
 	users: Record<UsersRecord['id'], UsersRecord>;

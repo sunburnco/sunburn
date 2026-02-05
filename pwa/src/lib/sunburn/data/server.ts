@@ -4,7 +4,7 @@ import { type ServersRecord, type ServersResponse } from '$lib/pb-types';
 import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
 import { logFriendly } from '$lib/utils/username';
 
-import { type Instance_t, sunburn } from '../sunburn.svelte';
+import { type Instance_t, type Server_t, sunburn } from '../sunburn.svelte';
 
 export const setServerRecord = (
 	instanceID: Instance_t['id'],
@@ -16,7 +16,6 @@ export const setServerRecord = (
 			record,
 			channels: {},
 			members: {},
-			permissionDefinitions: {},
 			roles: {},
 		};
 		return;
@@ -31,14 +30,14 @@ export const clearServerRecord = (instanceID: Instance_t['id'], serverID: Server
 
 export const fetchServer = async (
 	instanceID: Instance_t['id'],
-	serverID: ServersRecord['id'],
+	serverID: Server_t['record']['id'],
 	requestKey?: string | null,
 ) => {
 	try {
-		const record = (await sunburn[instanceID].pb
+		const server = (await sunburn[instanceID].pb
 			.collection('servers')
 			.getOne(serverID, { requestKey })) as ServersResponse<ServersRecord>;
-		setServerRecord(instanceID, serverID, record);
+		setServerRecord(instanceID, serverID, server);
 	} catch (err) {
 		if (err instanceof ClientResponseError && err.status === 0) {
 			// eslint-disable-next-line no-console
@@ -47,6 +46,7 @@ export const fetchServer = async (
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for server',
 				serverID,
+				requestKey,
 			);
 			return;
 		} else if (err instanceof ClientResponseError && err.status >= 400 && err.status < 500) {

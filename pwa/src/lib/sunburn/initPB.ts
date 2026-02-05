@@ -24,6 +24,7 @@ export const initPB = async (pb: TypedPocketBase, noReauth?: boolean) => {
 		myID: '',
 		pb,
 
+		permissionDefinitions: {},
 		servers: {},
 		dms: {},
 		users: {},
@@ -83,7 +84,6 @@ export const initPB = async (pb: TypedPocketBase, noReauth?: boolean) => {
 				// eslint-disable-next-line no-console
 				console.debug(...debugPrefix, `${logFriendly(instanceID)} fetching server`, server.id);
 
-				// TODO fetch server
 				setServerRecord(instanceID, server.id, server);
 			}
 		} catch {
