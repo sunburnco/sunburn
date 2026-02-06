@@ -11,8 +11,10 @@ export const lazyLoadServer = async (
 		fetchServer(instanceID, serverID);
 	}
 
+	// TODO
 	// fetch channels
 	// fetch roles
 	// fetch role assignments
+	// fetch members
 	// etc etc
 };

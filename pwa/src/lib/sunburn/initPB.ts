@@ -1,3 +1,5 @@
+import { SvelteSet } from 'svelte/reactivity';
+
 import type { ServersRecord, TypedPocketBase } from '$lib/pb-types';
 import { debugPrefix } from '$lib/utils/logPrefixes';
 import { logFriendly } from '$lib/utils/username';
@@ -28,6 +30,9 @@ export const initPB = async (pb: TypedPocketBase, noReauth?: boolean) => {
 		servers: {},
 		dms: {},
 		users: {},
+
+		pinnedServerIDs: new SvelteSet(),
+		pinnedDMIDs: new SvelteSet(),
 	};
 
 	if (pb.authStore.record?.id) {

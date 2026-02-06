@@ -8,8 +8,8 @@ import { type Instance_t, type Server_t, sunburn } from '../sunburn.svelte';
 
 export const setServerRecord = (
 	instanceID: Instance_t['id'],
-	serverID: ServersRecord['id'],
-	record: ServersRecord,
+	serverID: Server_t['record']['id'],
+	record: Server_t['record'],
 ) => {
 	if (!(serverID in sunburn[instanceID].servers)) {
 		sunburn[instanceID].servers[serverID] = {
@@ -24,7 +24,10 @@ export const setServerRecord = (
 	sunburn[instanceID].servers[serverID].record = record;
 };
 
-export const clearServerRecord = (instanceID: Instance_t['id'], serverID: ServersRecord['id']) => {
+export const clearServerRecord = (
+	instanceID: Instance_t['id'],
+	serverID: Server_t['record']['id'],
+) => {
 	delete sunburn[instanceID].servers[serverID];
 };
 

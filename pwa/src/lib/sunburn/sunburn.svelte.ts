@@ -87,6 +87,9 @@ export type Instance_t = {
 	servers: Record<Server_t['record']['id'], Server_t>;
 	dms: Record<DM_t['recipientID'], DM_t>;
 	users: Record<UsersRecord['id'], UsersRecord>;
+
+	pinnedServerIDs: SvelteSet<Server_t['record']['id']>;
+	pinnedDMIDs: SvelteSet<DM_t['recipientID']>;
 };
 
 export const sunburn = $state<Record<Instance_t['id'], Instance_t>>({});
