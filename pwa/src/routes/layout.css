@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin 'fluid-tailwindcss';
 @plugin '@tailwindcss/typography';
 
 @import '../lib/themes/day.css';
@@ -41,45 +42,22 @@
 
 	--size-selector: var(--size-selector);
 	--size-field: var(--size-field);
-
-	@keyframes float {
-		0%,
-		100% {
-			transform: translateY(0rem);
-		}
-		50% {
-			transform: translateY(0.5rem);
-		}
-	}
 }
 
-@layer utilities {
-	.animate-float {
-		animation: float 3s ease-in-out infinite;
-	}
-	.animate-float2 {
-		animation: float 3.2s ease-in-out infinite;
-	}
-	.animate-float3 {
-		animation: float 3.4s ease-in-out infinite;
-	}
-	.animate-float4 {
-		animation: float 3.6s ease-in-out infinite;
-	}
+@utility flp-sm {
+	@apply fl-py-[0.25/0.5] fl-px-[0.5/0.75];
+}
 
-	.modal {
-		transition:
-			translate 0.3s ease-out,
-			background-color 0.3s ease-out,
-			opacity 0.1s ease-out;
-		@starting-style {
-			&.modal-open,
-			&[open],
-			&:target {
-				visibility: visible;
-			}
-		}
-	}
+@utility flp-md {
+	@apply fl-py-[0.5/0.75] fl-px-[0.75/1];
+}
+
+@utility flp-lg {
+	@apply fl-py-[0.75/1.25] fl-px-[1.25/2.5];
+}
+
+@utility flicon-md {
+	@apply inline fl-size-3.5/5 -translate-y-px stroke-[1.5px];
 }
 
 strong,
@@ -103,10 +81,6 @@ strong,
 
 .font-bold > .lucide {
 	stroke-width: 3px;
-}
-
-::placeholder {
-	@apply text-base-content/50;
 }
 
 /* #region HLJS */

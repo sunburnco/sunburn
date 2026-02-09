@@ -1,11 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="overflow: hidden; height: 100dvh">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+		/>
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover">
+	<body data-sveltekit-preload-data="hover" style="overflow: auto; height: 100dvh">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

@@ -11,6 +11,9 @@ const config = {
 
 	compilerOptions: {
 		warningFilter: (warning) => !warning.code.startsWith('a11y'),
+		experimental: {
+			async: true,
+		},
 	},
 };
 

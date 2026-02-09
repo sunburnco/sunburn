@@ -6,17 +6,26 @@
 	import '@fontsource/oxygen-mono'; // mono
 	import '@fontsource-variable/playwrite-us-trad'; // script
 
-	import { onMount } from 'svelte';
 	import { themeChange } from 'theme-change';
 
-	import favicon from '$lib/assets/favicon.svg';
+	import { applicationStart } from '$lib/sunburn/applicationStart';
+
+	import CallBar from './CallBar.svelte';
 
 	let { children } = $props();
 
-	onMount(() => {
-		themeChange(false);
-	});
+	themeChange(false);
+	applicationStart();
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
-{@render children()}
+<svelte:head><link rel="icon" href="/favicon.ico" /></svelte:head>
+
+<div
+	class="flex h-dvh max-h-dvh w-full max-w-full flex-col overflow-hidden bg-base-300 fl-text-sm/base"
+	style="overscroll-behavior:contain;"
+>
+	<div class="grow">
+		{@render children()}
+	</div>
+	<CallBar />
+</div>
