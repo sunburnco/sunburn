@@ -10,7 +10,7 @@
 			"options": {
 				"parser": "svelte",
 				"bracketSameLine": false,
-				"htmlWhitespaceSensitivity": "strict"
+				"htmlWhitespaceSensitivity": "ignore"
 			}
 		}
 	],

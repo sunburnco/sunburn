@@ -2,7 +2,7 @@
 	import { ScrollArea, type WithoutChild } from 'bits-ui';
 
 	type Props = WithoutChild<ScrollArea.RootProps> & {
-		orientation: 'vertical' | 'horizontal' | 'both';
+		orientation?: 'vertical' | 'horizontal' | 'both';
 		viewportClassName?: string;
 		color?:
 			| 'base-100'
@@ -44,7 +44,7 @@
 			color === 'warning' && 'bg-warning/50',
 			color === 'error' && 'bg-error/50',
 			'flex touch-none select-none',
-			orientation === 'vertical' ? 'w-2' : 'h-2',
+			orientation === 'vertical' ? 'fl-w-1/2' : 'fl-h-1/2',
 		]}
 	>
 		<ScrollArea.Thumb

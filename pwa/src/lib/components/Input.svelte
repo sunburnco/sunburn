@@ -87,7 +87,7 @@
 		'box-border rounded-field border',
 		'text-base-content placeholder:text-base-content/50',
 
-		'disabled:cursor-not-allowed disabled:opacity-90',
+		'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
 		'focus:outline',
 		'invalid:border-error invalid:outline-2 invalid:outline-error',
 

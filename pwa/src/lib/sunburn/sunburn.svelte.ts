@@ -12,9 +12,9 @@ import type {
 } from '$lib/pb-types';
 import type { WithRequired } from '$lib/utils/withRequired';
 
-type LocalAuthStoreKey_t = string; // x@localhost:8090
-type InstanceURL_t = string; // http://localhost:8090
-export const localAuthStoreKeys = {} as Record<LocalAuthStoreKey_t, InstanceURL_t>;
+export type LocalAuthStoreKey_t = `${string}@${string}`; // x@localhost:8090
+export type BaseURL_t = string; // http://localhost:8090
+export const localAuthStoreKeys = {} as Record<LocalAuthStoreKey_t, BaseURL_t>;
 
 export type Role_t = {
 	record: ServerRolesRecord;

@@ -2,21 +2,17 @@ import { SvelteSet } from 'svelte/reactivity';
 
 import type { ServersRecord, TypedPocketBase } from '$lib/pb-types';
 import { debugPrefix } from '$lib/utils/logPrefixes';
+import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 import { logFriendly } from '$lib/utils/username';
 
 import { fetchInitialMessagesForDM } from './data/dmMessages';
 import { setServerRecord } from './data/server';
 import { type Instance_t, sunburn } from './sunburn.svelte';
 
-const extractInstanceIDFromBaseURL = (baseURL: string) => {
-	// http://127.0.0.1:8090
-	return new URL(baseURL).host;
-};
-
 // TODO why did we have onAuthChange?
 
-export const initPB = async (pb: TypedPocketBase, noReauth?: boolean) => {
-	const instanceID = extractInstanceIDFromBaseURL(pb.baseURL);
+export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boolean) => {
+	const instanceID = parseInstanceSlug(pb.baseURL, '');
 
 	const instance: Instance_t = {
 		id: instanceID,
@@ -117,6 +113,8 @@ export const initPB = async (pb: TypedPocketBase, noReauth?: boolean) => {
 		// TODO handle voice settings
 	}
 
+	sunburn[instance.id] = instance;
+
 	if (pb.authStore.isValid && !noReauth) {
 		pb.collection('users').authRefresh({ requestKey: null });
 	}
@@ -128,9 +126,7 @@ export const initPB = async (pb: TypedPocketBase, noReauth?: boolean) => {
 
 	// TODO register event listeners
 
-	instance.ready = true;
-
-	sunburn[instance.id] = instance;
+	sunburn[instance.id].ready = true;
 
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, `${logFriendly(instanceID)} init done`);

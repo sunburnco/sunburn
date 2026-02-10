@@ -5,7 +5,7 @@
 	import { setTheme } from '$lib/utils/setTheme';
 </script>
 
-<div class="flex justify-between fl-gap-0.5/1 bg-neutral fl-px-0.5/1 text-neutral-content">
+<div class="flex w-full justify-between fl-gap-0.5/1 bg-neutral fl-px-0.5/1 text-neutral-content">
 	<ScrollArea orientation="horizontal">
 		<div class="flex">
 			<Button color="neutral" onclick={() => setTheme('midnight')}>Midnight</Button>

@@ -21,7 +21,7 @@
 <svelte:head><link rel="icon" href="/favicon.ico" /></svelte:head>
 
 <div
-	class="flex h-dvh max-h-dvh w-full max-w-full flex-col overflow-hidden bg-base-300 fl-text-sm/base"
+	class="flex h-dvh max-h-dvh w-full max-w-full flex-col items-stretch justify-center bg-base-300 fl-text-sm/base"
 	style="overscroll-behavior:contain;"
 >
 	<div class="grow">
