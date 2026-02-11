@@ -18,6 +18,7 @@
 			| 'warning'
 			| 'error';
 		variant?: 'default' | 'outline' | 'ghost';
+		orientation?: 'vertical' | 'horizontal';
 	} & Omit<HTMLButtonAttributes, 'class'>;
 
 	const {
@@ -25,6 +26,7 @@
 		size = 'md',
 		color = 'neutral',
 		variant = 'default',
+		orientation = 'horizontal',
 		children,
 		...rest
 	}: Props_t = $props();
@@ -99,17 +101,35 @@
 					? 'text-error hover:bg-error hover:text-error-content active:bg-error active:text-error-content'
 					: 'bg-error text-error-content hover:bg-error active:bg-error'),
 
-		size === 'sm' && 'fl-py-[0.25/0.5] fl-px-[0.5/0.75]',
-		size === 'md' && 'fl-py-[0.5/0.75] fl-px-[0.75/1]',
-		size === 'lg' && 'fl-py-[0.75/1.25] fl-px-[1.25/2.5]',
+		size === 'sm' &&
+			(orientation === 'horizontal'
+				? 'fl-py-[0.25/0.5] fl-px-[0.5/0.75]'
+				: 'fl-py-[0.5/0.75] fl-px-[0.25/0.5]'),
+		size === 'md' &&
+			(orientation === 'horizontal'
+				? 'fl-py-[0.5/0.75] fl-px-[0.75/1]'
+				: 'fl-py-[0.75/1] fl-px-[0.5/0.75]'),
+		size === 'lg' &&
+			(orientation === 'horizontal'
+				? 'fl-py-[0.75/1.25] fl-px-[1.25/2.5]'
+				: 'fl-py-[1.25/2.5] fl-px-[0.75/1.25]'),
+
+		orientation === 'vertical' && 'writing-slr',
 
 		size === 'sm-sq' && 'flex aspect-square items-center justify-center fl-p-[0.25/0.5]',
 		size === 'md-sq' && 'flex aspect-square items-center justify-center fl-p-[0.5/0.75]',
 		size === 'lg-sq' && 'flex aspect-square items-center justify-center fl-p-[0.75/1.25]',
 
-		(size === 'sm' || size === 'sm-sq') && 'fl-min-h-[6/7.5] fl-text-xs/sm',
-		(size === 'md' || size === 'md-sq') && 'fl-min-h-[7.5/9] fl-text-sm/base',
-		(size === 'lg' || size === 'lg-sq') && 'fl-min-h-[8.5/11] fl-text-base/lg',
+		(size === 'sm' || size === 'sm-sq') && 'fl-text-xs/sm',
+		(size === 'md' || size === 'md-sq') && 'fl-text-sm/base',
+		(size === 'lg' || size === 'lg-sq') && 'fl-text-base/lg',
+
+		(size === 'sm' || size === 'sm-sq') &&
+			(orientation === 'horizontal' ? 'fl-min-h-[6/7.5]' : 'fl-min-w-[6/7.5]'),
+		(size === 'md' || size === 'md-sq') &&
+			(orientation === 'horizontal' ? 'fl-min-h-[7.5/9]' : 'fl-min-w-[7.5/9]'),
+		(size === 'lg' || size === 'lg-sq') &&
+			(orientation === 'horizontal' ? 'fl-min-h-[8.5/11]' : 'fl-min-w-[8.5/11]'),
 
 		variant === 'outline' && 'bg-transparent hover:border-transparent active:border-transparent',
 		variant === 'ghost' &&
@@ -118,7 +138,8 @@
 
 		'box-border border-2',
 		'cursor-pointer overflow-hidden rounded-field select-none',
-		'hover:brightness-80 active:translate-y-px active:brightness-80',
+		'hover:brightness-80  active:brightness-80',
+		orientation === 'horizontal' ? 'active:translate-y-px' : 'active:translate-x-px',
 
 		'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
 

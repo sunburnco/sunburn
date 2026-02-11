@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { DropdownMenu } from 'bits-ui';
+
+	import { setTheme } from '$lib/utils/setTheme';
 </script>
 
 {#snippet header(text: string)}
 	<DropdownMenu.GroupHeading>
-		<div class="font-display fl-text-xs/sm font-bold opacity-70 select-none">
+		<div class="font-display fl-text-xs/sm font-bold select-none">
 			{text}
 		</div>
 	</DropdownMenu.GroupHeading>
@@ -19,8 +21,23 @@
 		</DropdownMenu.Trigger>
 
 		<DropdownMenu.Portal>
-			<DropdownMenu.Content class="rounded-box bg-base-100 fl-p-1/2 text-base-content shadow-md">
+			<DropdownMenu.Content
+				class="min-w-48 rounded-box border border-base-content/50 bg-base-100 fl-p-1/2 text-base-content shadow-xl"
+			>
 				<DropdownMenu.Group>
+					{@render header('Theme')}
+
+					{#each ['Midnight', 'Day', 'Sunset', 'Lilac', 'Oasis', 'Verdant'] as theme (theme)}
+						<DropdownMenu.Item
+							class="rounded-box flp-md select-none hover:bg-base-content hover:text-base-100 hover:brightness-80"
+							onclick={() => setTheme(theme.toLocaleLowerCase())}
+						>
+							{theme}
+						</DropdownMenu.Item>
+					{/each}
+				</DropdownMenu.Group>
+
+				<DropdownMenu.Group class="fl-mt-1/2">
 					{@render header('Accounts')}
 
 					<a href="/login">

@@ -407,7 +407,7 @@ func init() {
 			{
 				"authAlert": {
 					"emailTemplate": {
-						"body": "<p>Hello,</p>\n<p>We noticed a login to your {APP_NAME} account from a new location.</p>\n<p>If this was you, you may disregard this email.</p>\n<p><strong>If this wasn't you, you should immediately change your {APP_NAME} account password to revoke access from all other locations.</strong></p>\n<p>\n  Thanks,<br/>\n  {APP_NAME} team\n</p>",
+						"body": "<p>Hello,</p>\n<p>We noticed a login to your {APP_NAME} account from a new location:</p>\n<p><em>{ALERT_INFO}</em></p>\n<p><strong>If this wasn't you, you should immediately change your {APP_NAME} account password to revoke access from all other locations.</strong></p>\n<p>If this was you, you may disregard this email.</p>\n<p>\n  Thanks,<br/>\n  {APP_NAME} team\n</p>",
 						"subject": "Login from a new location"
 					},
 					"enabled": true
@@ -579,10 +579,10 @@ func init() {
 			{
 				"authAlert": {
 					"emailTemplate": {
-						"body": "<p>Hello,</p>\n<p>We noticed a login to your {APP_NAME} account from a new location.</p>\n<p>If this was you, you may disregard this email.</p>\n<p><strong>If this wasn't you, you should immediately change your {APP_NAME} account password to revoke access from all other locations.</strong></p>\n<p>\n  Thanks,<br/>\n  {APP_NAME} team\n</p>",
+						"body": "<p>Hello,</p>\n<p>We noticed a login to your {APP_NAME} account from a new location:</p>\n<p><em>{ALERT_INFO}</em></p>\n<p><strong>If this wasn't you, you should immediately change your {APP_NAME} account password to revoke access from all other locations.</strong></p>\n<p>If this was you, you may disregard this email.</p>\n<p>\n  Thanks,<br/>\n  {APP_NAME} team\n</p>",
 						"subject": "Login from a new location"
 					},
-					"enabled": false
+					"enabled": true
 				},
 				"authRule": "",
 				"authToken": {
@@ -593,7 +593,7 @@ func init() {
 					"subject": "Confirm your {APP_NAME} new email address"
 				},
 				"createRule": "",
-				"deleteRule": null,
+				"deleteRule": "id = @request.auth.id",
 				"emailChangeToken": {
 					"duration": 1800
 				},
@@ -703,6 +703,26 @@ func init() {
 						"type": "file"
 					},
 					{
+						"hidden": false,
+						"id": "autodate2990389176",
+						"name": "created",
+						"onCreate": true,
+						"onUpdate": false,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					},
+					{
+						"hidden": false,
+						"id": "autodate3332085495",
+						"name": "updated",
+						"onCreate": true,
+						"onUpdate": true,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					},
+					{
 						"autogeneratePattern": "[a-z0-9]{10}",
 						"hidden": false,
 						"id": "text2441093337",
@@ -729,26 +749,6 @@ func init() {
 						"required": true,
 						"system": false,
 						"type": "text"
-					},
-					{
-						"hidden": false,
-						"id": "autodate2990389176",
-						"name": "created",
-						"onCreate": true,
-						"onUpdate": false,
-						"presentable": false,
-						"system": false,
-						"type": "autodate"
-					},
-					{
-						"hidden": false,
-						"id": "autodate3332085495",
-						"name": "updated",
-						"onCreate": true,
-						"onUpdate": true,
-						"presentable": false,
-						"system": false,
-						"type": "autodate"
 					}
 				],
 				"fileToken": {
@@ -757,10 +757,9 @@ func init() {
 				"id": "_pb_users_auth_",
 				"indexes": [
 					"CREATE UNIQUE INDEX ` + "`" + `idx_tokenKey__pb_users_auth_` + "`" + ` ON ` + "`" + `users` + "`" + ` (` + "`" + `tokenKey` + "`" + `)",
-					"CREATE UNIQUE INDEX ` + "`" + `idx_email__pb_users_auth_` + "`" + ` ON ` + "`" + `users` + "`" + ` (` + "`" + `email` + "`" + `) WHERE ` + "`" + `email` + "`" + ` != ''",
-					"CREATE UNIQUE INDEX ` + "`" + `idx_OfvLgbOH1O` + "`" + ` ON ` + "`" + `users` + "`" + ` (` + "`" + `handle_lowercase` + "`" + `)"
+					"CREATE UNIQUE INDEX ` + "`" + `idx_email__pb_users_auth_` + "`" + ` ON ` + "`" + `users` + "`" + ` (` + "`" + `email` + "`" + `) WHERE ` + "`" + `email` + "`" + ` != ''"
 				],
-				"listRule": "(\n  // authenticated\n  @request.auth.id != \"\"\n  \n  // mutual server\n  // @collection.serverRoleAssignments.user ?= id &&\n  // @collection.serverRoleAssignments:auth.user ?= @request.auth.id &&\n  // @collection.serverRoleAssignments.role ?=\n  // @collection.serverRoleAssignments:auth.role\n)",
+				"listRule": "id = @request.auth.id",
 				"manageRule": null,
 				"mfa": {
 					"duration": 1800,
@@ -789,8 +788,7 @@ func init() {
 				"passwordAuth": {
 					"enabled": true,
 					"identityFields": [
-						"email",
-						"handle_lowercase"
+						"email"
 					]
 				},
 				"passwordResetToken": {
@@ -810,11 +808,11 @@ func init() {
 				"verificationToken": {
 					"duration": 259200
 				},
-				"viewRule": "(\n  // authenticated\n  @request.auth.id != \"\" \n)"
+				"viewRule": "id = @request.auth.id"
 			},
 			{
-				"createRule": "(\n  // if owner\n  channel.server.owner.id = @request.auth.id\n)",
-				"deleteRule": "(\n  // if owner\n  channel.server.owner.id = @request.auth.id\n)",
+				"createRule": "(\n  // is owner\n  channel.server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeServerPermissions_via_user.server ?= channel.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"manage channels\"\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_CHANNELS\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)",
+				"deleteRule": "(\n  // is owner\n  channel.server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeServerPermissions_via_user.server ?= channel.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"manage channels\"\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_CHANNELS\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)",
 				"fields": [
 					{
 						"autogeneratePattern": "[a-z0-9]{15}",
@@ -858,15 +856,6 @@ func init() {
 					},
 					{
 						"hidden": false,
-						"id": "bool1012845560",
-						"name": "readonly",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "bool"
-					},
-					{
-						"hidden": false,
 						"id": "autodate2990389176",
 						"name": "created",
 						"onCreate": true,
@@ -891,16 +880,16 @@ func init() {
 					"CREATE UNIQUE INDEX ` + "`" + `idx_7pdySy3sxN` + "`" + ` ON ` + "`" + `channelRoleAssignments` + "`" + ` (\n  ` + "`" + `channel` + "`" + `,\n  ` + "`" + `role` + "`" + `\n)",
 					"CREATE INDEX ` + "`" + `idx_C7jsGvWqmS` + "`" + ` ON ` + "`" + `channelRoleAssignments` + "`" + ` (` + "`" + `channel` + "`" + `)"
 				],
-				"listRule": "(\n  // is owner\n  @request.auth.id = channel.server.owner\n)\n||\n(\n  // member of server\n  @request.auth.serverRoleAssignments_via_user.role.server ?= channel.server &&\n  // has role for channel\n  @request.auth.serverRoleAssignments_via_user.role ?= role\n)",
+				"listRule": "(\n  // is owner\n  channel.server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeChannelPermissions_via_user.channel ?= channel.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"channel read\"\n  (\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_READ\" ||\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)",
 				"name": "channelRoleAssignments",
 				"system": false,
 				"type": "base",
-				"updateRule": "(\n  // if owner\n  channel.server.owner.id = @request.auth.id\n)",
-				"viewRule": "(\n  // is owner\n  @request.auth.id = channel.server.owner\n)\n||\n(\n  // member of server\n  @request.auth.serverRoleAssignments_via_user.role.server ?= channel.server &&\n  // has role for channel\n  @request.auth.serverRoleAssignments_via_user.role ?= role\n)"
+				"updateRule": "(\n  // is owner\n  channel.server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeServerPermissions_via_user.server ?= channel.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"manage channels\"\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_CHANNELS\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)",
+				"viewRule": "(\n  // is owner\n  channel.server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeChannelPermissions_via_user.channel ?= channel.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"channel read\"\n  (\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_READ\" ||\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)"
 			},
 			{
-				"createRule": "(\n  // owner\n  server.owner = @request.auth.id\n)",
-				"deleteRule": "(\n  // owner\n  server.owner = @request.auth.id\n)",
+				"createRule": "(\n  // is owner\n  server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeServerPermissions_via_user.server ?= server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"manage channels\"\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_CHANNELS\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)",
+				"deleteRule": "(\n  // is owner\n  server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeServerPermissions_via_user.server ?= server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"manage channels\"\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_CHANNELS\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)",
 				"fields": [
 					{
 						"autogeneratePattern": "[a-z0-9]{15}",
@@ -977,12 +966,12 @@ func init() {
 				"indexes": [
 					"CREATE INDEX ` + "`" + `idx_1HpyctJmFg` + "`" + ` ON ` + "`" + `channels` + "`" + ` (` + "`" + `server` + "`" + `)"
 				],
-				"listRule": "(\n  // is owner\n  @request.auth.id = server.owner\n)\n||\n(\n  // member of server\n  @request.auth.serverRoleAssignments_via_user.role.server ?= server &&\n  // has role for channel\n  @request.auth.serverRoleAssignments_via_user.role ?= \n  channelRoleAssignments_via_channel.role\n)",
+				"listRule": "(\n  // is owner\n  server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeChannelPermissions_via_user.channel ?= id &&\n  @request.auth.cumulativeChannelPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"channel read\"\n  (\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_READ\" ||\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)",
 				"name": "channels",
 				"system": false,
 				"type": "base",
-				"updateRule": "(\n  // owner\n  server.owner = @request.auth.id\n)",
-				"viewRule": "(\n  // is owner\n  @request.auth.id = server.owner\n)\n||\n(\n  // member of server\n  @request.auth.serverRoleAssignments_via_user.role.server ?= server &&\n  // has role for channel\n  @request.auth.serverRoleAssignments_via_user.role ?= \n  channelRoleAssignments_via_channel.role\n)"
+				"updateRule": "(\n  // is owner\n  server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeServerPermissions_via_user.server ?= server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"manage channels\"\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_CHANNELS\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)",
+				"viewRule": "(\n  // is owner\n  server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeChannelPermissions_via_user.channel ?= id &&\n  @request.auth.cumulativeChannelPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"channel read\"\n  (\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_READ\" ||\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)"
 			},
 			{
 				"createRule": null,
@@ -1057,8 +1046,8 @@ func init() {
 				"viewRule": null
 			},
 			{
-				"createRule": "(\n  // is author\n  @request.auth.id = from\n)\n&&\n(\n  // if sending to channel\n  channel = null ||\n  (\n    // can see channel\n    (\n      // because of a role\n      @request.auth.serverRoleAssignments_via_user.role ?= \n      channel.channelRoleAssignments_via_channel.role ||\n      // or is owner\n      @request.auth.id = channel.server.owner\n    ) &&\n    // doesnt have a read-only role for the channel\n    @request.auth.serverRoleAssignments_via_user.role ?!= \n    channel.channelReadOnlyRoles_via_channelID.roleIDs\n  )\n)",
-				"deleteRule": "(\n  // is author\n  @request.auth.id = from\n)\n||\n(\n  // owns server\n  @request.auth.id = channel.server.owner\n)",
+				"createRule": "(\n  // is author\n  @request.auth.id = from\n)\n&&\n(\n  // if sending to channel\n  channel = null ||\n  (\n    // is owner\n    (\n      @request.auth.id = channel.server.owner\n    )\n    ||\n    (\n      // is server member\n      @request.auth.cumulativeChannelPermissions_via_user.channel ?= channel.id &&\n      @request.auth.cumulativeChannelPermissions_via_user.user = @request.auth.id &&\n      @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n      (\n        // can see channel\n        // with channel read\n        @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_READ\" ||\n        // or admin\n        @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n      ) &&\n      // and sufficient permission to write\n      (\n        // admin\n        @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\" ||\n        // or \"write\" without being muted\n        (\n          @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_SEND\" &&\n          @request.auth.cumulativeChannelPermissions_via_user.permissions ?!~ \"_MUTED\"\n        ) \n      )\n    )\n  )\n)",
+				"deleteRule": "(\n  // is author\n  @request.auth.id = from\n)\n||\n(\n  // owns server\n  @request.auth.id = channel.server.owner\n)\n||\n(\n  // user is server member\n  @request.auth.cumulativeChannelPermissions_via_user.channel ?= channel.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  (\n    // can see channel\n    // with channel read\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_READ\" ||\n    // or admin\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  ) &&\n  (\n    // and has permission to delete the message\n    // admin\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\" ||\n    // or \"manage messages\"\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"MANAGE_MESSAGES\"\n  )\n)",
 				"fields": [
 					{
 						"autogeneratePattern": "[a-z0-9]{15}",
@@ -1163,12 +1152,12 @@ func init() {
 					"CREATE INDEX ` + "`" + `idx_AwvXRZ46Eg` + "`" + ` ON ` + "`" + `messages` + "`" + ` (` + "`" + `to` + "`" + `)",
 					"CREATE INDEX ` + "`" + `idx_VAPPy3hMBI` + "`" + ` ON ` + "`" + `messages` + "`" + ` (` + "`" + `channel` + "`" + `)"
 				],
-				"listRule": "(\n  // message author\n  @request.auth.id = from\n)\n||\n(\n  // message recipient\n  @request.auth.id = to\n)\n||\n(\n  // can see channel\n  @request.auth.serverRoleAssignments_via_user.role ?= \n  channel.channelRoleAssignments_via_channel.role\n)",
+				"listRule": "(\n  // message author\n  @request.auth.id = from\n)\n||\n(\n  // message recipient\n  @request.auth.id = to\n)\n||\n(\n  // server owner\n  @request.auth.id = channel.server.owner\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeChannelPermissions_via_user.channel ?= channel.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"channel read\"\n  (\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_READ\" ||\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)",
 				"name": "messages",
 				"system": false,
 				"type": "base",
 				"updateRule": "(\n  // is author\n  @request.auth.id = from\n)",
-				"viewRule": "(\n  // message author\n  @request.auth.id = from\n)\n||\n(\n  // message recipient\n  @request.auth.id = to\n)\n||\n(\n  // can see channel\n  @request.auth.serverRoleAssignments_via_user.role ?= \n  channel.channelRoleAssignments_via_channel.role\n)"
+				"viewRule": "(\n  // message author\n  @request.auth.id = from\n)\n||\n(\n  // message recipient\n  @request.auth.id = to\n)\n||\n(\n  // server owner\n  @request.auth.id = channel.server.owner\n)\n||\n(\n  // user can see channel\n  @request.auth.cumulativeChannelPermissions_via_user.channel ?= channel.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"channel read\"\n  (\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_READ\" ||\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)"
 			},
 			{
 				"createRule": null,
@@ -1246,8 +1235,8 @@ func init() {
 				"viewRule": "(\n  // requesting own record\n  @request.auth.id = user\n)"
 			},
 			{
-				"createRule": "(\n  // if owner\n  role.server.owner.id = @request.auth.id\n)",
-				"deleteRule": "(\n  // if owner\n  role.server.owner.id = @request.auth.id\n)",
+				"createRule": "(\n  // owner\n  @request.auth.id = role.server.owner\n)\n||\n(\n  // user has \"manage members\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= role.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_MEMBERS\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  ) &&\n  // and ordinal is lower than users max ordinal\n  (\n    @request.auth.maxOrdinal_via_user.server ?= role.server &&\n    @request.auth.maxOrdinal_via_user.user = @request.auth.id &&\n    @request.body.role.ordinal ?< @request.auth.maxOrdinal_via_user.maxOrdinal\n  )\n)",
+				"deleteRule": "(\n  // owner\n  @request.auth.id = role.server.owner\n)\n||\n(\n  // deleting own roles\n  @request.auth.id = user\n)\n||\n(\n  // user has \"manage members\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= role.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_MEMBERS\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  ) &&\n  // and ordinal is lower than users max ordinal\n  (\n    @request.auth.maxOrdinal_via_user.server ?= role.server &&\n    @request.auth.maxOrdinal_via_user.user = @request.auth.id &&\n    role.ordinal ?< @request.auth.maxOrdinal_via_user.maxOrdinal\n  )\n)",
 				"fields": [
 					{
 						"autogeneratePattern": "[a-z0-9]{15}",
@@ -1316,16 +1305,16 @@ func init() {
 					"CREATE INDEX ` + "`" + `idx_j2Bkvfagcu` + "`" + ` ON ` + "`" + `serverRoleAssignments` + "`" + ` (` + "`" + `role` + "`" + `)",
 					"CREATE INDEX ` + "`" + `idx_AVr5GvAX6O` + "`" + ` ON ` + "`" + `serverRoleAssignments` + "`" + ` (` + "`" + `user` + "`" + `)"
 				],
-				"listRule": "(\n  // is owner\n  @request.auth.id = role.server.owner\n)\n||\n(\n  // if requesting own assignments\n  user = @request.auth.id\n)\n||\n(\n  // user has role in server\n  role.server ?= @request.auth.serverRoleAssignments_via_user.role.server\n)\n",
+				"listRule": "(\n  // owner\n  @request.auth.id = role.server.owner\n)\n||\n(\n  // user has \"server member\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= role.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\"\n)",
 				"name": "serverRoleAssignments",
 				"system": false,
 				"type": "base",
 				"updateRule": null,
-				"viewRule": "(\n  // is owner\n  @request.auth.id = role.server.owner\n)\n||\n(\n  // if requesting own assignments\n  user = @request.auth.id\n)\n||\n(\n  // user has role in server\n  role.server ?= @request.auth.serverRoleAssignments_via_user.role.server\n)\n"
+				"viewRule": "(\n  // owner\n  @request.auth.id = role.server.owner\n)\n||\n(\n  // user has \"server member\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= role.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\"\n)"
 			},
 			{
-				"createRule": "(\n  // if owner\n  server.owner.id = @request.auth.id\n)",
-				"deleteRule": "(\n  // if owner\n  server.owner.id = @request.auth.id\n)",
+				"createRule": "(\n  // owner\n  @request.auth.id = server.owner\n)\n||\n(\n  // user has \"manage roles\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_ROLES\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  ) &&\n  // and new ordinal is lower than max ordinal\n  (\n    @request.auth.maxOrdinal_via_user.server ?= server.id &&\n    @request.auth.maxOrdinal_via_user.user = @request.auth.id &&\n    @request.body.ordinal ?< @request.auth.maxOrdinal_via_user.maxOrdinal\n  )\n)",
+				"deleteRule": "(\n  // owner\n  @request.auth.id = server.owner\n)\n||\n(\n  // user has \"manage roles\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_ROLES\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  ) &&\n  // and ordinal is lower than max ordinal\n  (\n    @request.auth.maxOrdinal_via_user.server ?= server.id &&\n    @request.auth.maxOrdinal_via_user.user = @request.auth.id &&\n    ordinal ?< @request.auth.maxOrdinal_via_user.maxOrdinal\n  )\n)",
 				"fields": [
 					{
 						"autogeneratePattern": "[a-z0-9]{15}",
@@ -1388,7 +1377,7 @@ func init() {
 						"max": null,
 						"min": null,
 						"name": "ordinal",
-						"onlyInt": true,
+						"onlyInt": false,
 						"presentable": false,
 						"required": false,
 						"system": false,
@@ -1420,12 +1409,12 @@ func init() {
 					"CREATE UNIQUE INDEX ` + "`" + `idx_DZXYlmCMc4` + "`" + ` ON ` + "`" + `serverRoles` + "`" + ` (\n  ` + "`" + `server` + "`" + `,\n  ` + "`" + `ordinal` + "`" + `\n)",
 					"CREATE INDEX ` + "`" + `idx_ADYi3sHvW6` + "`" + ` ON ` + "`" + `serverRoles` + "`" + ` (` + "`" + `server` + "`" + `)"
 				],
-				"listRule": "(\n  // is owner\n  @request.auth.id = server.owner\n)\n||\n(\n  // if requesting roles for server user is part of\n  server ?= @request.auth.serverRoleAssignments_via_user.role.server\n)\n",
+				"listRule": "(\n  // owner\n  @request.auth.id = server.owner\n)\n||\n(\n  // user has \"server member\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\"\n)",
 				"name": "serverRoles",
 				"system": false,
 				"type": "base",
-				"updateRule": "(\n  // if owner\n  server.owner.id = @request.auth.id\n)",
-				"viewRule": "(\n  // is owner\n  @request.auth.id = server.owner\n)\n||\n(\n  // if requesting roles for server user is part of\n  server ?= @request.auth.serverRoleAssignments_via_user.role.server\n)\n"
+				"updateRule": "(\n  // owner\n  @request.auth.id = server.owner\n)\n||\n(\n  // user has \"manage roles\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_ROLES\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  ) &&\n  // and ordinal is lower than max ordinal\n  (\n    @request.auth.maxOrdinal_via_user.server ?= server.id &&\n    @request.auth.maxOrdinal_via_user.user = @request.auth.id &&\n    ordinal ?< @request.auth.maxOrdinal_via_user.maxOrdinal\n  )\n)",
+				"viewRule": "(\n  // owner\n  @request.auth.id = server.owner\n)\n||\n(\n  // user has \"server member\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\"\n)"
 			},
 			{
 				"createRule": "(\n  // user must own server\n  owner = @request.auth.id\n)\n&&\n(\n  // quota is negative\n  @request.auth.serverQuotas_via_user.maxServers < 0 ||\n  // quota is positive and user owns no servers\n  (\n    @request.auth.serverQuotas_via_user.maxServers > 0 && \n    @request.auth.serverCounts_via_user.serverCount = null\n  ) ||\n  // quota is positive and not over quota\n  @request.auth.serverCounts_via_user.serverCount < \n  @request.auth.serverQuotas_via_user.maxServers\n)",
@@ -1515,196 +1504,12 @@ func init() {
 				],
 				"id": "pbc_3929545014",
 				"indexes": [],
-				"listRule": "(\n  // owner\n  @request.auth.id = owner\n)\n||\n(\n  // user has role in server\n  @request.auth.serverRoleAssignments_via_user.role.server ?= id\n)",
+				"listRule": "(\n  // owner\n  @request.auth.id = owner\n)\n||\n(\n  // user has \"server member\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\"\n)",
 				"name": "servers",
 				"system": false,
 				"type": "base",
-				"updateRule": "(\n  // owner may update server\n  owner = @request.auth.id\n)",
-				"viewRule": "(\n  // owner\n  @request.auth.id = owner\n)\n||\n(\n  // user has role in server\n  @request.auth.serverRoleAssignments_via_user.role.server ?= id\n)\n// TODO add rule about invites"
-			},
-			{
-				"createRule": null,
-				"deleteRule": null,
-				"fields": [
-					{
-						"autogeneratePattern": "",
-						"hidden": false,
-						"id": "text3208210256",
-						"max": 0,
-						"min": 0,
-						"name": "id",
-						"pattern": "^[a-z0-9]+$",
-						"presentable": false,
-						"primaryKey": true,
-						"required": true,
-						"system": true,
-						"type": "text"
-					},
-					{
-						"cascadeDelete": true,
-						"collectionId": "pbc_3009067695",
-						"hidden": false,
-						"id": "_clone_zjHU",
-						"maxSelect": 1,
-						"minSelect": 0,
-						"name": "channelID",
-						"presentable": false,
-						"required": true,
-						"system": false,
-						"type": "relation"
-					},
-					{
-						"hidden": false,
-						"id": "json1834033734",
-						"maxSize": 1,
-						"name": "roleIDs",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "json"
-					}
-				],
-				"id": "pbc_1453476981",
-				"indexes": [],
-				"listRule": "(\n  @request.auth.userRolesByServer_via_userID.roleIDs ?= roleIDs\n)",
-				"name": "channelReadOnlyRoles",
-				"system": false,
-				"type": "view",
-				"updateRule": null,
-				"viewQuery": "SELECT\n  (ROW_NUMBER() OVER()) as id,\n  channel AS channelID,\n  GROUP_CONCAT(DISTINCT role) AS roleIDs\nFROM\n  channelRoleAssignments\nWHERE\n  readonly IS true\nGROUP BY\n  channel;",
-				"viewRule": "(\n  @request.auth.userRolesByServer_via_userID.roleIDs ?= roleIDs\n)"
-			},
-			{
-				"createRule": null,
-				"deleteRule": null,
-				"fields": [
-					{
-						"autogeneratePattern": "",
-						"hidden": false,
-						"id": "text3208210256",
-						"max": 0,
-						"min": 0,
-						"name": "id",
-						"pattern": "^[a-z0-9]+$",
-						"presentable": false,
-						"primaryKey": true,
-						"required": true,
-						"system": true,
-						"type": "text"
-					},
-					{
-						"cascadeDelete": false,
-						"collectionId": "_pb_users_auth_",
-						"hidden": false,
-						"id": "_clone_fGi6",
-						"maxSelect": 1,
-						"minSelect": 0,
-						"name": "user",
-						"presentable": false,
-						"required": true,
-						"system": false,
-						"type": "relation"
-					},
-					{
-						"hidden": false,
-						"id": "number2461887133",
-						"max": null,
-						"min": null,
-						"name": "serverCount",
-						"onlyInt": false,
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "number"
-					}
-				],
-				"id": "pbc_1963852619",
-				"indexes": [],
-				"listRule": "(\n  // requesting own record\n  @request.auth.id = user\n)",
-				"name": "serverCounts",
-				"system": false,
-				"type": "view",
-				"updateRule": null,
-				"viewQuery": "SELECT\n  (ROW_NUMBER() OVER()) as id,\n  owner AS user,\n  COUNT(id) AS serverCount\nFROM \n  servers\nGROUP BY\n  owner",
-				"viewRule": "(\n  // requesting own record\n  @request.auth.id = user\n)"
-			},
-			{
-				"createRule": null,
-				"deleteRule": null,
-				"fields": [
-					{
-						"autogeneratePattern": "",
-						"hidden": false,
-						"id": "text3208210256",
-						"max": 0,
-						"min": 0,
-						"name": "id",
-						"pattern": "^[a-z0-9]+$",
-						"presentable": false,
-						"primaryKey": true,
-						"required": true,
-						"system": true,
-						"type": "text"
-					},
-					{
-						"hidden": false,
-						"id": "json344172009",
-						"maxSize": 1,
-						"name": "users",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "json"
-					}
-				],
-				"id": "pbc_145117425",
-				"indexes": [],
-				"listRule": "@request.auth.id = id",
-				"name": "dmListFrom",
-				"system": false,
-				"type": "view",
-				"updateRule": null,
-				"viewQuery": "SELECT\n  \"from\" as id,\n  GROUP_CONCAT(DISTINCT \"to\") AS users\nFROM\n  messages\nGROUP BY\n  \"from\";",
-				"viewRule": "@request.auth.id = id"
-			},
-			{
-				"createRule": null,
-				"deleteRule": null,
-				"fields": [
-					{
-						"autogeneratePattern": "",
-						"hidden": false,
-						"id": "text3208210256",
-						"max": 0,
-						"min": 0,
-						"name": "id",
-						"pattern": "^[a-z0-9]+$",
-						"presentable": false,
-						"primaryKey": true,
-						"required": true,
-						"system": true,
-						"type": "text"
-					},
-					{
-						"hidden": false,
-						"id": "json344172009",
-						"maxSize": 1,
-						"name": "users",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "json"
-					}
-				],
-				"id": "pbc_1139236038",
-				"indexes": [],
-				"listRule": "@request.auth.id = id",
-				"name": "dmListTo",
-				"system": false,
-				"type": "view",
-				"updateRule": null,
-				"viewQuery": "SELECT\n  \"to\" as id,\n  GROUP_CONCAT(DISTINCT \"from\") AS users\nFROM\n  messages\nGROUP BY\n  \"to\";",
-				"viewRule": "@request.auth.id = id"
+				"updateRule": "(\n  // owner may update server\n  owner = @request.auth.id\n)\n||\n(\n  // user has \"manage server\" or \"admin\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_SERVER\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  ) &&\n  (\n    // owner is not modified\n    @request.body.owner = owner ||\n    @request.body.owner:isset = false\n  )\n)",
+				"viewRule": "(\n  // owner\n  @request.auth.id = owner\n)\n||\n(\n  // user has \"server member\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\"\n)"
 			},
 			{
 				"createRule": null,
@@ -1775,12 +1580,12 @@ func init() {
 				"indexes": [
 					"CREATE UNIQUE INDEX ` + "`" + `idx_WvENqfsRHU` + "`" + ` ON ` + "`" + `voiceParticipants` + "`" + ` (\n  ` + "`" + `user` + "`" + `,\n  ` + "`" + `channel` + "`" + `\n)"
 				],
-				"listRule": "(\n  // is owner\n  @request.auth.id = channel.server.owner\n)\n||\n(\n  // member of server\n  @request.auth.serverRoleAssignments_via_user.role.server = channel.server &&\n  // has role for channel\n  @request.auth.serverRoleAssignments_via_user.role ?= \n  channel.channelRoleAssignments_via_channel.role\n)",
+				"listRule": "(\n  // is owner\n  channel.server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeChannelPermissions_via_user.channel ?= channel.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"channel read\"\n  (\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_READ\" ||\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)",
 				"name": "voiceParticipants",
 				"system": false,
 				"type": "base",
 				"updateRule": null,
-				"viewRule": "(\n  // is owner\n  @request.auth.id = channel.server.owner\n)\n||\n(\n  // member of server\n  @request.auth.serverRoleAssignments_via_user.role.server = channel.server &&\n  // has role for channel\n  @request.auth.serverRoleAssignments_via_user.role ?= \n  channel.channelRoleAssignments_via_channel.role\n)"
+				"viewRule": "(\n  // is owner\n  channel.server.owner = @request.auth.id\n)\n||\n(\n  // user has \"server member\"\n  @request.auth.cumulativeChannelPermissions_via_user.channel ?= channel.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  // and \"admin\" or \"channel read\"\n  (\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"CHANNEL_READ\" ||\n    @request.auth.cumulativeChannelPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  )\n)"
 			},
 			{
 				"createRule": "@request.auth.id = user",
@@ -1933,6 +1738,493 @@ func init() {
 				"type": "base",
 				"updateRule": null,
 				"viewRule": "@request.auth.id = user"
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 0,
+						"min": 0,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"cascadeDelete": false,
+						"collectionId": "_pb_users_auth_",
+						"hidden": false,
+						"id": "_clone_ZSZS",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "user",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"hidden": false,
+						"id": "number2461887133",
+						"max": null,
+						"min": null,
+						"name": "serverCount",
+						"onlyInt": false,
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "number"
+					}
+				],
+				"id": "pbc_1963852619",
+				"indexes": [],
+				"listRule": "(\n  // requesting own record\n  @request.auth.id = user\n)",
+				"name": "serverCounts",
+				"system": false,
+				"type": "view",
+				"updateRule": null,
+				"viewQuery": "SELECT\n  (ROW_NUMBER() OVER()) as id,\n  owner AS user,\n  COUNT(id) AS serverCount\nFROM \n  servers\nGROUP BY\n  owner",
+				"viewRule": "(\n  // requesting own record\n  @request.auth.id = user\n)"
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 0,
+						"min": 0,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"hidden": false,
+						"id": "json344172009",
+						"maxSize": 1,
+						"name": "users",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "json"
+					}
+				],
+				"id": "pbc_145117425",
+				"indexes": [],
+				"listRule": "@request.auth.id = id",
+				"name": "dmListFrom",
+				"system": false,
+				"type": "view",
+				"updateRule": null,
+				"viewQuery": "SELECT\n  \"from\" as id,\n  GROUP_CONCAT(DISTINCT \"to\") AS users\nFROM\n  messages\nGROUP BY\n  \"from\";",
+				"viewRule": "@request.auth.id = id"
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 0,
+						"min": 0,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"hidden": false,
+						"id": "json344172009",
+						"maxSize": 1,
+						"name": "users",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "json"
+					}
+				],
+				"id": "pbc_1139236038",
+				"indexes": [],
+				"listRule": "@request.auth.id = id",
+				"name": "dmListTo",
+				"system": false,
+				"type": "view",
+				"updateRule": null,
+				"viewQuery": "SELECT\n  \"to\" as id,\n  GROUP_CONCAT(DISTINCT \"from\") AS users\nFROM\n  messages\nGROUP BY\n  \"to\";",
+				"viewRule": "@request.auth.id = id"
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 128,
+						"min": 1,
+						"name": "id",
+						"pattern": "^[a-zA-Z0-9_]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"hidden": false,
+						"id": "number2768976709",
+						"max": 63,
+						"min": 0,
+						"name": "shift",
+						"onlyInt": true,
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "number"
+					},
+					{
+						"hidden": false,
+						"id": "bool2498023534",
+						"name": "isServerPermission",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "bool"
+					},
+					{
+						"hidden": false,
+						"id": "autodate2990389176",
+						"name": "created",
+						"onCreate": true,
+						"onUpdate": false,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					},
+					{
+						"hidden": false,
+						"id": "autodate3332085495",
+						"name": "updated",
+						"onCreate": true,
+						"onUpdate": true,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					}
+				],
+				"id": "pbc_3709660955",
+				"indexes": [
+					"CREATE UNIQUE INDEX ` + "`" + `idx_91cahb6KFF` + "`" + ` ON ` + "`" + `_permissions` + "`" + ` (` + "`" + `shift` + "`" + `)"
+				],
+				"listRule": "",
+				"name": "_permissions",
+				"system": false,
+				"type": "base",
+				"updateRule": null,
+				"viewRule": ""
+			},
+			{
+				"createRule": "(\n  // owner\n  @request.auth.id = role.server.owner\n)\n||\n(\n  // user has \"manage role permissions\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= role.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_ROLE_PERMISSIONS\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  ) &&\n  // and ordinal is lower than users max ordinal\n  (\n    @request.auth.maxOrdinal_via_user.server ?= role.server &&\n    @request.auth.maxOrdinal_via_user.user = @request.auth.id &&\n    @request.body.role.ordinal ?< @request.auth.maxOrdinal_via_user.maxOrdinal\n  )\n  // TODO should there be a check to forbid users from assigning permissions they do not already have?\n)",
+				"deleteRule": "(\n  // owner\n  @request.auth.id = role.server.owner\n)\n||\n(\n  // user has \"manage role permissions\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= role.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\" &&\n  (\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"MANAGE_ROLE_PERMISSIONS\" ||\n    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"ADMINISTRATOR\"\n  ) &&\n  // and ordinal is lower than users max ordinal\n  (\n    @request.auth.maxOrdinal_via_user.server ?= role.server &&\n    @request.auth.maxOrdinal_via_user.user = @request.auth.id &&\n    role.ordinal ?< @request.auth.maxOrdinal_via_user.maxOrdinal\n  )\n)",
+				"fields": [
+					{
+						"autogeneratePattern": "[a-z0-9]{15}",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 15,
+						"min": 15,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"cascadeDelete": true,
+						"collectionId": "pbc_578049435",
+						"hidden": false,
+						"id": "relation1466534506",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "role",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"cascadeDelete": true,
+						"collectionId": "pbc_3709660955",
+						"hidden": false,
+						"id": "relation3762918058",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "permission",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"hidden": false,
+						"id": "autodate2990389176",
+						"name": "created",
+						"onCreate": true,
+						"onUpdate": false,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					},
+					{
+						"hidden": false,
+						"id": "autodate3332085495",
+						"name": "updated",
+						"onCreate": true,
+						"onUpdate": true,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					}
+				],
+				"id": "pbc_163835457",
+				"indexes": [
+					"CREATE UNIQUE INDEX ` + "`" + `idx_E04HtQYEHt` + "`" + ` ON ` + "`" + `serverRolePermissions` + "`" + ` (\n  ` + "`" + `role` + "`" + `,\n  ` + "`" + `permission` + "`" + `\n)"
+				],
+				"listRule": "(\n  // owner\n  @request.auth.id = role.server.owner\n)\n||\n(\n  // user has \"server member\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= role.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\"\n)",
+				"name": "serverRolePermissions",
+				"system": false,
+				"type": "base",
+				"updateRule": null,
+				"viewRule": "(\n  // owner\n  @request.auth.id = role.server.owner\n)\n||\n(\n  // user has \"server member\" permission\n  @request.auth.cumulativeServerPermissions_via_user.server ?= role.server.id &&\n  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&\n  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ \"SERVER_MEMBER\"\n)"
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 0,
+						"min": 0,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"cascadeDelete": true,
+						"collectionId": "pbc_3929545014",
+						"hidden": false,
+						"id": "_clone_bjhD",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "server",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"cascadeDelete": true,
+						"collectionId": "_pb_users_auth_",
+						"hidden": false,
+						"id": "_clone_zn6k",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "user",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"hidden": false,
+						"id": "json770559087",
+						"maxSize": 1,
+						"name": "permissions",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "json"
+					}
+				],
+				"id": "pbc_1895722597",
+				"indexes": [],
+				"listRule": null,
+				"name": "cumulativeServerPermissions",
+				"system": false,
+				"type": "view",
+				"updateRule": null,
+				"viewQuery": "SELECT  \n  (ROW_NUMBER() OVER()) as id,\n  sr.server,\n  sra.user,\n  GROUP_CONCAT(DISTINCT srp.permission) AS permissions\nFROM\n  -- (\n  --   SELECT\n  --     *\n  --   FROM\n  --     serverRolePermissions\n  --     LEFT JOIN _permissions ON _permissions.id = serverRolePermissions.permission\n  --   WHERE\n  --     isServerPermission IS TRUE\n  -- ) srp\n  serverRolePermissions srp\n  LEFT JOIN _permissions _p ON _p.id = srp.permission\n  LEFT JOIN serverRoleAssignments sra ON sra.role = srp.role\n  LEFT JOIN serverRoles sr ON sra.role = sr.id\nWHERE\n  server NOTNULL AND\n  user NOTNULL AND\n  -- this filters roles without a dedicated server permission, meaning, if there was an \"ordinal\" column, it would only count roles with a server permission toward the ordinal\n  _p.isServerPermission IS TRUE\nGROUP BY\n  sr.server,\n  sra.user",
+				"viewRule": null
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 0,
+						"min": 0,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"cascadeDelete": true,
+						"collectionId": "pbc_3929545014",
+						"hidden": false,
+						"id": "_clone_XNna",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "server",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"cascadeDelete": true,
+						"collectionId": "_pb_users_auth_",
+						"hidden": false,
+						"id": "_clone_HQLR",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "user",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"cascadeDelete": true,
+						"collectionId": "pbc_3009067695",
+						"hidden": false,
+						"id": "_clone_D8Ml",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "channel",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"hidden": false,
+						"id": "json770559087",
+						"maxSize": 1,
+						"name": "permissions",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "json"
+					}
+				],
+				"id": "pbc_2423273168",
+				"indexes": [],
+				"listRule": null,
+				"name": "cumulativeChannelPermissions",
+				"system": false,
+				"type": "view",
+				"updateRule": null,
+				"viewQuery": "SELECT  \n  (ROW_NUMBER() OVER()) as id,\n  sr.server,\n  sra.user,\n  cra.channel,\n  CONCAT(GROUP_CONCAT(DISTINCT(srp.permission)), ',', csp.permissions) AS permissions\nFROM\n  serverRolePermissions srp\n  LEFT JOIN _permissions _p ON _p.id = srp.permission\n  LEFT JOIN serverRoleAssignments sra ON sra.role = srp.role\n  INNER JOIN channelRoleAssignments cra ON cra.role = sra.role\n  LEFT JOIN serverRoles sr ON sra.role = sr.id\n  LEFT JOIN cumulativeServerPermissions csp ON csp.user = sra.user\nWHERE\n  sr.server NOTNULL AND\n  sra.user NOTNULL AND\n  _p.isServerPermission = FALSE\nGROUP BY\n  sr.server,\n  sra.user,\n  cra.channel",
+				"viewRule": null
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 0,
+						"min": 0,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"cascadeDelete": true,
+						"collectionId": "_pb_users_auth_",
+						"hidden": false,
+						"id": "_clone_znQz",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "user",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"cascadeDelete": true,
+						"collectionId": "pbc_3929545014",
+						"hidden": false,
+						"id": "_clone_NzDk",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "server",
+						"presentable": false,
+						"required": true,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"hidden": false,
+						"id": "json1470146965",
+						"maxSize": 1,
+						"name": "maxOrdinal",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "json"
+					}
+				],
+				"id": "pbc_2578631689",
+				"indexes": [],
+				"listRule": null,
+				"name": "maxOrdinal",
+				"system": false,
+				"type": "view",
+				"updateRule": null,
+				"viewQuery": "SELECT\n  (ROW_NUMBER() OVER()) as id,\n  sra.user,\n  sr.server,\n  MAX(sr.ordinal) AS maxOrdinal\nFROM\n  serverRoleAssignments sra\n  LEFT JOIN serverRoles sr ON sra.role = sr.id\nWHERE\n  sr.server NOTNULL AND\n  sra.user NOTNULL\nGROUP BY\n  sra.user,\n  sr.server",
+				"viewRule": null
 			}
 		]`
 

@@ -47,17 +47,28 @@
 @utility flp-sm {
 	@apply fl-py-[0.25/0.5] fl-px-[0.5/0.75];
 }
-
 @utility flp-md {
 	@apply fl-py-[0.5/0.75] fl-px-[0.75/1];
 }
-
 @utility flp-lg {
 	@apply fl-py-[0.75/1.25] fl-px-[1.25/2.5];
 }
 
+@utility flicon-sm {
+	@apply inline fl-size-2/3.5 -translate-y-px stroke-[1.5px];
+}
+@utility flicon-sm90 {
+	@apply inline fl-size-2/3.5 translate-x-px -rotate-90 stroke-[1.5px];
+}
 @utility flicon-md {
 	@apply inline fl-size-3.5/5 -translate-y-px stroke-[1.5px];
+}
+@utility flicon-md90 {
+	@apply inline fl-size-3.5/5 translate-x-px -rotate-90 stroke-[1.5px];
+}
+
+@utility writing-slr {
+	writing-mode: sideways-lr;
 }
 
 strong,

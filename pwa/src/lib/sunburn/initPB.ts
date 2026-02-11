@@ -1,20 +1,20 @@
 import { SvelteSet } from 'svelte/reactivity';
 
-import type { ServersRecord, TypedPocketBase } from '$lib/pb-types';
+import type { TypedPocketBase } from '$lib/pb-types';
 import { debugPrefix } from '$lib/utils/logPrefixes';
 import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 import { logFriendly } from '$lib/utils/username';
 
 import { fetchInitialMessagesForDM } from './data/dmMessages';
 import { setServerRecord } from './data/server';
-import { type Instance_t, sunburn } from './sunburn.svelte';
+import { sunburn } from './sunburn.svelte';
 
 // TODO why did we have onAuthChange?
 
 export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boolean) => {
 	const instanceID = parseInstanceSlug(pb.baseURL, '');
 
-	const instance: Instance_t = {
+	sunburn[instanceID] = {
 		id: instanceID,
 		version: (await fetch(pb.buildURL('/api/health'))).headers.get('x-sb-version') ?? '',
 		ready: false,
@@ -32,11 +32,13 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 	};
 
 	if (pb.authStore.record?.id) {
-		instance.myID = pb.authStore.record.id;
+		sunburn[instanceID].myID = pb.authStore.record.id;
 
 		// eslint-disable-next-line no-console
 		console.debug(...debugPrefix, `<${pb.authStore.record.id}> fetching self`);
-		instance.users[instance.myID] = await pb.collection('users').getOne(instance.myID);
+		sunburn[instanceID].users[pb.authStore.record.id] = await pb
+			.collection('users')
+			.getOne(pb.authStore.record.id);
 
 		try {
 			for (const userID of (
@@ -79,9 +81,7 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 		}
 
 		try {
-			for (const server of (await pb
-				.collection('servers')
-				.getFullList({ requestKey: null })) as ServersRecord[]) {
+			for (const server of await pb.collection('servers').getFullList({ requestKey: null })) {
 				// eslint-disable-next-line no-console
 				console.debug(...debugPrefix, `${logFriendly(instanceID)} fetching server`, server.id);
 
@@ -113,8 +113,6 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 		// TODO handle voice settings
 	}
 
-	sunburn[instance.id] = instance;
-
 	if (pb.authStore.isValid && !noReauth) {
 		pb.collection('users').authRefresh({ requestKey: null });
 	}
@@ -126,7 +124,7 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 
 	// TODO register event listeners
 
-	sunburn[instance.id].ready = true;
+	sunburn[instanceID].ready = true;
 
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, `${logFriendly(instanceID)} init done`);

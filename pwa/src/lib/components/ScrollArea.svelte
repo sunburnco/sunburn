@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { ScrollArea, type WithoutChild } from 'bits-ui';
 
+	import { createStaydown } from '$lib/staydown/staydown';
+
 	type Props = WithoutChild<ScrollArea.RootProps> & {
 		orientation?: 'vertical' | 'horizontal' | 'both';
 		viewportClassName?: string;
@@ -16,6 +18,7 @@
 			| 'success'
 			| 'warning'
 			| 'error';
+		staydown?: boolean;
 	};
 
 	let {
@@ -23,6 +26,7 @@
 		orientation = 'vertical',
 		viewportClassName,
 		color = 'neutral',
+		staydown = false,
 		children,
 		...restProps
 	}: Props = $props();
@@ -62,12 +66,18 @@
 				color === 'error' && 'bg-error-content/50 active:bg-error-content/80',
 				'rounded-selector',
 			]}
+			style={orientation === 'vertical'
+				? '--bits-scroll-area-thumb-width:clamp(0.25rem, 0.162rem + 0.3756vw, 0.5rem);'
+				: '--bits-scroll-area-thumb-height:clamp(0.25rem, 0.162rem + 0.3756vw, 0.5rem);'}
 		/>
 	</ScrollArea.Scrollbar>
 {/snippet}
 
 <ScrollArea.Root bind:ref class="overflow-hidden" scrollHideDelay={0} {...restProps}>
-	<ScrollArea.Viewport class={viewportClassName}>
+	<ScrollArea.Viewport
+		class={viewportClassName}
+		{@attach createStaydown({ pauseOnUserScroll: true, psych: !staydown })}
+	>
 		{@render children?.()}
 	</ScrollArea.Viewport>
 	{#if orientation === 'vertical' || orientation === 'both'}
