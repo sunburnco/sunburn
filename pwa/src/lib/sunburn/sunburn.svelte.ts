@@ -16,6 +16,9 @@ export type LocalAuthStoreKey_t = `${string}@${string}`; // x@localhost:8090
 export type BaseURL_t = string; // http://localhost:8090
 export const localAuthStoreKeys = {} as Record<LocalAuthStoreKey_t, BaseURL_t>;
 
+export type DMMessage_t = WithRequired<Omit<MessagesRecord, 'channel'>, 'to'>;
+export type ChannelMessage_t = WithRequired<Omit<MessagesRecord, 'to'>, 'channel'>;
+
 export type Role_t = {
 	record: ServerRolesRecord;
 	permissions: SvelteSet<string>;
@@ -24,7 +27,8 @@ export type Role_t = {
 export type Channel_t = {
 	record: ChannelsRecord;
 	assignedRolesIDs: SvelteSet<ServerRolesRecord['id']>;
-	messages: WithRequired<Omit<MessagesRecord, 'to'>, 'channel'>[];
+	messages: ChannelMessage_t[];
+	voiceParticipants: SvelteSet<ServerMember_t['id']>;
 };
 
 export type ServerMember_t = {
@@ -37,12 +41,19 @@ export type Server_t = {
 	roles: Record<ServerRolesRecord['id'], Role_t>;
 	channels: Record<ChannelsRecord['id'], Channel_t>;
 	members: Record<ServerMember_t['id'], ServerMember_t>;
+
+	// this is true when the roles, channels, and members have been fetched
+	// a server only becomes "loaded" when it's selected from the server picker
+	// this cuts down on event processing
+	//
+	// for events, the check is performed by `find{Server|Role}IDForChannel()`
+	loaded: boolean;
 };
 
 export type DM_t = {
 	recipientID: UsersRecord['id'];
 	updated: ZonedDateTime;
-	messages: WithRequired<Omit<MessagesRecord, 'channel'>, 'to'>[];
+	messages: DMMessage_t[];
 };
 
 /**
@@ -90,6 +101,8 @@ export type Instance_t = {
 
 	pinnedServerIDs: SvelteSet<Server_t['record']['id']>;
 	pinnedDMIDs: SvelteSet<DM_t['recipientID']>;
+
+	// TODO add memo for which server a channel belongs to
 };
 
 export const sunburn = $state<Record<Instance_t['id'], Instance_t>>({});

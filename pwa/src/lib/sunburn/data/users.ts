@@ -21,12 +21,12 @@ export const clearUserRecord = (instanceID: Instance_t['id'], userID: UsersRecor
 export const fetchUser = async (
 	instanceID: Instance_t['id'],
 	userID: UsersRecord['id'],
-	requestKey?: string | null,
+	_requestKey?: string | null,
 ) => {
 	try {
 		const record = (await sunburn[instanceID].pb
 			.collection('users')
-			.getOne(userID, { requestKey })) as UsersResponse<UsersRecord>;
+			.getOne(userID, { requestKey: null })) as UsersResponse<UsersRecord>;
 		setUserRecord(instanceID, userID, record);
 	} catch (err) {
 		if (err instanceof ClientResponseError && err.status === 0) {
@@ -36,7 +36,7 @@ export const fetchUser = async (
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for user',
 				userID,
-				requestKey,
+				_requestKey,
 			);
 			return;
 		} else if (err instanceof ClientResponseError && err.status >= 400 && err.status < 500) {

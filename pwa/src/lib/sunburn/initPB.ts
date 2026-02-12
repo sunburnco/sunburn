@@ -6,6 +6,8 @@ import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 import { logFriendly } from '$lib/utils/username';
 
 import { fetchInitialMessagesForDM } from './data/dmMessages';
+import { fetchPinnedDMs } from './data/pinnedDMs';
+import { fetchPinnedServers } from './data/pinnedServers';
 import { setServerRecord } from './data/server';
 import { sunburn } from './sunburn.svelte';
 
@@ -73,7 +75,7 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 					`${logFriendly(instanceID)} fetching dm messages (pt. 2)`,
 					userID,
 				);
-				fetchInitialMessagesForDM(instanceID, userID, userID);
+				fetchInitialMessagesForDM(instanceID, userID, userID + '2');
 			}
 		} catch {
 			// noop
@@ -95,7 +97,7 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 		try {
 			// eslint-disable-next-line no-console
 			console.debug(...debugPrefix, `${logFriendly(instanceID)} fetching pinned dms`);
-			// TODO fetch pinned DMs
+			fetchPinnedDMs(instanceID, instanceID);
 		} catch {
 			// noop
 			const _ = null;
@@ -104,7 +106,7 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 		try {
 			// eslint-disable-next-line no-console
 			console.debug(...debugPrefix, `${logFriendly(instanceID)} fetching pinned servers`);
-			// TODO fetch pinned servers
+			fetchPinnedServers(instanceID, instanceID);
 		} catch {
 			// noop
 			const _ = null;
@@ -122,7 +124,7 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, `${logFriendly(instanceID)} registering event listeners`);
 
-	// TODO register event listeners
+	// TODO register handlers
 
 	sunburn[instanceID].ready = true;
 

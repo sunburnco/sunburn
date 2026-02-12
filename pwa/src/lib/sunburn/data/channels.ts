@@ -18,6 +18,7 @@ import {
 	sunburn,
 } from '../sunburn.svelte';
 import { fetchServer } from './server';
+import { fetchVoiceParticipantsForChannel } from './voiceParticipants';
 
 export const setChannelRecord = (
 	instanceID: Instance_t['id'],
@@ -37,8 +38,12 @@ export const setChannelRecord = (
 			assignedRolesIDs: new SvelteSet(),
 			messages: [],
 			record,
+			voiceParticipants: new SvelteSet(),
 		};
+		return;
 	}
+
+	sunburn[instanceID].servers[serverID].channels[channelID].record = record;
 };
 
 export const clearChannelRecord = (
@@ -53,13 +58,16 @@ export const fetchChannel = async (
 	instanceID: Instance_t['id'],
 	serverID: Server_t['record']['id'],
 	channelID: Channel_t['record']['id'],
-	requestKey?: string | null,
+	_requestKey?: string | null,
 ) => {
 	try {
 		const channel = await sunburn[instanceID].pb
 			.collection('channels')
-			.getOne<ChannelsResponse<ChannelsRecord>>(channelID, { requestKey });
+			.getOne<ChannelsResponse<ChannelsRecord>>(channelID, { requestKey: null });
 		setChannelRecord(instanceID, serverID, channelID, channel);
+
+		fetchChannelRoleAssignmentsForChannel(instanceID, serverID, channelID, null);
+		fetchVoiceParticipantsForChannel(instanceID, serverID, channelID, null);
 	} catch (err) {
 		if (err instanceof ClientResponseError && err.status === 0) {
 			// eslint-disable-next-line no-console
@@ -68,7 +76,7 @@ export const fetchChannel = async (
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for channel',
 				channelID,
-				requestKey,
+				_requestKey,
 			);
 			return;
 		} else if (err instanceof ClientResponseError && err.status >= 400 && err.status < 500) {
@@ -84,7 +92,7 @@ export const fetchChannel = async (
 export const fetchChannelsForServer = async (
 	instanceID: Instance_t['id'],
 	serverID: Server_t['record']['id'],
-	requestKey?: string | null,
+	_requestKey?: string | null,
 ) => {
 	try {
 		if (!(serverID in sunburn[instanceID].servers)) {
@@ -95,11 +103,13 @@ export const fetchChannelsForServer = async (
 			.collection('channels')
 			.getFullList<ChannelsResponse<ChannelsRecord>>({
 				filter: sunburn[instanceID].pb.filter('server = {:serverID}', { serverID }),
-				requestKey,
+				requestKey: null,
 			});
 
 		for (const channel of channelsResp) {
 			setChannelRecord(instanceID, serverID, channel.id, channel);
+			fetchChannelRoleAssignmentsForChannel(instanceID, serverID, channel.id, null);
+			fetchVoiceParticipantsForChannel(instanceID, serverID, channel.id, null);
 		}
 	} catch (err) {
 		if (err instanceof ClientResponseError && err.status === 0) {
@@ -109,7 +119,7 @@ export const fetchChannelsForServer = async (
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for full channel list',
 				serverID,
-				requestKey,
+				_requestKey,
 			);
 			return;
 		} else if (err instanceof ClientResponseError && err.status >= 400 && err.status < 500) {
@@ -175,14 +185,14 @@ export const fetchChannelRoleAssignmentsForChannel = async (
 	instanceID: Instance_t['id'],
 	serverID: Server_t['record']['id'],
 	channelID: Channel_t['record']['id'],
-	requestKey?: string | null,
+	_requestKey?: string | null,
 ) => {
 	if (!(serverID in sunburn[instanceID].servers)) {
-		await fetchServer(instanceID, serverID, requestKey + serverID);
+		await fetchServer(instanceID, serverID, null);
 	}
 
 	if (!(channelID in sunburn[instanceID].servers[serverID].channels)) {
-		await fetchChannel(instanceID, serverID, channelID, requestKey + channelID);
+		await fetchChannel(instanceID, serverID, channelID, null);
 	}
 
 	try {
@@ -190,7 +200,7 @@ export const fetchChannelRoleAssignmentsForChannel = async (
 			.collection('channelRoleAssignments')
 			.getFullList<ChannelRoleAssignmentsResponse<ChannelRoleAssignmentsRecord>>({
 				filter: sunburn[instanceID].pb.filter('channel = {:channelID}', { channelID }),
-				requestKey,
+				requestKey: null,
 			});
 		for (const cra of craResp) {
 			setChannelRoleAssignment(instanceID, serverID, channelID, cra.role);
@@ -203,7 +213,7 @@ export const fetchChannelRoleAssignmentsForChannel = async (
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for channel role assignments',
 				channelID,
-				requestKey,
+				_requestKey,
 			);
 			return;
 		}

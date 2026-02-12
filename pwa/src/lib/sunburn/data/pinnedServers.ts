@@ -22,12 +22,12 @@ export const clearPinnedServerRecord = (
 
 export const fetchPinnedServers = async (
 	instanceID: Instance_t['id'],
-	requestKey?: string | null,
+	_requestKey?: string | null,
 ) => {
 	try {
 		const pinnedServersResp = await sunburn[instanceID].pb
 			.collection('pinnedServers')
-			.getFullList<PinnedServersResponse<PinnedServersRecord>>({ requestKey });
+			.getFullList<PinnedServersResponse<PinnedServersRecord>>({ requestKey: null });
 		for (const pinnedServer of pinnedServersResp) {
 			setPinnedServerRecord(instanceID, pinnedServer.server);
 		}
@@ -38,7 +38,7 @@ export const fetchPinnedServers = async (
 				...debugPrefix,
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for pinned server list',
-				requestKey,
+				_requestKey,
 			);
 			return;
 		}

@@ -1,9 +1,10 @@
-import { fromAbsolute, getLocalTimeZone, parseZonedDateTime } from '@internationalized/date';
+import { fromAbsolute, getLocalTimeZone } from '@internationalized/date';
 import { ClientResponseError } from 'pocketbase';
 
 import type { MessagesRecord, UsersRecord } from '$lib/pb-types';
 import { binaryUpdateOrInsert } from '$lib/utils/binaryArray';
 import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
+import { parseTimeFromPB } from '$lib/utils/parseTimeFromPB';
 import { logFriendly } from '$lib/utils/username';
 
 import { type DM_t, type Instance_t, sunburn } from '../sunburn.svelte';
@@ -34,7 +35,7 @@ export const clearDMMessages = (instanceID: Instance_t['id'], recipientID: Users
 export const fetchInitialMessagesForDM = async (
 	instanceID: Instance_t['id'],
 	recipientID: DM_t['recipientID'],
-	requestKey?: string | null,
+	_requestKey?: string | null,
 ) => {
 	try {
 		const messagesResp = await sunburn[instanceID].pb.collection('messages').getList(1, 50, {
@@ -45,7 +46,7 @@ export const fetchInitialMessagesForDM = async (
 				},
 			),
 			sort: '-created',
-			requestKey,
+			requestKey: null,
 		});
 
 		if (!(recipientID in sunburn[instanceID].dms)) {
@@ -67,7 +68,7 @@ export const fetchInitialMessagesForDM = async (
 			if (!isFirst) {
 				continue;
 			}
-			const t = parseZonedDateTime(message.updated);
+			const t = parseTimeFromPB(message.updated);
 			if (t.compare(sunburn[instanceID].dms[recipientID].updated) > 0) {
 				sunburn[instanceID].dms[recipientID].updated = t;
 			}
@@ -81,7 +82,7 @@ export const fetchInitialMessagesForDM = async (
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for dm messages',
 				recipientID,
-				requestKey,
+				_requestKey,
 			);
 			return;
 		}

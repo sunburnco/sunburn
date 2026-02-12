@@ -8,12 +8,12 @@ import { type Instance_t, sunburn } from '../sunburn.svelte';
 
 export const fetchGlobalPermissions = async (
 	instanceID: Instance_t['id'],
-	requestKey?: string | null,
+	_requestKey?: string | null,
 ) => {
 	try {
 		const permissionsResp = await sunburn[instanceID].pb
 			.collection('_permissions')
-			.getFullList<PermissionsResponse<PermissionsRecord>>({ requestKey });
+			.getFullList<PermissionsResponse<PermissionsRecord>>({ requestKey: null });
 		for (const permission of permissionsResp) {
 			sunburn[instanceID].permissionDefinitions[permission.id] = permission;
 		}
@@ -24,7 +24,7 @@ export const fetchGlobalPermissions = async (
 				...debugPrefix,
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for instance global permissions',
-				requestKey,
+				_requestKey,
 			);
 			return;
 		}

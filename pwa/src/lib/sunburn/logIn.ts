@@ -16,7 +16,9 @@ export const logInWithPassword = async (
 
 	const pb = new PocketBase(baseURL, new LocalAuthStore(instanceID)) as TypedPocketBase;
 
-	const resp = await pb.collection('users').authWithPassword(emailOrUsername, password);
+	const resp = await pb
+		.collection('users')
+		.authWithPassword(emailOrUsername.toLocaleLowerCase(), password);
 	const handle = resp.record.handle_lowercase;
 
 	initPB(pb, handle, true);

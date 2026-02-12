@@ -20,11 +20,11 @@ export const clearPinnedDMRecord = (
 	sunburn[instanceID].pinnedDMIDs.delete(pinnedDMID);
 };
 
-export const fetchPinnedDMs = async (instanceID: Instance_t['id'], requestKey?: string | null) => {
+export const fetchPinnedDMs = async (instanceID: Instance_t['id'], _requestKey?: string | null) => {
 	try {
 		const pinnedDMsResp = await sunburn[instanceID].pb
 			.collection('pinnedDMs')
-			.getFullList<PinnedDMsResponse<PinnedDMsRecord>>({ requestKey });
+			.getFullList<PinnedDMsResponse<PinnedDMsRecord>>({ requestKey: null });
 		for (const pinnedDM of pinnedDMsResp) {
 			setPinnedDMRecord(instanceID, pinnedDM.recipient);
 		}
@@ -35,7 +35,7 @@ export const fetchPinnedDMs = async (instanceID: Instance_t['id'], requestKey?: 
 				...debugPrefix,
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for pinned DM list',
-				requestKey,
+				_requestKey,
 			);
 			return;
 		}

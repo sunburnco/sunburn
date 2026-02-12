@@ -8,15 +8,15 @@ export const cumulativeServerPermissions = (
 	instanceID: Instance_t['id'],
 	serverID: Server_t['record']['id'],
 	userID: UsersRecord['id'],
-): string[] => {
+): Set<string> => {
+	const perms = new Set<PermissionsRecord['id']>();
+
 	if (
 		!(serverID in sunburn[instanceID].servers) ||
 		!(userID in sunburn[instanceID].servers[serverID].members)
 	) {
-		return [];
+		return perms;
 	}
-
-	const perms = new Set<PermissionsRecord['id']>();
 
 	for (const roleID of sunburn[instanceID].servers[serverID].members[userID].roleIDs) {
 		for (const permissionID of sunburn[instanceID].servers[serverID].roles[roleID].permissions) {
@@ -25,7 +25,7 @@ export const cumulativeServerPermissions = (
 		}
 	}
 
-	return Array.from(perms);
+	return perms;
 };
 
 export const cumulativeChannelPermissions = (
@@ -33,20 +33,20 @@ export const cumulativeChannelPermissions = (
 	serverID: Server_t['record']['id'],
 	channelID: Channel_t['record']['id'],
 	userID: UsersRecord['id'],
-): string[] => {
+): Set<string> => {
+	const perms = new Set<PermissionsRecord['id']>();
+
 	if (
 		!(serverID in sunburn[instanceID].servers) ||
 		!(channelID in sunburn[instanceID].servers[serverID].channels) ||
 		!(userID in sunburn[instanceID].servers[serverID].members)
 	) {
-		return [];
+		return perms;
 	}
 
 	const channelRoleIDs = sunburn[instanceID].servers[serverID].channels[channelID].assignedRolesIDs;
 	const userRoleIDs = sunburn[instanceID].servers[serverID].members[userID].roleIDs;
 	const commonRoleIDs = channelRoleIDs.intersection(userRoleIDs);
-
-	const perms = new Set<PermissionsRecord['id']>();
 
 	for (const roleID of commonRoleIDs) {
 		for (const permissionID of sunburn[instanceID].servers[serverID].roles[roleID].permissions) {
@@ -55,5 +55,5 @@ export const cumulativeChannelPermissions = (
 		}
 	}
 
-	return Array.from(perms);
+	return perms;
 };

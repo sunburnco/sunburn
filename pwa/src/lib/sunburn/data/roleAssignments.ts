@@ -64,10 +64,10 @@ export const clearRoleAssignment = (
 export const fetchRoleAssignmentsForServer = async (
 	instanceID: Instance_t['id'],
 	serverID: Server_t['record']['id'],
-	requestKey?: string | null,
+	_requestKey?: string | null,
 ) => {
 	if (!(serverID in sunburn[instanceID].servers)) {
-		await fetchServer(instanceID, serverID, requestKey + serverID);
+		await fetchServer(instanceID, serverID, null);
 	}
 
 	try {
@@ -75,6 +75,7 @@ export const fetchRoleAssignmentsForServer = async (
 			.collection('serverRoleAssignments')
 			.getFullList<ServerRoleAssignmentsResponse<ServerRoleAssignmentsRecord>>({
 				filter: sunburn[instanceID].pb.filter('role.server = {:serverID}', { serverID }),
+				requestKey: null,
 			});
 		for (const sra of srasResp) {
 			setRoleAssignment(instanceID, serverID, sra.user, sra.role);
@@ -87,7 +88,7 @@ export const fetchRoleAssignmentsForServer = async (
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for server role assignments',
 				serverID,
-				requestKey,
+				_requestKey,
 			);
 			return;
 		}

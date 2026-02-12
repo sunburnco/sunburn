@@ -22,7 +22,7 @@
 
 		<DropdownMenu.Portal>
 			<DropdownMenu.Content
-				class="min-w-48 rounded-box border border-base-content/50 bg-base-100 fl-p-1/2 text-base-content shadow-xl"
+				class="fl-mx-0.5/1 min-w-48 rounded-box border border-base-content/50 bg-base-100 fl-p-1/2 text-base-content shadow-xl"
 			>
 				<DropdownMenu.Group>
 					{@render header('Theme')}

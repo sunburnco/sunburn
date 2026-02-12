@@ -2,17 +2,21 @@
 	import type { ZonedDateTime } from '@internationalized/date';
 	import { LucideCirclePlus, LucideHash, LucideVolume2 } from '@lucide/svelte';
 
+	import { page } from '$app/state';
 	import Button from '$lib/components/Button.svelte';
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
 	import ScrollArea from '$lib/components/ScrollArea.svelte';
-	import { fetchChannelsForServer } from '$lib/sunburn/data/channels';
+	import { loadServer } from '$lib/sunburn/data/server';
 	import { fetchUser } from '$lib/sunburn/data/users';
 	import { type Channel_t, type Server_t, sunburn } from '$lib/sunburn/sunburn.svelte';
 
 	let root = $state<HTMLDivElement | null>(null);
 
-	let activeInstanceID = $state('');
-	let activeServerID = $state<string>('dms');
+	const url = $state.snapshot(page.url.pathname).split('/');
+	let activeInstanceID = $state(url.length >= 3 && url[1] === 'instance' ? url[2] : '');
+	let activeServerID = $state(url.length >= 5 && url[3] === 'server' ? url[4] : 'dms');
+	let activeChannelID = $state(url.length >= 7 && url[5] === 'channel' ? url[6] : '');
+	let activeDMID = $state(url.length >= 5 && url[3] === 'dm' ? url[4] : '');
 
 	const serverList = $derived.by(() => {
 		const ret: { instanceID: string; serverID: string; record: Server_t['record'] }[] = [];
@@ -54,8 +58,12 @@
 			return;
 		}
 
-		if (Object.keys(sunburn[activeInstanceID].servers[activeServerID].channels).length === 0) {
-			fetchChannelsForServer(activeInstanceID, activeServerID, activeServerID);
+		if (!(activeInstanceID in sunburn) || !(activeServerID in sunburn[activeInstanceID].servers)) {
+			return;
+		}
+
+		if (!sunburn[activeInstanceID].servers[activeServerID].loaded) {
+			loadServer(activeInstanceID, activeServerID, activeServerID);
 		}
 	});
 
@@ -108,7 +116,14 @@
 			{#each dmList as dm (dm.dmID)}
 				{#if dm.dmID in sunburn[dm.instanceID].users}
 					<a href={`/instance/${dm.instanceID}/dm/${dm.dmID}`}>
-						<Button orientation="vertical" color="base-200">
+						<Button
+							orientation="vertical"
+							color={activeDMID === dm.dmID ? 'neutral' : 'base-200'}
+							onclick={() => {
+								activeDMID = dm.dmID;
+								activeChannelID = '';
+							}}
+						>
 							<div class="flex items-center justify-center fl-gap-[0.5/0.75]">
 								<PBAvatar
 									instanceID={dm.instanceID}
@@ -132,7 +147,14 @@
 				<a
 					href={`/instance/${channel.instanceID}/server/${channel.record.server}/channel/${channel.channelID}`}
 				>
-					<Button orientation="vertical" color="base-200">
+					<Button
+						orientation="vertical"
+						color={activeChannelID === channel.channelID ? 'neutral' : 'base-200'}
+						onclick={() => {
+							activeChannelID = channel.channelID;
+							activeDMID = '';
+						}}
+					>
 						<div class="flex items-center justify-center fl-gap-0.5/1">
 							{#if channel.record.voice}
 								<LucideVolume2 class="flicon-sm90" />
@@ -165,11 +187,10 @@
 	>
 		<Button
 			orientation="vertical"
-			color="base-100"
+			color={activeServerID === 'dms' ? 'neutral' : 'base-100'}
 			onclick={() => {
 				activeServerID = 'dms';
 			}}
-			className={activeServerID === 'dms' ? 'font-bold' : 'font-normal'}
 		>
 			DMs
 		</Button>
