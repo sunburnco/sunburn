@@ -117,7 +117,7 @@ export const loadServer = async (
 	sunburn[instanceID].servers[serverID].loaded = true;
 	await fetchServer(instanceID, serverID, null);
 
-	// this also fetches role permission
+	// this also fetches role permissions
 	fetchRolesForServer(instanceID, serverID, null);
 
 	// this also fetches channel role assignments and voice participants

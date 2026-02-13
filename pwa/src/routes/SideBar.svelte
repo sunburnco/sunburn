@@ -13,9 +13,9 @@
 	let root = $state<HTMLDivElement | null>(null);
 
 	const url = $state.snapshot(page.url.pathname).split('/');
-	let activeInstanceID = $state(url.length >= 3 && url[1] === 'instance' ? url[2] : '');
-	let activeServerID = $state(url.length >= 5 && url[3] === 'server' ? url[4] : 'dms');
-	let activeChannelID = $state(url.length >= 7 && url[5] === 'channel' ? url[6] : '');
+	let activeInstanceID = $state(page.params.instanceID || '');
+	let activeServerID = $state(page.params.serverID || 'dms');
+	let activeChannelID = $state(page.params.channelID || '');
 	let activeDMID = $state(url.length >= 5 && url[3] === 'dm' ? url[4] : '');
 
 	const serverList = $derived.by(() => {
@@ -39,6 +39,10 @@
 		const ret: { dmID: string; instanceID: string; updated: ZonedDateTime }[] = [];
 
 		for (const instanceID of Object.keys(sunburn)) {
+			if (!sunburn[instanceID].ready) {
+				continue;
+			}
+
 			for (const dmID of Object.keys(sunburn[instanceID].dms)) {
 				ret.push({ dmID, instanceID, updated: sunburn[instanceID].dms[dmID].updated });
 
@@ -62,13 +66,21 @@
 			return;
 		}
 
+		if (!sunburn[activeInstanceID].ready) {
+			return;
+		}
+
 		if (!sunburn[activeInstanceID].servers[activeServerID].loaded) {
 			loadServer(activeInstanceID, activeServerID, activeServerID);
 		}
 	});
 
 	let channelList = $derived.by(() => {
-		if (!(activeInstanceID in sunburn) || !(activeServerID in sunburn[activeInstanceID].servers)) {
+		if (
+			!(activeInstanceID in sunburn) ||
+			!sunburn[activeInstanceID].ready ||
+			!(activeServerID in sunburn[activeInstanceID].servers)
+		) {
 			return [];
 		}
 
@@ -155,7 +167,7 @@
 							activeDMID = '';
 						}}
 					>
-						<div class="flex items-center justify-center fl-gap-0.5/1">
+						<div class="flex items-center justify-center fl-gap-[0.5/0.75]">
 							{#if channel.record.voice}
 								<LucideVolume2 class="flicon-sm90" />
 							{:else}

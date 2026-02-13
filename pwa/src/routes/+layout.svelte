@@ -8,6 +8,7 @@
 
 	import { themeChange } from 'theme-change';
 
+	import { page } from '$app/state';
 	import ScrollArea from '$lib/components/ScrollArea.svelte';
 	import { applicationStart } from '$lib/sunburn/applicationStart';
 
@@ -21,6 +22,8 @@
 
 	let barHeight = $state(0);
 	let windowHeight = $state(0);
+
+	const isChannel = $derived(Boolean(page.params.channelID) || Boolean(page.params.dmID));
 </script>
 
 <svelte:head><link rel="icon" href="/favicon.ico" /></svelte:head>
@@ -35,14 +38,21 @@
 		class="flex grow items-stretch sm:flex-row-reverse"
 		style={`height:${windowHeight - barHeight}px`}
 	>
-		<ScrollArea
-			color="base-300"
-			orientation="vertical"
-			class="flex grow items-stretch justify-center overflow-hidden"
-			viewportClassName="max-h-full box-border flp-sm"
-		>
-			{@render children()}
-		</ScrollArea>
+		{#if !isChannel}
+			<ScrollArea
+				color="base-300"
+				orientation="vertical"
+				class="flex grow items-stretch justify-center overflow-hidden"
+				viewportClassName={`max-h-full box-border grow relative ${!isChannel ? 'flp-sm' : ''}`}
+				staydown={isChannel}
+			>
+				{@render children()}
+			</ScrollArea>
+		{:else}
+			<div class="grow">
+				{@render children()}
+			</div>
+		{/if}
 		<SideBar />
 	</div>
 	<CallBar bind:clientHeight={barHeight} />

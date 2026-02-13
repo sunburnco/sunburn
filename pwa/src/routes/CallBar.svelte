@@ -8,11 +8,13 @@
 
 <div
 	bind:clientHeight
-	class="flex w-full justify-start fl-gap-0.5/1 bg-neutral px-1.5 text-neutral-content sm:flex-row-reverse"
+	class="flex w-full justify-start fl-gap-[0.5/0.75] bg-neutral px-1.5 text-neutral-content sm:flex-row-reverse"
 >
 	<ScrollArea class="grow overflow-hidden" orientation="horizontal">
 		<div class="flex">
-			<Button color="neutral">call info</Button>
+			<a href="/">
+				<Button color="neutral">call info</Button>
+			</a>
 		</div>
 	</ScrollArea>
 

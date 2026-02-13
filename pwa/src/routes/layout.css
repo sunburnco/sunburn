@@ -66,6 +66,9 @@
 @utility flicon-md90 {
 	@apply inline fl-size-3.5/5 translate-x-px -rotate-90 stroke-[1.5px];
 }
+@utility flicon-lg {
+	@apply inline fl-size-[4/5.5] -translate-y-px stroke-[1.5px];
+}
 
 @utility writing-slr {
 	writing-mode: sideways-lr;

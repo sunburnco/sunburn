@@ -7,6 +7,7 @@ import type {
 	ChannelsRecord,
 	ChannelsResponse,
 } from '$lib/pb-types';
+import { binaryUpdateOrInsert } from '$lib/utils/binaryArray';
 import { debugPrefix, errorPrefix, warnPrefix } from '$lib/utils/logPrefixes';
 import { logFriendly } from '$lib/utils/username';
 
@@ -223,6 +224,54 @@ export const fetchChannelRoleAssignmentsForChannel = async (
 			...errorPrefix,
 			logFriendly(instanceID),
 			'error fetching channel role assignments',
+			channelID,
+			'\n',
+			err,
+		);
+	}
+};
+
+export const fetchInitialMessageForChannel = async (
+	instanceID: Instance_t['id'],
+	serverID: Server_t['record']['id'],
+	channelID: Channel_t['record']['id'],
+	_requestKey?: string | null,
+) => {
+	try {
+		const messagesResp = await sunburn[instanceID].pb.collection('messages').getList(1, 50, {
+			filter: sunburn[instanceID].pb.filter('channel = {:channelID}', { channelID }),
+			sort: '-created',
+			requestKey: null,
+		});
+
+		if (!(channelID in sunburn[instanceID].servers[serverID].channels)) {
+			await fetchChannel(instanceID, serverID, channelID, null);
+		}
+
+		for (const message of messagesResp.items) {
+			binaryUpdateOrInsert(
+				message,
+				sunburn[instanceID].servers[serverID].channels[channelID].messages,
+			);
+		}
+	} catch (err) {
+		if (err instanceof ClientResponseError && err.status === 0) {
+			// eslint-disable-next-line no-console
+			console.debug(
+				...debugPrefix,
+				logFriendly(instanceID),
+				'duplicate fetch request aborted for initial channel messages',
+				channelID,
+				_requestKey,
+			);
+			return;
+		}
+
+		// eslint-disable-next-line no-console
+		console.error(
+			...errorPrefix,
+			logFriendly(instanceID),
+			'error fetching initial messages for channel',
 			channelID,
 			'\n',
 			err,

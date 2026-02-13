@@ -51,6 +51,7 @@ export type Server_t = {
 };
 
 export type DM_t = {
+	// TODO figure out some sort of "loaded" state for DMs too
 	recipientID: UsersRecord['id'];
 	updated: ZonedDateTime;
 	messages: DMMessage_t[];

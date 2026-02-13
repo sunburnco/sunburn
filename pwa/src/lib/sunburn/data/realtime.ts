@@ -65,13 +65,7 @@ export const onMessage = (
 			binaryUpdateOrInsert(record, sunburn[instanceID].dms[recipientID].messages);
 		} else if (record.channel) {
 			// channel
-			let serverID = '';
-			for (const _serverID of Object.keys(sunburn[instanceID].servers)) {
-				if (record.channel in sunburn[instanceID].servers[_serverID]) {
-					serverID = _serverID;
-					break;
-				}
-			}
+			const serverID = findServerIDForChannel(instanceID, record.channel);
 			if (!serverID) {
 				return;
 			}
@@ -90,13 +84,7 @@ export const onMessage = (
 			binaryDelete(record, sunburn[instanceID].dms[recipientID].messages);
 		} else if (record.channel) {
 			// channel
-			let serverID = '';
-			for (const _serverID of Object.keys(sunburn[instanceID].servers)) {
-				if (record.channel in sunburn[instanceID].servers[_serverID]) {
-					serverID = _serverID;
-					break;
-				}
-			}
+			const serverID = findServerIDForChannel(instanceID, record.channel);
 			if (!serverID) {
 				return;
 			}

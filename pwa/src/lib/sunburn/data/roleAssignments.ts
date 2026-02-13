@@ -23,14 +23,14 @@ export const setRoleAssignment = (
 ) => {
 	if (!(serverID in sunburn[instanceID].servers)) {
 		fetchServer(instanceID, serverID, serverID).then(() =>
-			setRoleAssignment(instanceID, serverID, roleID, userID),
+			setRoleAssignment(instanceID, serverID, userID, roleID),
 		);
 		return;
 	}
 
 	if (!(roleID in sunburn[instanceID].servers[serverID].roles)) {
 		fetchRole(instanceID, serverID, roleID, roleID).then(() =>
-			setRoleAssignment(instanceID, serverID, roleID, userID),
+			setRoleAssignment(instanceID, serverID, userID, roleID),
 		);
 		return;
 	}

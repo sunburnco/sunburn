@@ -53,12 +53,12 @@ export const fetchRole = async (
 	instanceID: Instance_t['id'],
 	serverID: Server_t['record']['id'],
 	roleID: Role_t['record']['id'],
-	requestKey?: string | null,
+	_requestKey?: string | null,
 ) => {
 	try {
 		const role = await sunburn[instanceID].pb
 			.collection('serverRoles')
-			.getOne<ServerRolesResponse<ServerRolesRecord>>(roleID, { requestKey });
+			.getOne<ServerRolesResponse<ServerRolesRecord>>(roleID, { requestKey: null });
 		setRoleRecord(instanceID, serverID, roleID, role);
 	} catch (err) {
 		if (err instanceof ClientResponseError && err.status === 0) {
@@ -68,7 +68,7 @@ export const fetchRole = async (
 				logFriendly(instanceID),
 				'duplicate fetch request aborted for role',
 				roleID,
-				requestKey,
+				_requestKey,
 			);
 			return;
 		} else if (err instanceof ClientResponseError && err.status >= 400 && err.status < 500) {
