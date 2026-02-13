@@ -8,6 +8,16 @@ import { logFriendly } from '$lib/utils/username';
 import { fetchInitialMessagesForDM } from './data/dmMessages';
 import { fetchPinnedDMs } from './data/pinnedDMs';
 import { fetchPinnedServers } from './data/pinnedServers';
+import {
+	onChannel,
+	onChannelRoleAssignment,
+	onMessage,
+	onServer,
+	onServerRole,
+	onServerRoleAssignment,
+	onServerRolePermission,
+	onVoiceParticipant,
+} from './data/realtime';
 import { setServerRecord } from './data/server';
 import { sunburn } from './sunburn.svelte';
 
@@ -124,7 +134,24 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, `${logFriendly(instanceID)} registering event listeners`);
 
-	// TODO register handlers
+	pb.collection('messages').subscribe('*', (e) => onMessage(instanceID, e));
+
+	pb.collection('servers').subscribe('*', (e) => onServer(instanceID, e));
+	pb.collection('serverRoles').subscribe('*', (e) => onServerRole(instanceID, e));
+	pb.collection('serverRolePermissions').subscribe('*', (e) =>
+		onServerRolePermission(instanceID, e),
+	);
+
+	pb.collection('channels').subscribe('*', (e) => onChannel(instanceID, e));
+	pb.collection('channelRoleAssignments').subscribe('*', (e) =>
+		onChannelRoleAssignment(instanceID, e),
+	);
+
+	pb.collection('voiceParticipants').subscribe('*', (e) => onVoiceParticipant(instanceID, e));
+
+	pb.collection('serverRoleAssignments').subscribe('*', (e) =>
+		onServerRoleAssignment(instanceID, e),
+	);
 
 	sunburn[instanceID].ready = true;
 

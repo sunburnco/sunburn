@@ -14,6 +14,8 @@ import type {
 } from '$lib/pb-types';
 import { binaryDelete, binaryUpdateOrInsert } from '$lib/utils/binaryArray';
 import { findServerIDForChannel, findServerIDForRole } from '$lib/utils/findServerID';
+import { debugPrefix } from '$lib/utils/logPrefixes';
+import { logFriendly } from '$lib/utils/username';
 
 import {
 	type DMMessage_t,
@@ -44,6 +46,9 @@ export const onMessage = (
 	e: RecordSubscription<MessagesResponse>,
 ) => {
 	const { action, record } = e;
+
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), 'onMessage', action, record);
 
 	if (action === 'create' || action === 'update') {
 		if (record.to) {
@@ -103,6 +108,9 @@ export const onMessage = (
 export const onServer = (instanceID: Instance_t['id'], e: RecordSubscription<ServersResponse>) => {
 	const { action, record } = e;
 
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), 'onServer', action, record);
+
 	if (action === 'create' || action === 'update') {
 		setServerRecord(instanceID, record.id, record);
 	} else if (action === 'delete') {
@@ -115,6 +123,9 @@ export const onServerRole = (
 	e: RecordSubscription<ServerRolesResponse>,
 ) => {
 	const { action, record } = e;
+
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), 'onServerRole', action, record);
 
 	if (action === 'create' || action === 'update') {
 		setRoleRecord(instanceID, record.server, record.id, record);
@@ -166,6 +177,9 @@ export const onServerRolePermission = (
 		return;
 	}
 
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), 'onServerRolePermission', action, record);
+
 	if (action === 'create' || action === 'update') {
 		setRolePermission(instanceID, serverID, record.role, record.permission);
 
@@ -204,6 +218,9 @@ export const onChannel = (
 		return;
 	}
 
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), 'onChannel', action, record);
+
 	if (action === 'create' || action === 'update') {
 		setChannelRecord(instanceID, serverID, record.id, record);
 		// no need to fetch perms and voice participants because a new channel
@@ -224,6 +241,9 @@ export const onChannelRoleAssignment = (
 	if (!serverID) {
 		return;
 	}
+
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), 'onChannelRoleAssignment', action, record);
 
 	if (action === 'create' || action === 'update') {
 		setChannelRoleAssignment(instanceID, serverID, record.channel, record.role);
@@ -262,6 +282,9 @@ export const onVoiceParticipant = (
 		return;
 	}
 
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), 'onVoiceParticipant', action, record);
+
 	if (action === 'create' || action === 'update') {
 		setVoiceParticipant(instanceID, serverID, record.channel, record.user);
 	} else if (action === 'delete') {
@@ -279,6 +302,9 @@ export const onServerRoleAssignment = (
 	if (!serverID) {
 		return;
 	}
+
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), 'onServerRoleAssignment', action, record);
 
 	if (action === 'create' || action === 'update') {
 		setRoleAssignment(instanceID, serverID, record.user, record.role);
