@@ -1,4 +1,4 @@
-import { now } from '@internationalized/date';
+import { DateTime } from 'luxon';
 import type { RecordSubscription } from 'pocketbase';
 
 import type {
@@ -57,7 +57,7 @@ export const onMessage = (
 			if (!(recipientID in sunburn[instanceID].dms)) {
 				sunburn[instanceID].dms[recipientID] = {
 					recipientID: recipientID,
-					updated: now('Etc/UTC'),
+					updated: DateTime.now(),
 					messages: [record as DMMessage_t],
 				};
 				return;

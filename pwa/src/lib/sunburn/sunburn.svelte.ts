@@ -1,4 +1,4 @@
-import { ZonedDateTime } from '@internationalized/date';
+import type { DateTime } from 'luxon';
 import { type SvelteSet } from 'svelte/reactivity';
 
 import type {
@@ -53,7 +53,7 @@ export type Server_t = {
 export type DM_t = {
 	// TODO figure out some sort of "loaded" state for DMs too
 	recipientID: UsersRecord['id'];
-	updated: ZonedDateTime;
+	updated: DateTime;
 	messages: DMMessage_t[];
 };
 

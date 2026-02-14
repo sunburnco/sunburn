@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ZonedDateTime } from '@internationalized/date';
 	import { LucideCirclePlus, LucideHash, LucideVolume2 } from '@lucide/svelte';
+	import type { DateTime } from 'luxon';
 
 	import { page } from '$app/state';
 	import Button from '$lib/components/Button.svelte';
@@ -36,7 +36,7 @@
 		if (activeServerID !== 'dms') {
 			return [];
 		}
-		const ret: { dmID: string; instanceID: string; updated: ZonedDateTime }[] = [];
+		const ret: { dmID: string; instanceID: string; updated: DateTime }[] = [];
 
 		for (const instanceID of Object.keys(sunburn)) {
 			if (!sunburn[instanceID].ready) {
@@ -52,7 +52,7 @@
 			}
 		}
 
-		ret.sort((a, b) => a.updated.compare(b.updated));
+		ret.sort((a, b) => a.updated.diff(b.updated).as('seconds'));
 
 		return ret;
 	});
@@ -115,7 +115,7 @@
 	staydown
 >
 	<div
-		class="flex h-full flex-col-reverse items-center justify-end fl-gap-1/2 overflow-x-hidden bg-base-200 py-1.5 text-base-content"
+		class="fl-gap-1/2 flex h-full flex-col-reverse items-center justify-end overflow-x-hidden bg-base-200 py-1.5 text-base-content"
 	>
 		<Button size="md-sq" orientation="vertical" color="base-200">
 			<LucideCirclePlus class="flicon-md90" />
@@ -136,7 +136,7 @@
 								activeChannelID = '';
 							}}
 						>
-							<div class="flex items-center justify-center fl-gap-[0.5/0.75]">
+							<div class="fl-gap-[0.5/0.75] flex items-center justify-center">
 								<PBAvatar
 									instanceID={dm.instanceID}
 									userID={dm.dmID}
@@ -167,7 +167,7 @@
 							activeDMID = '';
 						}}
 					>
-						<div class="flex items-center justify-center fl-gap-[0.5/0.75]">
+						<div class="fl-gap-[0.5/0.75] flex items-center justify-center">
 							{#if channel.record.voice}
 								<LucideVolume2 class="flicon-sm90" />
 							{:else}
@@ -195,7 +195,7 @@
 	staydown
 >
 	<div
-		class="flex h-full flex-col-reverse items-center justify-end fl-gap-1/2 overflow-x-hidden bg-base-100 fl-py-1/1.5 text-base-content"
+		class="fl-gap-1/2 fl-py-1/1.5 flex h-full flex-col-reverse items-center justify-end overflow-x-hidden bg-base-100 text-base-content"
 	>
 		<Button
 			orientation="vertical"
@@ -223,7 +223,7 @@
 					activeServerID = server.serverID;
 				}}
 			>
-				<div class="flex items-center justify-center fl-gap-[0.5/0.75]">
+				<div class="fl-gap-[0.5/0.75] flex items-center justify-center">
 					<PBAvatar
 						instanceID={server.instanceID}
 						name={server.record.name}

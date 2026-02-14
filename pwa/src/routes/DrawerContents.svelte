@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ZonedDateTime } from '@internationalized/date';
 	import { LucideHash, LucidePackageOpen, LucideVolume2 } from '@lucide/svelte';
+	import type { DateTime } from 'luxon';
 	import { Debounced } from 'runed';
 
 	import { page } from '$app/state';
@@ -36,7 +36,7 @@
 		if (activeServerID !== 'dms') {
 			return [];
 		}
-		const ret: { dmID: string; instanceID: string; updated: ZonedDateTime }[] = [];
+		const ret: { dmID: string; instanceID: string; updated: DateTime }[] = [];
 
 		for (const instanceID of Object.keys(sunburn)) {
 			if (!sunburn[instanceID].ready) {
@@ -52,7 +52,7 @@
 			}
 		}
 
-		ret.sort((a, b) => a.updated.compare(b.updated));
+		ret.sort((a, b) => a.updated.diff(b.updated).as('seconds'));
 
 		return ret;
 	});

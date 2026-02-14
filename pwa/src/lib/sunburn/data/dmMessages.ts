@@ -1,10 +1,9 @@
-import { fromAbsolute, getLocalTimeZone } from '@internationalized/date';
+import { DateTime } from 'luxon';
 import { ClientResponseError } from 'pocketbase';
 
 import type { MessagesRecord, UsersRecord } from '$lib/pb-types';
 import { binaryUpdateOrInsert } from '$lib/utils/binaryArray';
 import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
-import { parseTimeFromPB } from '$lib/utils/parseTimeFromPB';
 import { logFriendly } from '$lib/utils/username';
 
 import { type DM_t, type Instance_t, sunburn } from '../sunburn.svelte';
@@ -18,7 +17,7 @@ export const setDMMessages = (
 	if (!(recipientID in sunburn[instanceID].dms)) {
 		sunburn[instanceID].dms[recipientID] = {
 			recipientID,
-			updated: fromAbsolute(0, getLocalTimeZone()),
+			updated: DateTime.now(),
 			messages: [],
 		};
 	}
@@ -52,7 +51,7 @@ export const fetchInitialMessagesForDM = async (
 		if (!(recipientID in sunburn[instanceID].dms)) {
 			sunburn[instanceID].dms[recipientID] = {
 				recipientID,
-				updated: fromAbsolute(0, getLocalTimeZone()),
+				updated: DateTime.now(),
 				messages: [],
 			};
 		}
@@ -68,8 +67,8 @@ export const fetchInitialMessagesForDM = async (
 			if (!isFirst) {
 				continue;
 			}
-			const t = parseTimeFromPB(message.updated);
-			if (t.compare(sunburn[instanceID].dms[recipientID].updated) > 0) {
+			const t = DateTime.fromSQL(message.updated);
+			if (t.diff(sunburn[instanceID].dms[recipientID].updated).as('seconds') > 0) {
 				sunburn[instanceID].dms[recipientID].updated = t;
 			}
 			isFirst = false;
