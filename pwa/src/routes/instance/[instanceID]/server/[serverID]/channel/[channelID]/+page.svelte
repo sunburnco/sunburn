@@ -25,8 +25,8 @@
 </script>
 
 <div class="flex h-full w-full flex-col items-stretch">
-	<div class="w-full border-b border-base-content/50 bg-base-200 flp-md font-bold select-none">
-		<div class="flex items-stretch justify-center fl-gap-[0.75/1.25]">
+	<div class="w-full border-b border-base-content/50 bg-base-200 p-1 font-bold select-none">
+		<div class="flex items-center justify-center gap-1">
 			<PBAvatar
 				size="md"
 				{instanceID}
@@ -35,17 +35,16 @@
 				url={sunburn[instanceID].servers[serverID].record.icon}
 			/>
 			{sunburn[instanceID].servers[serverID].record.name}
-			<span class="text-base-content/50">|</span>
+			<div class="divider m-0 my-1 divider-horizontal"></div>
 			{#if sunburn[instanceID].servers[serverID].channels[channelID].record.voice}
 				<div>
-					<LucideVolume2 class="flicon-sm stroke-2" />
+					<LucideVolume2 class="inline size-4 -translate-y-px" />
 					{sunburn[instanceID].servers[serverID].channels[channelID].record.name}
 				</div>
 			{:else}
 				<div>
-					<LucideHash class="flicon-sm stroke-2" />{sunburn[instanceID].servers[serverID].channels[
-						channelID
-					].record.name}
+					<LucideHash class="inline size-4 -translate-y-px" />{sunburn[instanceID].servers[serverID]
+						.channels[channelID].record.name}
 				</div>
 			{/if}
 		</div>

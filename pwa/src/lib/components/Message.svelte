@@ -37,6 +37,7 @@
 				<div class="my-1.5 size-9 self-start">
 					<PBAvatar
 						size="msg"
+						color="base-300"
 						{instanceID}
 						name={nameOrHandle(instanceID, record.from)}
 						userID={record.from}

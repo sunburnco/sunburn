@@ -9,51 +9,32 @@
 	import { themeChange } from 'theme-change';
 
 	import { page } from '$app/state';
-	import ScrollArea from '$lib/components/ScrollArea.svelte';
 	import { applicationStart } from '$lib/sunburn/applicationStart';
 
-	import CallBar from './CallBar.svelte';
-	import SideBar from './SideBar.svelte';
+	import DrawerContents from './DrawerContents.svelte';
 
 	let { children } = $props();
 
 	themeChange(false);
 	applicationStart();
 
-	let barHeight = $state(0);
-	let windowHeight = $state(0);
-
 	const isChannel = $derived(Boolean(page.params.channelID) || Boolean(page.params.dmID));
 </script>
 
 <svelte:head><link rel="icon" href="/favicon.ico" /></svelte:head>
-<svelte:window bind:innerHeight={windowHeight} />
 
 <!-- TODO use env() and CSS safe areas -->
-<div
-	class="flex h-dvh max-h-dvh w-full max-w-full flex-col items-stretch justify-center bg-base-300 fl-text-sm/base"
-	style="overscroll-behavior:contain;"
->
+<div class="drawer grow md:drawer-open">
+	<input id="rootDrawerInput" type="checkbox" class="drawer-toggle" />
 	<div
-		class="flex grow items-stretch sm:flex-row-reverse"
-		style={`height:${windowHeight - barHeight}px`}
+		class={['drawer-content flex h-dvh flex-col items-center justify-center', !isChannel && 'p-1']}
 	>
-		{#if !isChannel}
-			<ScrollArea
-				color="base-300"
-				orientation="vertical"
-				class="flex grow items-stretch justify-center overflow-hidden"
-				viewportClassName={`max-h-full box-border grow relative ${!isChannel ? 'flp-sm' : ''}`}
-				staydown={isChannel}
-			>
-				{@render children()}
-			</ScrollArea>
-		{:else}
-			<div class="grow">
-				{@render children()}
-			</div>
-		{/if}
-		<SideBar />
+		{@render children()}
 	</div>
-	<CallBar bind:clientHeight={barHeight} />
+	<div class="drawer-side">
+		<label for="rootDrawerInput" aria-label="close sidebar" class="drawer-overlay"></label>
+		<DrawerContents />
+	</div>
 </div>
+
+<!-- <label for="rootDrawerInput" class="drawer-button btn md:hidden">Open Drawer</label> -->

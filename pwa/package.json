@@ -25,6 +25,7 @@
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/luxon": "^3.7.1",
 		"@types/node": "^24",
+		"daisyui": "^5.5.18",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-simple-import-sort": "^12.1.1",

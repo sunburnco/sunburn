@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Avatar } from 'bits-ui';
 	import { onMount } from 'svelte';
 
 	import { fetchUser } from '$lib/sunburn/data/users';
@@ -12,7 +11,7 @@
 		serverID?: string;
 		url?: string;
 		name: string;
-		size?: 'sm' | 'md' | 'lg' | 'xl' | 'msg';
+		size?: 'sm' | 'md' | 'lg' | 'xl' | 'msg' | 'grow';
 		color?:
 			| 'base-100'
 			| 'base-200'
@@ -26,6 +25,7 @@
 			| 'warning'
 			| 'error';
 		imgClassName?: string;
+		fallbackClassName?: string;
 	};
 
 	const {
@@ -37,6 +37,7 @@
 		size = 'md',
 		color = 'base-100',
 		imgClassName,
+		fallbackClassName,
 	}: Props_t = $props();
 
 	onMount(() => {
@@ -45,32 +46,40 @@
 		}
 		// no need to fetch server because server icons are always loaded
 	});
+
+	let imgLoaded = $state(false);
+	$effect(() => {
+		if (!url) {
+			imgLoaded = false;
+		}
+	});
 </script>
 
-<Avatar.Root class="inline w-min">
-	<div
-		class={[
-			size === 'sm' && 'fl-size-[4.5/5.5] fl-gap-[0.25/0.5] fl-text-xs/sm',
-			size === 'md' && 'fl-size-[5.5/6.5] fl-gap-[0.5/0.75] fl-text-sm/base',
-			size === 'lg' && 'fl-size-[6/7.5] fl-gap-[0.75/1.25] fl-text-base/lg',
-			size === 'xl' && 'fl-size-[7/8.5] fl-gap-[1/1.5] fl-text-lg/xl',
-			size === 'msg' && 'size-9 gap-2 text-xl',
+<div
+	class={[
+		size === 'sm' && 'size-5 text-xs',
+		size === 'md' && 'size-6 text-sm',
+		size === 'lg' && 'size-7 text-base',
+		size === 'xl' && 'size-8 text-lg',
+		size === 'msg' && 'size-9 gap-2 text-xl',
+		size === 'grow' && 'grow text-xl',
 
-			'flex aspect-square items-center justify-center overflow-hidden rounded-box font-bold',
-		]}
-	>
-		{#if instanceID in sunburn && url && (userID || serverID)}
-			<Avatar.Image
-				src={userID || serverID
-					? sunburn[instanceID].pb.buildURL(
-							`/api/files/${userID ? `users/${userID}` : `servers/${serverID}`}/${url}`,
-						)
-					: undefined}
-				alt={name}
-				class={imgClassName}
-			/>
-		{/if}
-		<Avatar.Fallback
+		'grid aspect-square grid-cols-1 grid-rows-1 items-center justify-center overflow-hidden rounded-box font-bold',
+	]}
+>
+	{#if instanceID in sunburn && url && (userID || serverID)}
+		<img
+			onload={() => (imgLoaded = true)}
+			src={sunburn[instanceID].pb.buildURL(
+				`/api/files/${userID ? `users/${userID}` : `servers/${serverID}`}/${url}`,
+			)}
+			alt={name}
+			class={['col-start-1 row-start-1 bg-transparent', imgClassName]}
+		/>
+	{/if}
+
+	{#if !imgLoaded}
+		<p
 			class={[
 				color === 'base-100' && 'bg-base-content text-base-100',
 				color === 'base-200' && 'bg-base-content text-base-200',
@@ -85,9 +94,12 @@
 				color === 'error' && 'bg-error-content text-error',
 
 				'flex size-full items-center justify-center',
+				'col-start-1 row-start-1',
+
+				fallbackClassName,
 			]}
 		>
 			{parseInitials(name)}
-		</Avatar.Fallback>
-	</div>
-</Avatar.Root>
+		</p>
+	{/if}
+</div>

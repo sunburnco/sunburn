@@ -4,7 +4,6 @@
 	import { Editor } from 'tiny-markdown-editor';
 
 	import Button from './Button.svelte';
-	import ScrollArea from './ScrollArea.svelte';
 
 	type Props_t = { onSend: (contents: string) => void | Promise<void>; content?: string };
 
@@ -52,17 +51,9 @@
 	});
 </script>
 
-<div class="fl-mx-1/2 fl-mb-1/2 flex items-end fl-gap-1/2">
-	<label
-		class="box-border flex grow rounded-box border border-base-content/50 bg-base-100 py-0 fl-px-[0.25/0.5]"
-	>
-		<ScrollArea
-			color="base-100"
-			class="grow overflow-hidden"
-			viewportClassName="max-h-48 min-h-0 cursor-text overflow-y-auto"
-		>
-			<textarea name="editor" bind:this={textarea} rows={1}></textarea>
-		</ScrollArea>
+<div class="m-2 flex items-end gap-2">
+	<label class="textarea max-h-48 min-h-0 grow cursor-text overflow-y-auto px-1 py-0">
+		<textarea name="editor" bind:this={textarea} rows={1}></textarea>
 	</label>
 	<Button
 		size="md-sq"

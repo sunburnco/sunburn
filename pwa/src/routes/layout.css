@@ -1,77 +1,499 @@
 @import 'tailwindcss';
-@plugin 'fluid-tailwindcss';
+@plugin 'daisyui' {
+	logs: false;
+}
 @plugin '@tailwindcss/typography';
 
-@import '../lib/themes/day.css';
-@import '../lib/themes/lilac.css';
-@import '../lib/themes/midnight.css';
-@import '../lib/themes/oasis.css';
-@import '../lib/themes/sunset.css';
-@import '../lib/themes/verdant.css';
-
-@theme inline {
+@theme {
 	--font-display: var(--font-display);
 	--font-sans: var(--font-sans);
 	--font-script: var(--font-script);
-
-	--color-base-100: var(--color-base-100);
-	--color-base-200: var(--color-base-200);
-	--color-base-300: var(--color-base-300);
-	--color-base-content: var(--color-base-content);
-	--color-base-dots: var(--color-base-dots);
-	--color-primary: var(--color-primary);
-	--color-primary-content: var(--color-primary-content);
-	--color-secondary: var(--color-secondary);
-	--color-secondary-content: var(--color-secondary-content);
-	--color-accent: var(--color-accent);
-	--color-accent-content: var(--color-accent-content);
-	--color-neutral: var(--color-neutral);
-	--color-neutral-content: var(--color-neutral-content);
-	--color-info: var(--color-info);
-	--color-info-content: var(--color-info-content);
-	--color-success: var(--color-success);
-	--color-success-content: var(--color-success-content);
-	--color-warning: var(--color-warning);
-	--color-warning-content: var(--color-warning-content);
-	--color-error: var(--color-error);
-	--color-error-content: var(--color-error-content);
-
-	--radius-selector: var(--radius-selector);
-	--radius-field: var(--radius-field);
-	--radius-box: var(--radius-box);
-
-	--size-selector: var(--size-selector);
-	--size-field: var(--size-field);
 }
 
-@utility flp-sm {
-	@apply fl-py-[0.25/0.5] fl-px-[0.5/0.75];
-}
-@utility flp-md {
-	@apply fl-py-[0.5/0.75] fl-px-[0.75/1];
-}
-@utility flp-lg {
-	@apply fl-py-[0.75/1.25] fl-px-[1.25/2.5];
+@layer base {
+	.range-vertical {
+		writing-mode: vertical-lr;
+		direction: rtl;
+		appearance: none;
+		--range-thumb: var(--color-base-100) /* var(--color-base-100) */;
+		--range-thumb-size: calc(var(--size-selector, 0.25rem /* 4px */) * 6);
+		--range-progress: currentColor;
+		--range-fill: 1;
+		--range-p: 0.25rem /* 4px */;
+		--range-bg: color-mix(in oklab, currentColor 10%, #0000);
+		cursor: pointer;
+		overflow: hidden;
+		background-color: transparent;
+		vertical-align: middle;
+		/* width: clamp(3rem, 20rem, 100%); */
+		width: var(--range-thumb-size);
+		--radius-selector-max: calc(
+			var(--radius-selector) /* var(--radius-selector) */ + var(--radius-selector)
+				/* var(--radius-selector) */ + var(--radius-selector) /* var(--radius-selector) */
+		);
+		border-radius: calc(
+			var(--radius-selector) /* var(--radius-selector) */ +
+				min(var(--range-p), var(--radius-selector-max))
+		);
+		border: none;
+		/* height: var(--range-thumb-size); */
+		height: clamp(3rem, 20rem, 100%);
+		/* height: auto; */
+		[dir='rtl'] & {
+			--range-dir: -1;
+		}
+		&:focus {
+			outline: none;
+		}
+		&:focus-visible {
+			outline: 2px solid;
+			outline-offset: 2px;
+		}
+		&::-webkit-slider-runnable-track {
+			/* width: 100%; */
+			width: calc(var(--range-thumb-size) * 0.5);
+			background-color: var(--range-bg);
+			border-radius: var(--radius-selector) /* var(--radius-selector) */;
+			/* height: calc(var(--range-thumb-size) * 0.5); */
+			height: 100%;
+		}
+		@media (forced-colors: active) {
+			&::-webkit-slider-runnable-track {
+				border: 1px solid;
+			}
+		}
+		@media (forced-colors: active) {
+			&::-moz-range-track {
+				border: 1px solid;
+			}
+		}
+		&::-webkit-slider-thumb {
+			position: relative;
+			box-sizing: border-box;
+			border-radius: calc(
+				var(--radius-selector) /* var(--radius-selector) */ +
+					min(var(--range-p), var(--radius-selector-max))
+			);
+			background-color: currentColor;
+			height: var(--range-thumb-size);
+			width: var(--range-thumb-size);
+			border: var(--range-p) solid;
+			appearance: none;
+			color: var(--range-progress);
+			left: 50%;
+			transform: translateX(-50%);
+			box-shadow:
+				0 -1px oklch(0% 0 0 / calc(var(--depth) * 0.1)) /* #000000 */ inset,
+				0 8px 0 -4px oklch(100% 0 0 / calc(var(--depth) * 0.1)) inset,
+				0 1px color-mix(in oklab, currentColor calc(var(--depth) * 10%), #0000),
+				0 0 0 2rem /* 32px */ var(--range-thumb) inset,
+				/* calc(
+					(var(--range-dir, 1) * -100rem) -
+						(var(--range-dir, 1) * var(--range-thumb-size) / 2)
+				)
+				0 0 calc(100rem * var(--range-fill)); */
+					0
+					calc(
+						(var(--range-dir, -1) * -100rem) - (var(--range-dir, -1) * var(--range-thumb-size) / 2)
+					)
+					0 calc(100rem * var(--range-fill));
+		}
+		&::-moz-range-track {
+			/* width: 100%; */
+			width: calc(var(--range-thumb-size) * 0.5);
+			background-color: var(--range-bg);
+			border-radius: var(--radius-selector) /* var(--radius-selector) */;
+			/* height: calc(var(--range-thumb-size) * 0.5); */
+			height: 100%;
+		}
+		&::-moz-range-thumb {
+			position: relative;
+			box-sizing: border-box;
+			border-radius: calc(
+				var(--radius-selector) /* var(--radius-selector) */ +
+					min(var(--range-p), var(--radius-selector-max))
+			);
+			background-color: currentColor;
+			height: var(--range-thumb-size);
+			width: var(--range-thumb-size);
+			border: var(--range-p) solid;
+			left: 50%;
+			color: var(--range-progress);
+			box-shadow:
+				0 -1px oklch(0% 0 0 / calc(var(--depth) * 0.1)) /* #000000 */ inset,
+				0 8px 0 -4px oklch(100% 0 0 / calc(var(--depth) * 0.1)) inset,
+				0 1px color-mix(in oklab, currentColor calc(var(--depth) * 10%), #0000),
+				0 0 0 2rem /* 32px */ var(--range-thumb) inset,
+				calc((var(--range-dir, 1) * -100rem) - (var(--range-dir, 1) * var(--range-thumb-size) / 2))
+					0 0 calc(100rem * var(--range-fill));
+		}
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 30%;
+		}
+	}
 }
 
-@utility flicon-sm {
-	@apply inline fl-size-2/3.5 -translate-y-px stroke-[1.5px];
-}
-@utility flicon-sm90 {
-	@apply inline fl-size-2/3.5 translate-x-px -rotate-90 stroke-[1.5px];
-}
-@utility flicon-md {
-	@apply inline fl-size-3.5/5 -translate-y-px stroke-[1.5px];
-}
-@utility flicon-md90 {
-	@apply inline fl-size-3.5/5 translate-x-px -rotate-90 stroke-[1.5px];
-}
-@utility flicon-lg {
-	@apply inline fl-size-[4/5.5] -translate-y-px stroke-[1.5px];
+@theme {
+	@keyframes float {
+		0%,
+		100% {
+			transform: translateY(0rem);
+		}
+		50% {
+			transform: translateY(0.5rem);
+		}
+	}
 }
 
-@utility writing-slr {
-	writing-mode: sideways-lr;
+@layer utilities {
+	.animate-float {
+		animation: float 3s ease-in-out infinite;
+	}
+	.animate-float2 {
+		animation: float 3.2s ease-in-out infinite;
+	}
+	.animate-float3 {
+		animation: float 3.4s ease-in-out infinite;
+	}
+	.animate-float4 {
+		animation: float 3.6s ease-in-out infinite;
+	}
+
+	.modal {
+		transition:
+			translate 0.3s ease-out,
+			background-color 0.3s ease-out,
+			opacity 0.1s ease-out;
+		@starting-style {
+			&.modal-open,
+			&[open],
+			&:target {
+				visibility: visible;
+			}
+		}
+	}
+
+	.dots-100 {
+		background:
+			0 0 / 2rem 2rem radial-gradient(var(--color-base-dots) 1px, transparent 0),
+			1rem 1rem / 2rem 2rem radial-gradient(var(--color-base-dots) 1px, transparent 0),
+			var(--color-base-100);
+	}
+
+	.dots-200 {
+		background:
+			0 0 / 2rem 2rem radial-gradient(var(--color-base-dots) 1px, transparent 0),
+			1rem 1rem / 2rem 2rem radial-gradient(var(--color-base-dots) 1px, transparent 0),
+			var(--color-base-200);
+	}
+
+	.dots-300 {
+		background:
+			0 0 / 2rem 2rem radial-gradient(var(--color-base-dots) 1px, transparent 0),
+			1rem 1rem / 2rem 2rem radial-gradient(var(--color-base-dots) 1px, transparent 0),
+			var(--color-base-300);
+	}
+}
+
+@plugin 'daisyui/theme' {
+	name: 'midnight';
+	default: false;
+	prefersdark: true;
+	color-scheme: 'dark';
+	--font-sans: '"Quicksand Variable", sans-serif';
+	--font-mono: '"Oxygen Mono", monospace';
+	--font-display: '"League Mono", monospace';
+	--font-script: '"Playwrite US Trad Variable", cursive';
+	--color-base-100: oklch(0.25 0 0);
+	--color-base-200: oklch(0.17 0 0);
+	--color-base-300: oklch(0 0 0);
+	--color-base-content: oklch(0.9625 0.0476 90.06);
+	--color-base-dots: oklch(0.4495 0 0);
+	--color-primary: oklch(0.4099 0.157 28.29);
+	--color-primary-content: oklch(0.9625 0.0476 90.06);
+	--color-secondary: oklch(0.5188 0.1941 28.98);
+	--color-secondary-content: oklch(0.9625 0.0476 90.06);
+	--color-accent: oklch(0.6309 0.2369 30.24);
+	--color-accent-content: oklch(0.9625 0.0476 90.06);
+	--color-neutral: oklch(0.9625 0.0476 90.06);
+	--color-neutral-content: oklch(0 0 0);
+	--color-info: oklch(0.7862 0.0638 74.62);
+	--color-info-content: oklch(0.3553 0.0481 73.88);
+	--color-success: oklch(0.6583 0.0883 120.51);
+	--color-success-content: oklch(0.2318 0.0241 118.88);
+	--color-warning: oklch(0.6496 0.1404 59.61);
+	--color-warning-content: oklch(0.9635 0.0161 64.67);
+	--color-error: oklch(0.3074 0.104 25.8);
+	--color-error-content: oklch(0.8415 0.0637 18.5);
+	--radius-selector: 0.25rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.25rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+	--font-display-tracking: '-0.05em';
+
+	--hljs-background: oklch(0.15 0.02 90);
+	--hljs-text: oklch(0.85 0.05 90);
+	--hljs-comment: oklch(0.55 0.04 90);
+	--hljs-meta: oklch(0.65 0.08 60);
+	--hljs-built_in: oklch(0.72 0.12 30);
+	--hljs-addition: oklch(0.68 0.12 120);
+	--hljs-function: oklch(0.75 0.15 28);
+	--hljs-attribute: oklch(0.68 0.1 50);
+}
+
+@plugin 'daisyui/theme' {
+	name: 'day';
+	default: true;
+	prefersdark: false;
+	color-scheme: 'light';
+	--font-sans: '"Quicksand Variable", sans-serif';
+	--font-mono: '"Oxygen Mono", monospace';
+	--font-display: '"League Mono", monospace';
+	--font-script: '"Playwrite US Trad Variable", cursive';
+	--color-base-100: oklch(0.9278 0.0903 89.48);
+	--color-base-200: oklch(0.9458 0.0698 90.35);
+	--color-base-300: oklch(0.9625 0.0476 90.06);
+	--color-base-content: oklch(0.3079 0.1097 28.08);
+	--color-base-dots: oklch(0.8676 0.1561 87.34);
+	--color-primary: oklch(0.6309 0.2369 30.24);
+	--color-primary-content: oklch(0.2164 0.0754 30.1);
+	--color-secondary: oklch(0.6855 0.2033 37.98);
+	--color-secondary-content: oklch(0.3062 0.0971 39.04);
+	--color-accent: oklch(0.8201 0.1343 66.99);
+	--color-accent-content: oklch(0.4356 0.102 59.67);
+	--color-neutral: oklch(0.3079 0.1097 28.08);
+	--color-neutral-content: oklch(0.9625 0.0476 90.06);
+	--color-info: oklch(0.7862 0.0638 74.62);
+	--color-info-content: oklch(0.3553 0.0481 73.88);
+	--color-success: oklch(0.6583 0.0883 120.51);
+	--color-success-content: oklch(0.2318 0.0241 118.88);
+	--color-warning: oklch(0.6496 0.1404 59.61);
+	--color-warning-content: oklch(0.9635 0.0161 64.67);
+	--color-error: oklch(0.3074 0.104 25.8);
+	--color-error-content: oklch(0.8415 0.0637 18.5);
+	--radius-selector: 0.25rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.25rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+	--font-display-tracking: '-0.05em';
+
+	--hljs-background: oklch(0.92 0.05 90);
+	--hljs-text: oklch(0.3 0.11 28);
+	--hljs-comment: oklch(0.65 0.06 90);
+	--hljs-meta: oklch(0.55 0.1 60);
+	--hljs-built_in: oklch(0.5 0.15 30);
+	--hljs-addition: oklch(0.45 0.12 120);
+	--hljs-function: oklch(0.4 0.18 28);
+	--hljs-attribute: oklch(0.6 0.12 50);
+}
+
+@plugin 'daisyui/theme' {
+	name: 'sunset';
+	default: false;
+	prefersdark: false;
+	color-scheme: 'dark';
+	--font-sans: '"Quicksand Variable", sans-serif';
+	--font-mono: '"Oxygen Mono", monospace';
+	--font-display: '"League Mono", monospace';
+	--font-script: '"Playwrite US Trad Variable", cursive';
+	--color-base-100: oklch(0.28 0.0855 28.41);
+	--color-base-200: oklch(0.2506 0.0855 28.41);
+	--color-base-300: oklch(0.2242 0.0745 27.89);
+	--color-base-content: oklch(0.9037 0.0515 69.95);
+	--color-base-dots: oklch(0.3835 0.1283 27.89);
+	--color-primary: oklch(0.6652 0.2116 34.12);
+	--color-primary-content: oklch(0.337 0.1277 30.7);
+	--color-secondary: oklch(0.7043 0.1729 37.67);
+	--color-secondary-content: oklch(0.3745 0.1239 37.14);
+	--color-accent: oklch(0.8182 0.1344 66.29);
+	--color-accent-content: oklch(0.4754 0.1132 58.1);
+	--color-neutral: oklch(0.9037 0.0515 69.95);
+	--color-neutral-content: oklch(0.2242 0.0745 27.89);
+	--color-info: oklch(0.7862 0.0638 74.62);
+	--color-info-content: oklch(0.3553 0.0481 73.88);
+	--color-success: oklch(0.6583 0.0883 120.51);
+	--color-success-content: oklch(0.2318 0.0241 118.88);
+	--color-warning: oklch(0.5 0.1404 59.61);
+	--color-warning-content: oklch(0.9 0.0161 64.67);
+	--color-error: oklch(0.2 0.104 25.8);
+	--color-error-content: oklch(0.8415 0.0637 18.5);
+	--radius-selector: 0.25rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.25rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+	--font-display-tracking: '-0.05em';
+
+	--hljs-background: oklch(0.4 0.16 28);
+	--hljs-text: oklch(0.92 0.05 90);
+	--hljs-comment: oklch(0.55 0.12 28);
+	--hljs-meta: oklch(0.7 0.15 50);
+	--hljs-built_in: oklch(0.75 0.18 30);
+	--hljs-addition: oklch(0.65 0.12 120);
+	--hljs-function: oklch(0.82 0.13 67);
+	--hljs-attribute: oklch(0.68 0.2 38);
+}
+
+@plugin 'daisyui/theme' {
+	name: 'oasis';
+	default: false;
+	prefersdark: false;
+	color-scheme: 'light';
+	--font-sans: '"Quicksand Variable", sans-serif';
+	--font-mono: '"Oxygen Mono", monospace';
+	--font-display: '"League Mono", monospace';
+	--font-script: '"Playwrite US Trad Variable", cursive';
+	--color-base-100: oklch(0.82 0.03 200);
+	--color-base-200: oklch(0.88 0.01 205);
+	--color-base-300: oklch(0.94 0 210);
+	--color-base-content: oklch(0.22 0.12 210);
+	--color-base-dots: oklch(0.75 0.06 205);
+	--color-primary: oklch(0.7 0.18 195);
+	--color-primary-content: oklch(0.95 0.01 210);
+	--color-secondary: oklch(0.5 0.2 220);
+	--color-secondary-content: oklch(0.1235 0.0173 220);
+	--color-accent: oklch(0.75 0.2 160);
+	--color-accent-content: oklch(0.25 0.12 160);
+	--color-neutral: oklch(0.25 0.05 210);
+	--color-neutral-content: oklch(0.9 0.02 210);
+	--color-info: oklch(0.7862 0.0638 74.62);
+	--color-info-content: oklch(0.3553 0.0481 73.88);
+	--color-success: oklch(0.6583 0.0883 120.51);
+	--color-success-content: oklch(0.2318 0.0241 118.88);
+	--color-warning: oklch(0.6496 0.1404 59.61);
+	--color-warning-content: oklch(0.9635 0.0161 64.67);
+	--color-error: oklch(0.3074 0.104 25.8);
+	--color-error-content: oklch(0.8415 0.0637 18.5);
+	--radius-selector: 0.25rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.25rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+	--font-display-tracking: '-0.05em';
+
+	--hljs-background: oklch(0.8 0.04 200);
+	--hljs-text: oklch(0.28 0.1 30);
+	--hljs-comment: oklch(0.67 0.0543 232.94);
+	--hljs-meta: oklch(0.58 0.11 145);
+	--hljs-built_in: oklch(0.52 0.16 45);
+	--hljs-addition: oklch(0.62 0.13 135);
+	--hljs-function: oklch(0.28 0.16 150);
+	--hljs-attribute: oklch(0.6176 0.1381 55);
+}
+
+@plugin 'daisyui/theme' {
+	name: 'verdant';
+	default: false;
+	prefersdark: false;
+	color-scheme: dark;
+	--font-sans: '"Quicksand Variable", sans-serif';
+	--font-mono: '"Oxygen Mono", monospace';
+	--font-display: '"League Mono", monospace';
+	--font-script: '"Playwrite US Trad Variable", cursive';
+	--color-base-100: oklch(0.25 0.08 160);
+	--color-base-200: oklch(0.18 0.1 165);
+	--color-base-300: oklch(0.12 0.05 170);
+	--color-base-content: oklch(0.92 0.03 100);
+	--color-base-dots: oklch(0.3516 0.0715 142.94);
+	--color-primary: oklch(0.8 0.25 170);
+	--color-primary-content: oklch(0.1941 0.037 170);
+	--color-secondary: oklch(0.6 0.2 155);
+	--color-secondary-content: oklch(0.2088 0.0395 155);
+	--color-accent: oklch(0.4 0.5 140);
+	--color-accent-content: oklch(0.95 0.01 100);
+	--color-neutral: oklch(0.92 0.03 100);
+	--color-neutral-content: oklch(0.2 0.1 165);
+	--color-info: oklch(0.7862 0.0638 74.62);
+	--color-info-content: oklch(0.3553 0.0481 73.88);
+	--color-success: oklch(0.6583 0.0883 120.51);
+	--color-success-content: oklch(0.2318 0.0241 118.88);
+	--color-warning: oklch(0.6496 0.1404 59.61);
+	--color-warning-content: oklch(0.9635 0.0161 64.67);
+	--color-error: oklch(0.3074 0.104 25.8);
+	--color-error-content: oklch(0.8415 0.0637 18.5);
+	--radius-selector: 0.25rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.25rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+	--font-display-tracking: '-0.05em';
+
+	--hljs-background: oklch(0.3 0.07 155);
+	--hljs-text: oklch(0.85 0.05 100);
+	--hljs-comment: oklch(0.5 0.08 160);
+	--hljs-meta: oklch(0.6 0.12 280);
+	--hljs-built_in: oklch(0.65 0.18 70);
+	--hljs-addition: oklch(0.7 0.2 130);
+	--hljs-function: oklch(0.75 0.22 180);
+	--hljs-attribute: oklch(0.68 0.25 160);
+}
+
+@plugin 'daisyui/theme' {
+	name: 'lilac';
+	default: false;
+	prefersdark: false;
+	color-scheme: light;
+	--font-sans: '"Quicksand Variable", sans-serif';
+	--font-mono: '"Oxygen Mono", monospace';
+	--font-display: '"League Mono", monospace';
+	--font-script: '"Playwrite US Trad Variable", cursive';
+	--color-base-100: oklch(0.85 0.03 290);
+	--color-base-200: oklch(0.92 0.02 295);
+	--color-base-300: oklch(0.98 0.01 300);
+	--color-base-content: oklch(0.18 0.12 310);
+	--color-base-dots: oklch(0.7 0.05 290);
+	--color-primary: oklch(0.55 0.12 325);
+	--color-primary-content: oklch(0.9176 0.0839 325);
+	--color-secondary: oklch(0.3 0.1608 325);
+	--color-secondary-content: oklch(0.85 0.0765 325);
+	--color-accent: oklch(0.89 0.1 13);
+	--color-accent-content: oklch(0.2 0.1 13);
+	--color-neutral: oklch(0.18 0.12 310);
+	--color-neutral-content: oklch(0.85 0.03 290);
+	--color-info: oklch(0.7862 0.0638 74.62);
+	--color-info-content: oklch(0.3553 0.0481 73.88);
+	--color-success: oklch(0.6583 0.0883 120.51);
+	--color-success-content: oklch(0.2318 0.0241 118.88);
+	--color-warning: oklch(0.6496 0.1404 59.61);
+	--color-warning-content: oklch(0.9635 0.0161 64.67);
+	--color-error: oklch(0.3074 0.104 25.8);
+	--color-error-content: oklch(0.8415 0.0637 18.5);
+	--radius-selector: 0.25rem;
+	--radius-field: 0.25rem;
+	--radius-box: 0.25rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 2px;
+	--depth: 0;
+	--noise: 0;
+	--font-display-tracking: '-0.05em';
+
+	--hljs-background: oklch(0.82 0.04 290);
+	--hljs-text: oklch(0.2 0.1 310);
+	--hljs-comment: oklch(0.65 0.06 295);
+	--hljs-meta: oklch(0.6 0.12 260);
+	--hljs-built_in: oklch(0.5 0.18 325);
+	--hljs-addition: oklch(0.7 0.15 160);
+	--hljs-function: oklch(0.55 0.25 80);
+	--hljs-attribute: oklch(0.45 0.2 350);
 }
 
 strong,
@@ -95,6 +517,10 @@ strong,
 
 .font-bold > .lucide {
 	stroke-width: 3px;
+}
+
+::placeholder {
+	@apply text-base-content/50;
 }
 
 /* #region HLJS */
@@ -246,7 +672,7 @@ code.hljs {
 	}
 
 	a {
-		@apply underline;
+		@apply link;
 	}
 
 	code {
