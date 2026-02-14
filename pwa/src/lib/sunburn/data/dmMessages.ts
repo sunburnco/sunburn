@@ -17,7 +17,7 @@ export const setDMMessages = (
 	if (!(recipientID in sunburn[instanceID].dms)) {
 		sunburn[instanceID].dms[recipientID] = {
 			recipientID,
-			updated: DateTime.now(),
+			updated: DateTime.fromMillis(0),
 			messages: [],
 		};
 	}
@@ -51,7 +51,7 @@ export const fetchInitialMessagesForDM = async (
 		if (!(recipientID in sunburn[instanceID].dms)) {
 			sunburn[instanceID].dms[recipientID] = {
 				recipientID,
-				updated: DateTime.now(),
+				updated: DateTime.fromMillis(0),
 				messages: [],
 			};
 		}

@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import type { RecordSubscription } from 'pocketbase';
 
 import type {
@@ -17,13 +16,7 @@ import { findServerIDForChannel, findServerIDForRole } from '$lib/utils/findServ
 import { debugPrefix } from '$lib/utils/logPrefixes';
 import { logFriendly } from '$lib/utils/username';
 
-import {
-	type DMMessage_t,
-	type Instance_t,
-	type Role_t,
-	type Server_t,
-	sunburn,
-} from '../sunburn.svelte';
+import { type Instance_t, type Role_t, type Server_t, sunburn } from '../sunburn.svelte';
 import {
 	clearChannelRecord,
 	clearChannelRoleAssignment,
@@ -32,6 +25,7 @@ import {
 	setChannelRecord,
 	setChannelRoleAssignment,
 } from './channels';
+import { setDMMessages } from './dmMessages';
 import { clearRoleAssignment, setRoleAssignment } from './roleAssignments';
 import { clearRolePermission, clearRoleRecord, setRolePermission, setRoleRecord } from './roles';
 import { clearServerRecord, fetchServersForInstance, setServerRecord } from './server';
@@ -54,15 +48,7 @@ export const onMessage = (
 		if (record.to) {
 			const recipientID = record.to === sunburn[instanceID].myID ? record.from : record.to;
 			// dm
-			if (!(recipientID in sunburn[instanceID].dms)) {
-				sunburn[instanceID].dms[recipientID] = {
-					recipientID: recipientID,
-					updated: DateTime.now(),
-					messages: [record as DMMessage_t],
-				};
-				return;
-			}
-			binaryUpdateOrInsert(record, sunburn[instanceID].dms[recipientID].messages);
+			setDMMessages(instanceID, recipientID, [record]);
 		} else if (record.channel) {
 			// channel
 			const serverID = findServerIDForChannel(instanceID, record.channel);

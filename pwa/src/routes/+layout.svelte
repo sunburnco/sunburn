@@ -48,5 +48,3 @@
 		<DrawerContents />
 	</div>
 </div>
-
-<!-- <label for="rootDrawerInput" class="drawer-button btn md:hidden">Open Drawer</label> -->

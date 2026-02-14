@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { LucideHash, LucidePackageOpen, LucideVolume2 } from '@lucide/svelte';
+	import {
+		LucideHash,
+		LucideMicOff,
+		LucidePackageOpen,
+		LucideVideoOff,
+		LucideVolume2,
+	} from '@lucide/svelte';
 	import type { DateTime } from 'luxon';
 	import { Debounced } from 'runed';
 
@@ -329,7 +335,14 @@
 		<div
 			class="sticky bottom-0 mt-auto w-full border-t border-base-content/50 bg-neutral p-2 text-neutral-content"
 		>
-			call area
+			<div class="flex w-full justify-end gap-2">
+				<button class="btn btn-square btn-sm btn-accent">
+					<LucideMicOff class="size-5" />
+				</button>
+				<button class="btn btn-square btn-sm btn-accent">
+					<LucideVideoOff class="size-5" />
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
