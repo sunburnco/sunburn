@@ -29,6 +29,8 @@ func LiveKitToken(e *core.RequestEvent) error {
 		return e.ForbiddenError("", err)
 	}
 
+	// TODO use info.Auth.Id to check for CHANNEL_SEND and update the Publish grant accordingly
+
 	baseURL := os.Getenv("LIVEKIT_BASE_URL")
 	if baseURL == "" {
 		return e.InternalServerError("missing livekit base url", nil)

@@ -1,11 +1,17 @@
 <script lang="ts">
 	import {
 		LucideHash,
+		LucideMic,
 		LucideMicOff,
+		LucideMonitorUp,
+		LucideMonitorX,
 		LucidePackageOpen,
+		LucidePhone,
+		LucideVideo,
 		LucideVideoOff,
 		LucideVolume2,
 	} from '@lucide/svelte';
+	import { ConnectionState } from 'livekit-client';
 	import type { DateTime } from 'luxon';
 	import { Debounced } from 'runed';
 
@@ -13,9 +19,17 @@
 	import LucideSunburn from '$lib/components/LucideSunburn.svelte';
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
 	import type { UsersRecord, UsersResponse } from '$lib/pb-types';
+	import { call } from '$lib/sunburn/call.svelte';
 	import { loadServer } from '$lib/sunburn/data/server';
 	import { fetchUser } from '$lib/sunburn/data/users';
 	import { type Channel_t, type Server_t, sunburn } from '$lib/sunburn/sunburn.svelte';
+	import { disconnect } from '$lib/utils/call/disconnect';
+	import { muteCamera } from '$lib/utils/call/muteCamera';
+	import { muteMic } from '$lib/utils/call/muteMic';
+	import { startScreenShare } from '$lib/utils/call/startScreenShare';
+	import { stopScreenShare } from '$lib/utils/call/stopScreenShare';
+	import { unmuteCamera } from '$lib/utils/call/unmuteCamera';
+	import { unmuteMic } from '$lib/utils/call/unmuteMic';
 	import { debugPrefix } from '$lib/utils/logPrefixes';
 	import { nameOrHandle } from '$lib/utils/username';
 
@@ -310,6 +324,7 @@
 											<span class="inline-flex items-center gap-2 px-1.5">
 												<PBAvatar
 													size="sm"
+													color={activeChannelID === channel.channelID ? 'neutral' : 'base-200'}
 													instanceID={activeInstanceID}
 													userID={vp}
 													name={nameOrHandle(activeInstanceID, vp)}
@@ -333,15 +348,72 @@
 		{/if}
 
 		<div
-			class="sticky bottom-0 mt-auto w-full border-t border-base-content/50 bg-neutral p-2 text-neutral-content"
+			class="sticky bottom-0 mt-auto w-full border-t border-base-content/50 bg-base-100 p-2 text-base-content"
 		>
-			<div class="flex w-full justify-end gap-2">
-				<button class="btn btn-square btn-sm btn-accent">
-					<LucideMicOff class="size-5" />
-				</button>
-				<button class="btn btn-square btn-sm btn-accent">
-					<LucideVideoOff class="size-5" />
-				</button>
+			<div class="flex w-full justify-between">
+				<div class="flex gap-2">
+					<!-- TODO add settings -->
+					<button disabled class="btn btn-square btn-ghost btn-sm"></button>
+				</div>
+				<div class="flex gap-2">
+					<button
+						disabled={call.roomState !== ConnectionState.Connected}
+						class={[
+							'group btn btn-square btn-sm',
+							call.me?.micUnmuted ? 'btn-accent' : 'btn-ghost',
+						]}
+						onclick={call.me?.micUnmuted ? muteMic : unmuteMic}
+					>
+						<div class="group-disabled:opacity-20">
+							{#if call.me?.micUnmuted}
+								<LucideMic class="size-5" />
+							{:else}
+								<LucideMicOff class="size-5 stroke-base-content" />
+							{/if}
+						</div>
+					</button>
+					<button
+						disabled={call.roomState !== ConnectionState.Connected}
+						class={[
+							'group btn btn-square btn-sm',
+							call.me?.cameraUnmuted ? 'btn-accent' : 'btn-ghost',
+						]}
+						onclick={call.me?.cameraUnmuted ? muteCamera : unmuteCamera}
+					>
+						<div class="text-base-content group-disabled:opacity-20">
+							{#if call.me?.cameraUnmuted}
+								<LucideVideo class="size-5" />
+							{:else}
+								<LucideVideoOff class="size-5" />
+							{/if}
+						</div>
+					</button>
+					<button
+						disabled={call.roomState !== ConnectionState.Connected}
+						class={[
+							'group btn btn-square btn-sm',
+							call.me?.screenShareUnmuted ? 'btn-accent' : 'btn-ghost',
+						]}
+						onclick={call.me?.screenShareUnmuted ? stopScreenShare : startScreenShare}
+					>
+						<div class="text-base-content group-disabled:opacity-20">
+							{#if call.me?.screenShareUnmuted}
+								<LucideMonitorUp class="size-5" />
+							{:else}
+								<LucideMonitorX class="size-5" />
+							{/if}
+						</div>
+					</button>
+					<button
+						disabled={call.roomState === ConnectionState.Disconnected}
+						class="group btn btn-square btn-sm btn-primary"
+						onclick={disconnect}
+					>
+						<div class="text-base-content group-disabled:opacity-20">
+							<LucidePhone class="size-5" />
+						</div>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>

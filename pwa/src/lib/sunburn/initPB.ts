@@ -1,6 +1,16 @@
 import { SvelteSet } from 'svelte/reactivity';
 
-import type { TypedPocketBase } from '$lib/pb-types';
+import {
+	type ChannelRoleAssignmentsRecord,
+	type ChannelRoleAssignmentsResponse,
+	type ChannelsRecord,
+	type ServerRoleAssignmentsRecord,
+	type ServerRoleAssignmentsResponse,
+	type ServerRolesRecord,
+	type TypedPocketBase,
+	type VoiceParticipantsRecord,
+	type VoiceParticipantsResponse,
+} from '$lib/pb-types';
 import { debugPrefix } from '$lib/utils/logPrefixes';
 import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 import { logFriendly } from '$lib/utils/username';
@@ -17,7 +27,7 @@ import {
 	onServerRoleAssignment,
 	onServerRolePermission,
 	onVoiceParticipant,
-} from './data/realtime';
+} from './data/realtime.svelte';
 import { setServerRecord } from './data/server';
 import { sunburn } from './sunburn.svelte';
 
@@ -143,15 +153,21 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 	);
 
 	pb.collection('channels').subscribe('*', (e) => onChannel(instanceID, e));
-	pb.collection('channelRoleAssignments').subscribe('*', (e) =>
-		onChannelRoleAssignment(instanceID, e),
-	);
+	pb.collection('channelRoleAssignments').subscribe<
+		ChannelRoleAssignmentsResponse<ChannelRoleAssignmentsRecord & { role: ServerRolesRecord }>
+	>('*', (e) => onChannelRoleAssignment(instanceID, e), { expand: 'role' });
 
-	pb.collection('voiceParticipants').subscribe('*', (e) => onVoiceParticipant(instanceID, e));
+	pb.collection('voiceParticipants').subscribe<
+		VoiceParticipantsResponse<VoiceParticipantsRecord & { channel: ChannelsRecord }>
+	>('*', (e) => onVoiceParticipant(instanceID, e), {
+		expand: 'channel',
+	});
 
-	pb.collection('serverRoleAssignments').subscribe('*', (e) =>
-		onServerRoleAssignment(instanceID, e),
-	);
+	pb.collection('serverRoleAssignments').subscribe<
+		ServerRoleAssignmentsResponse<ServerRoleAssignmentsRecord & { role: ServerRolesRecord }>
+	>('*', (e) => onServerRoleAssignment(instanceID, e), {
+		expand: 'role',
+	});
 
 	sunburn[instanceID].ready = true;
 

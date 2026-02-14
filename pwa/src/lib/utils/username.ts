@@ -14,6 +14,10 @@ export const nameOrHandle = (
 	userID: UsersRecord['id'],
 	includeAt?: boolean,
 ) => {
+	if (!userID) {
+		return '';
+	}
+
 	if (!(userID in sunburn[instanceID].users)) {
 		return '';
 	}

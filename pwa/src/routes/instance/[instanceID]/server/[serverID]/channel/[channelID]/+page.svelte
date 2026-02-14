@@ -11,6 +11,7 @@
 		sunburn,
 	} from '$lib/sunburn/sunburn.svelte';
 
+	import CallView from './CallView.svelte';
 	import TextView from './TextView.svelte';
 
 	const instanceID: Instance_t['id'] = $derived(page.params.instanceID || '');
@@ -52,7 +53,7 @@
 	</div>
 
 	{#if sunburn[instanceID].servers[serverID].channels[channelID].record.voice}
-		voice
+		<CallView />
 	{:else}
 		<TextView />
 	{/if}

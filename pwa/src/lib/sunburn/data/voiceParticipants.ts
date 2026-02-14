@@ -45,7 +45,7 @@ export const clearVoiceParticipant = (
 		return;
 	}
 
-	if (!(channelID in sunburn[instanceID].servers[serverID])) {
+	if (!(channelID in sunburn[instanceID].servers[serverID].channels)) {
 		return;
 	}
 

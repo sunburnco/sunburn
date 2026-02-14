@@ -117,11 +117,13 @@ export const loadServer = async (
 	sunburn[instanceID].servers[serverID].loaded = true;
 	await fetchServer(instanceID, serverID, null);
 
-	// this also fetches role permissions
-	fetchRolesForServer(instanceID, serverID, null);
+	await Promise.all([
+		// this also fetches role permissions
+		fetchRolesForServer(instanceID, serverID, null),
 
-	// this also fetches channel role assignments and voice participants
-	fetchChannelsForServer(instanceID, serverID, null);
+		// this also fetches channel role assignments and voice participants
+		fetchChannelsForServer(instanceID, serverID, null),
+	]);
 
 	// fetch member role assignments, but do not fetch the user
 	// users are fetched when rendered (i.e. message, user list, etc)

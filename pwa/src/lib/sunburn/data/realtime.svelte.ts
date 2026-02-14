@@ -1,14 +1,19 @@
 import type { RecordSubscription } from 'pocketbase';
 
 import type {
+	ChannelRoleAssignmentsRecord,
 	ChannelRoleAssignmentsResponse,
+	ChannelsRecord,
 	ChannelsResponse,
 	MessagesResponse,
 	PermissionsRecord,
+	ServerRoleAssignmentsRecord,
 	ServerRoleAssignmentsResponse,
 	ServerRolePermissionsResponse,
+	ServerRolesRecord,
 	ServerRolesResponse,
 	ServersResponse,
+	VoiceParticipantsRecord,
 	VoiceParticipantsResponse,
 } from '$lib/pb-types';
 import { binaryDelete, binaryUpdateOrInsert } from '$lib/utils/binaryArray';
@@ -28,7 +33,7 @@ import {
 import { setDMMessages } from './dmMessages';
 import { clearRoleAssignment, setRoleAssignment } from './roleAssignments';
 import { clearRolePermission, clearRoleRecord, setRolePermission, setRoleRecord } from './roles';
-import { clearServerRecord, fetchServersForInstance, setServerRecord } from './server';
+import { clearServerRecord, fetchServer, fetchServersForInstance, setServerRecord } from './server';
 import { clearVoiceParticipant, setVoiceParticipant } from './voiceParticipants';
 
 // TODO this whole file is probably buggy
@@ -98,6 +103,10 @@ export const onServerRole = (
 ) => {
 	const { action, record } = e;
 
+	if (!(record.server in sunburn[instanceID].servers) || !sunburn[instanceID].servers.loaded) {
+		return;
+	}
+
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onServerRole', action, record);
 
@@ -116,7 +125,7 @@ const iHaveRole = (
 	roleID: Role_t['record']['id'],
 ) => {
 	if (
-		!(serverID in sunburn[instanceID]) ||
+		!(serverID in sunburn[instanceID].servers) ||
 		!(sunburn[instanceID].myID in sunburn[instanceID].servers[serverID].members)
 	) {
 		return false;
@@ -133,7 +142,10 @@ const roleHasPermission = (
 	roleID: Role_t['record']['id'],
 	permission: PermissionsRecord['id'],
 ) => {
-	if (!(serverID in sunburn[instanceID]) || !(roleID in sunburn[instanceID].servers[serverID])) {
+	if (
+		!(serverID in sunburn[instanceID].servers) ||
+		!(roleID in sunburn[instanceID].servers[serverID].roles)
+	) {
 		return false;
 	}
 
@@ -147,7 +159,7 @@ export const onServerRolePermission = (
 	const { action, record } = e;
 
 	const serverID = findServerIDForRole(instanceID, record.role);
-	if (!serverID) {
+	if (!serverID || !sunburn[instanceID].servers[serverID].loaded) {
 		return;
 	}
 
@@ -162,8 +174,7 @@ export const onServerRolePermission = (
 		// for the first time
 		if (
 			iHaveRole(instanceID, serverID, record.role) &&
-			(roleHasPermission(instanceID, serverID, record.role, 'CHANNEL_READ') ||
-				roleHasPermission(instanceID, serverID, record.role, 'ADMINISTRATOR'))
+			(record.permission === 'CHANNEL_READ' || record.permission === 'ADMINISTRATOR')
 		) {
 			fetchChannelsForServer(instanceID, serverID, null);
 		}
@@ -173,10 +184,14 @@ export const onServerRolePermission = (
 		// similarly, we may have lost access to the channel
 		if (
 			iHaveRole(instanceID, serverID, record.role) &&
-			(roleHasPermission(instanceID, serverID, record.role, 'CHANNEL_READ') ||
-				roleHasPermission(instanceID, serverID, record.role, 'ADMINISTRATOR'))
+			(record.permission === 'CHANNEL_READ' || record.permission === 'ADMINISTRATOR')
 		) {
-			fetchChannelsForServer(instanceID, serverID, null);
+			for (const channelID of Object.keys(sunburn[instanceID].servers[serverID].channels)) {
+				const channel = sunburn[instanceID].servers[serverID].channels[channelID];
+				if (channel.assignedRolesIDs.has(record.role)) {
+					fetchChannel(instanceID, serverID, channelID, null);
+				}
+			}
 		}
 	}
 };
@@ -187,8 +202,10 @@ export const onChannel = (
 ) => {
 	const { action, record } = e;
 
-	const serverID = findServerIDForChannel(instanceID, record.id);
-	if (!serverID) {
+	if (
+		!(record.server in sunburn[instanceID].servers) ||
+		!sunburn[instanceID].servers[record.server].loaded
+	) {
 		return;
 	}
 
@@ -196,23 +213,29 @@ export const onChannel = (
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onChannel', action, record);
 
 	if (action === 'create' || action === 'update') {
-		setChannelRecord(instanceID, serverID, record.id, record);
+		setChannelRecord(instanceID, record.server, record.id, record);
 		// no need to fetch perms and voice participants because a new channel
 		// won't have any, and updating a channel won't change perms or
 		// participants
 	} else if (action === 'delete') {
-		clearChannelRecord(instanceID, serverID, record.id);
+		clearChannelRecord(instanceID, record.server, record.id);
 	}
 };
 
 export const onChannelRoleAssignment = (
 	instanceID: Instance_t['id'],
-	e: RecordSubscription<ChannelRoleAssignmentsResponse>,
+	e: RecordSubscription<
+		ChannelRoleAssignmentsResponse<ChannelRoleAssignmentsRecord & { role: ServerRolesRecord }>
+	>,
 ) => {
 	const { action, record } = e;
 
-	const serverID = findServerIDForChannel(instanceID, record.channel);
-	if (!serverID) {
+	const serverID = e.record.expand.role.server;
+	if (
+		!serverID ||
+		!(serverID in sunburn[instanceID].servers) ||
+		!sunburn[instanceID].servers[serverID].loaded
+	) {
 		return;
 	}
 
@@ -247,12 +270,18 @@ export const onChannelRoleAssignment = (
 
 export const onVoiceParticipant = (
 	instanceID: Instance_t['id'],
-	e: RecordSubscription<VoiceParticipantsResponse>,
+	e: RecordSubscription<
+		VoiceParticipantsResponse<VoiceParticipantsRecord & { channel: ChannelsRecord }>
+	>,
 ) => {
 	const { action, record } = e;
 
-	const serverID = findServerIDForChannel(instanceID, record.channel);
-	if (!serverID) {
+	const serverID = e.record.expand.channel.server;
+	if (
+		!serverID ||
+		!(serverID in sunburn[instanceID].servers) ||
+		!sunburn[instanceID].servers[serverID].loaded
+	) {
 		return;
 	}
 
@@ -268,12 +297,19 @@ export const onVoiceParticipant = (
 
 export const onServerRoleAssignment = (
 	instanceID: Instance_t['id'],
-	e: RecordSubscription<ServerRoleAssignmentsResponse>,
+	e: RecordSubscription<
+		ServerRoleAssignmentsResponse<ServerRoleAssignmentsRecord & { role: ServerRolesRecord }>
+	>,
 ) => {
 	const { action, record } = e;
 
-	const serverID = findServerIDForRole(instanceID, record.role);
-	if (!serverID) {
+	// const serverID = findServerIDForRole(instanceID, record.role);
+	const serverID = record.expand.role.server;
+	if (
+		!serverID ||
+		!(serverID in sunburn[instanceID].servers) ||
+		!sunburn[instanceID].servers[serverID].loaded
+	) {
 		return;
 	}
 
@@ -305,24 +341,25 @@ export const onServerRoleAssignment = (
 		clearRoleAssignment(instanceID, serverID, record.user, record.role);
 
 		// similarly, we may have lost access to a channel
-		//
-		// this could be more granular by checking only for
-		// channels that have the cleared role, but I think
-		// the gains would be marginal
 		if (
 			sunburn[instanceID].myID === record.user &&
 			(roleHasPermission(instanceID, serverID, record.role, 'CHANNEL_READ') ||
 				roleHasPermission(instanceID, serverID, record.role, 'ADMINISTRATOR'))
 		) {
-			fetchChannelsForServer(instanceID, serverID, null);
+			for (const channelID of Object.keys(sunburn[instanceID].servers[serverID].channels)) {
+				const channel = sunburn[instanceID].servers[serverID].channels[channelID];
+				if (channel.assignedRolesIDs.has(record.role)) {
+					fetchChannel(instanceID, serverID, channelID, null);
+				}
+			}
 		}
 
 		// or we may have lost access to the server
-		else if (
+		if (
 			sunburn[instanceID].myID === record.user &&
 			roleHasPermission(instanceID, serverID, record.role, 'SERVER_MEMBER')
 		) {
-			fetchServersForInstance(instanceID, null);
+			fetchServer(instanceID, serverID, null);
 		}
 	}
 };
