@@ -3,9 +3,6 @@
 	import { Debounced } from 'runed';
 
 	import { page } from '$app/state';
-	import Button from '$lib/components/Button.svelte';
-	import Input from '$lib/components/Input.svelte';
-	import Label from '$lib/components/Label.svelte';
 	import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 
 	let defaultURL = $state(page.url.host);
@@ -19,30 +16,27 @@
 	}, 175);
 </script>
 
-<div class="flex flex-col fl-gap-1/2">
-	<h1 class="font-display fl-text-lg/xl font-bold select-none">Log In</h1>
-	<form
-		action={`${page.url.href}/${instanceSlug.current}`}
-		class="fl-mt-1/2 flex flex-col fl-gap-1/2"
-	>
-		<Label>
-			{#snippet ts()}
-				Instance URL
-			{/snippet}
-			<Input
-				id="instanceURL"
+<div class="flex flex-col">
+	<h1 class="font-display text-xl font-bold select-none">Log In</h1>
+	<form action={`${page.url.href}/${instanceSlug.current}`} class="flex flex-col gap-2">
+		<fieldset class="fieldset">
+			<legend class="fieldset-legend">Instance URL</legend>
+			<input
+				class="input w-full"
+				type="text"
 				bind:value={baseHost}
 				placeholder={`Default: ${defaultURL}`}
 				autocomplete="off"
 				autocorrect="off"
 				autocapitalize="off"
 			/>
-		</Label>
+		</fieldset>
+
 		<a class="" href={`${page.url.href}/${instanceSlug.current}`}>
-			<Button color="primary" type="submit" className="w-full">
+			<button class="btn w-full btn-primary" type="submit">
 				Log in to {instanceSlug.current}
 				<LucideLogIn class="flicon-md" />
-			</Button>
+			</button>
 		</a>
 	</form>
 </div>

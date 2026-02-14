@@ -8,9 +8,6 @@
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import Button from '$lib/components/Button.svelte';
-	import Input from '$lib/components/Input.svelte';
-	import Label from '$lib/components/Label.svelte';
 	import { logInWithPassword } from '$lib/sunburn/logIn';
 	import { debugPrefix, errorPrefix, warnPrefix } from '$lib/utils/logPrefixes';
 	import { logFriendly } from '$lib/utils/username';
@@ -126,74 +123,73 @@
 	onMount(fetchURLAndAuthMethods);
 </script>
 
-<div class="flex w-full flex-col fl-gap-1/2">
-	<h1 class="font-display fl-text-lg/xl font-bold select-none">Log In</h1>
+<div class="flex w-full flex-col gap-2">
+	<h1 class="font-display text-xl font-bold select-none">Log In</h1>
 	{#if valid === null}
 		<p>Loading...</p>
 	{:else if !valid}
 		<p>Could not find a Sunburn instance at this URL. Check the console for more information.</p>
 		<a href="/login">
-			<Button color="primary" variant="outline" className="w-full">Go Back</Button>
+			<button class="btn w-full btn-primary">Go Back</button>
 		</a>
 	{:else if isError}
-		<div class="rounded-box bg-error flp-md text-error-content">
+		<div class="rounded-box bg-error p-2 text-error-content">
 			Unable to log in. Are your username and password correct?
 		</div>
 	{:else}
 		<div
 			class={[
-				'fl-gap-1/2 rounded-box flp-md',
+				'gap-2 rounded-box p-2 select-none',
 				tls && __SB_VERSION__ === version
 					? 'bg-base-200 text-base-content'
 					: 'bg-warning text-warning-content',
 			]}
 		>
-			<p><LucideCheck class="flicon-md" /> Connected to {page.params.instanceID}</p>
+			<p><LucideCheck class="inline size-4" /> Connected to {page.params.instanceID}</p>
 
 			{#if tls}
-				<p><LucideLock class="flicon-md" /> Using SSL</p>
+				<p><LucideLock class="inline size-4" /> Using SSL</p>
 			{:else}
-				<p><LucideLockOpen class="flicon-md" /> Not using SSL</p>
+				<p><LucideLockOpen class="inline size-4" /> Not using SSL</p>
 			{/if}
 
 			{#if version !== __SB_VERSION__}
 				<p>
-					<LucideCloudAlert class="flicon-md" /> Client: v{__SB_VERSION__}, Server: v{version}
+					<LucideCloudAlert class="inline size-4" /> Client: v{__SB_VERSION__}, Server: v{version}
 				</p>
 			{/if}
 		</div>
 	{/if}
 
 	{#if authMethods?.password.enabled}
-		<form onsubmit={attemptLogin} class="fl-mt-1/2 flex flex-col">
-			<Label>
-				{#snippet ts()}
-					Username or Email
-				{/snippet}
-				<Input
+		<form onsubmit={attemptLogin} class="flex flex-col gap-2">
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend">Username or Email</legend>
+				<input
+					class="input w-full"
+					type="text"
 					{disabled}
 					id="username"
 					bind:value={username}
 					autocomplete="username"
 					oninput={() => (isError = false)}
 				/>
-			</Label>
+			</fieldset>
 
-			<Label>
-				{#snippet ts()}
-					Password
-				{/snippet}
-				<Input
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend">Password</legend>
+				<input
+					class="input w-full"
+					type="password"
 					{disabled}
 					id="password"
 					bind:value={password}
-					type="password"
 					autocomplete="current-password"
 					oninput={() => (isError = false)}
 				/>
-			</Label>
+			</fieldset>
 
-			<Button {disabled} color="primary" type="submit" className="fl-mt-1/2 w-full">Submit</Button>
+			<button class="btn w-full btn-primary" {disabled} type="submit">Submit</button>
 		</form>
 	{/if}
 </div>

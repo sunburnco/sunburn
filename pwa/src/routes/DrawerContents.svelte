@@ -227,7 +227,7 @@
 					{:else}
 						<div class="select-none opacity-50 gap-1 w-full flex items-center flex-col">
 							<LucidePackageOpen class="size-6" />
-							<div class="w-1/2">Nothing to display.</div>
+							<div class="w-1/2 text-center">Nothing to display.</div>
 						</div>
 					{/each}
 				{:else}
@@ -255,7 +255,7 @@
 					{:else}
 						<div class="select-none opacity-50 gap-1 w-full flex items-center flex-col">
 							<LucidePackageOpen class="size-6" />
-							<div class="w-1/2">Nothing to display. Try searching for a user.</div>
+							<div class="w-1/2 text-center">Nothing to display. Try searching for a user.</div>
 						</div>
 					{/each}
 				{/if}
@@ -296,11 +296,31 @@
 							{sunburn[activeInstanceID].servers[activeServerID].channels[channel.channelID].record
 								.name}
 						</a>
+						{#if sunburn[activeInstanceID].servers[activeServerID].channels[channel.channelID].voiceParticipants.size > 0}
+							<ul>
+								{#each sunburn[activeInstanceID].servers[activeServerID].channels[channel.channelID].voiceParticipants.keys() as vp (vp)}
+									{#if vp in sunburn[activeInstanceID].users}
+										<li>
+											<span class="inline-flex items-center gap-2 px-1.5">
+												<PBAvatar
+													size="sm"
+													instanceID={activeInstanceID}
+													userID={vp}
+													name={nameOrHandle(activeInstanceID, vp)}
+													url={sunburn[activeInstanceID].users[vp].avatar}
+												/>
+												{nameOrHandle(activeInstanceID, vp)}
+											</span>
+										</li>
+									{/if}
+								{/each}
+							</ul>
+						{/if}
 					</li>
 				{:else}
 					<div class="select-none opacity-50 gap-1 w-full flex items-center flex-col">
 						<LucidePackageOpen class="size-6" />
-						<div class="w-1/2">Nothing to display.</div>
+						<div class="w-1/2 text-center">Nothing to display.</div>
 					</div>
 				{/each}
 			</ul>

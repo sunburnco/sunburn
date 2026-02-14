@@ -3,8 +3,6 @@
 	import { onMount } from 'svelte';
 	import { Editor } from 'tiny-markdown-editor';
 
-	import Button from './Button.svelte';
-
 	type Props_t = { onSend: (contents: string) => void | Promise<void>; content?: string };
 
 	let { onSend, content = $bindable() }: Props_t = $props();
@@ -55,11 +53,8 @@
 	<label class="textarea max-h-48 min-h-0 grow cursor-text overflow-y-auto px-1 py-0">
 		<textarea name="editor" bind:this={textarea} rows={1}></textarea>
 	</label>
-	<Button
-		size="md-sq"
-		color="primary"
-		title="Send"
-		className="p-1 box-border min-h-9.5"
+	<button
+		class="btn btn-square btn-primary"
 		onclick={() => {
 			const content = tinyMDE?.getContent();
 			if (!content || !tinyMDE) {
@@ -71,5 +66,5 @@
 		}}
 	>
 		<LucideSend class="flicon-md translate-y-px" />
-	</Button>
+	</button>
 </div>

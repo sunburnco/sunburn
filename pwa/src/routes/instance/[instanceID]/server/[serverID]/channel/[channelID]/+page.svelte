@@ -29,6 +29,7 @@
 		<div class="flex items-center justify-center gap-1">
 			<PBAvatar
 				size="md"
+				color="base-200"
 				{instanceID}
 				name={sunburn[instanceID].servers[serverID].record.name}
 				{serverID}

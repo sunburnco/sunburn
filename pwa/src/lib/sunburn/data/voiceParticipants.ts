@@ -26,7 +26,7 @@ export const setVoiceParticipant = (
 		);
 	}
 
-	if (!(channelID in sunburn[instanceID].servers[serverID])) {
+	if (!(channelID in sunburn[instanceID].servers[serverID].channels)) {
 		fetchChannel(instanceID, serverID, channelID, channelID).then(() =>
 			setVoiceParticipant(instanceID, serverID, channelID, memberID),
 		);
