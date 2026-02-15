@@ -29,3 +29,23 @@ export const logInWithPassword = async (
 
 	return resp.record.handle;
 };
+
+export const logInWithOAuth2 = async (
+	baseURL: BaseURL_t, // http://localhost:8090
+	provider: string,
+) => {
+	const instanceID = parseInstanceSlug(baseURL, '');
+
+	const pb = new PocketBase(baseURL, new LocalAuthStore(instanceID)) as TypedPocketBase;
+
+	const resp = await pb.collection('users').authWithOAuth2({ provider });
+	const handle = resp.record.handle_lowercase;
+
+	initPB(pb, handle, true);
+
+	const authStoreKey: LocalAuthStoreKey_t = `${handle}@${instanceID}`;
+	localAuthStoreKeys[authStoreKey] = baseURL;
+	await set('sbLocalAuthStoreKeys', localAuthStoreKeys);
+
+	return resp.record.handle;
+};

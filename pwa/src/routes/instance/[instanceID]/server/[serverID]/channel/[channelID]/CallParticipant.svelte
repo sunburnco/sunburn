@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LucideCamera, LucideWallpaper } from '@lucide/svelte';
+	import { LucideEye, LucideWallpaper } from '@lucide/svelte';
 	import { Track } from 'livekit-client';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -68,18 +68,18 @@
 		</div>
 		{#if cameraTrack}
 			<button
-				class="group/btn btn hidden btn-square btn-sm group-hover:flex group-focus:flex"
+				class="group/btn btn hidden btn-square btn-sm btn-secondary group-hover:flex group-focus:flex"
 				onclick={() => {
 					setFocusedTracks(participantID, cameraTrack.trackSid);
 				}}
 				title={`Focus ${nameOrHandle(call.instanceID, participantID)}'s camera`}
 			>
-				<LucideCamera class="size-5" />
+				<LucideEye class="size-5" />
 			</button>
 		{/if}
 		{#if ssVideoTrack}
 			<button
-				class="group/btn btn hidden btn-square btn-sm group-hover:flex group-focus:flex"
+				class="group/btn btn hidden btn-square btn-sm btn-secondary group-hover:flex group-focus:flex"
 				onclick={() => {
 					setFocusedTracks(participantID, ssVideoTrack.trackSid, ssAudioTrack?.trackSid);
 				}}

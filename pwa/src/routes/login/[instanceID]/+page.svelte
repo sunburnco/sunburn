@@ -8,7 +8,7 @@
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { logInWithPassword } from '$lib/sunburn/logIn';
+	import { logInWithOAuth2, logInWithPassword } from '$lib/sunburn/logIn';
 	import { debugPrefix, errorPrefix, warnPrefix } from '$lib/utils/logPrefixes';
 	import { logFriendly } from '$lib/utils/username';
 
@@ -119,11 +119,22 @@
 			isError = true;
 		}
 	};
+	const attemptOAuthLogin = async (provider: string) => {
+		isError = false;
+		try {
+			const handle = await logInWithOAuth2(baseURL, provider);
+			goto(`${page.url.pathname}/success?handle=${handle}`);
+		} catch (err) {
+			// eslint-disable-next-line no-console
+			console.error(...errorPrefix, 'could not sign in\n', err);
+			isError = true;
+		}
+	};
 
 	onMount(fetchURLAndAuthMethods);
 </script>
 
-<div class="flex w-full flex-col gap-2">
+<div class="flex w-full flex-col gap-4">
 	<h1 class="font-display text-xl font-bold select-none">Log In</h1>
 	{#if valid === null}
 		<p>Loading...</p>
@@ -134,7 +145,7 @@
 		</a>
 	{:else if isError}
 		<div class="rounded-box bg-error p-2 text-error-content">
-			Unable to log in. Are your username and password correct?
+			Unable to log in. Check the console for more information.
 		</div>
 	{:else}
 		<div
@@ -191,5 +202,13 @@
 
 			<button class="btn w-full btn-primary" {disabled} type="submit">Submit</button>
 		</form>
+		{#if authMethods?.oauth2.providers.length > 0}
+			<div class="divider"></div>
+		{/if}
 	{/if}
+	{#each authMethods?.oauth2.providers as provider (provider.authURL)}
+		<button class="btn w-full btn-outline" onclick={() => attemptOAuthLogin(provider.name)}>
+			Log in with {provider.displayName}
+		</button>
+	{/each}
 </div>

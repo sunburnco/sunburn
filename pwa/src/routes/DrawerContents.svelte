@@ -255,7 +255,7 @@
 					{:else}
 						<div class="select-none opacity-50 gap-1 w-full flex items-center flex-col">
 							<LucidePackageOpen class="size-6" />
-							<div class="w-1/2 text-center">Nothing to display.</div>
+							<div class="w-1/2 text-center">Nothing to display</div>
 						</div>
 					{/each}
 				{:else}
@@ -353,7 +353,7 @@
 				{:else}
 					<div class="select-none opacity-50 gap-1 w-full flex items-center flex-col">
 						<LucidePackageOpen class="size-6" />
-						<div class="w-1/2 text-center">Nothing to display.</div>
+						<div class="w-1/2 text-center">Nothing to display</div>
 					</div>
 				{/each}
 			</ul>

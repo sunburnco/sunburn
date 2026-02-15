@@ -70,7 +70,7 @@
 					class="select-none opacity-50 mt-2 gap-1 w-full flex items-center justify-center flex-col"
 				>
 					<LucidePackageOpen class="size-6" />
-					<div>Nothing to display.</div>
+					<div>Nothing to display</div>
 				</div>
 			{/each}
 		</div>

@@ -1,20 +1,10 @@
 <script lang="ts">
-	import {
-		LucideLoaderCircle,
-		LucideMic,
-		LucideMicOff,
-		LucideMonitorUp,
-		LucideMonitorX,
-		LucideVideo,
-		LucideVideoOff,
-		LucideWallpaper,
-	} from '@lucide/svelte';
+	import { LucideLoaderCircle } from '@lucide/svelte';
 	import {
 		ConnectionState,
 		RemoteTrackPublication,
 		Room,
 		setLogLevel,
-		Track,
 		TrackPublication,
 	} from 'livekit-client';
 	import { DateTime } from 'luxon';
@@ -28,16 +18,11 @@
 	import { callVolumes } from '$lib/utils/call/callVolumes.svelte';
 	import { connect } from '$lib/utils/call/connect';
 	import { disconnect } from '$lib/utils/call/disconnect';
-	import { muteCamera } from '$lib/utils/call/muteCamera';
-	import { muteMic } from '$lib/utils/call/muteMic';
-	import { startScreenShare } from '$lib/utils/call/startScreenShare';
-	import { stopScreenShare } from '$lib/utils/call/stopScreenShare';
-	import { unmuteCamera } from '$lib/utils/call/unmuteCamera';
-	import { unmuteMic } from '$lib/utils/call/unmuteMic';
 	import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
 	import { logFriendly, nameOrHandle } from '$lib/utils/username';
 
 	import CallParticipant from './CallParticipant.svelte';
+	import Me from './Me.svelte';
 
 	const instanceID = $derived(page.params.instanceID || '');
 	const serverID = $derived(page.params.serverID || '');
@@ -92,6 +77,14 @@
 		videoID: CallTrackID_t,
 		audioID: CallTrackID_t = '',
 	) => {
+		if (focusedParticipantID === participantID && focusedVideoTrackID === videoID) {
+			// toggle off
+			focusedParticipantID = '';
+			focusedVideoTrackID = '';
+			focusedAudioTrackID = '';
+			return;
+		}
+
 		if (focusedVideoTrack && !focusedVideoTrack.isLocal) {
 			(focusedVideoTrack as RemoteTrackPublication).setSubscribed(false);
 		}
@@ -247,7 +240,7 @@
 				</div>
 				<div class="group absolute bottom-0 left-0 max-w-full" tabindex="-1">
 					<div class="flex items-end gap-2 overflow-x-auto p-2 px-4">
-						{@render Me()}
+						<Me {setFocusedTracks} />
 						{#each Object.keys(call.roomParticipants) as participantID (participantID)}
 							<CallParticipant {participantID} {setFocusedTracks} />
 						{/each}
@@ -257,99 +250,6 @@
 		{/if}
 	</div>
 </div>
-
-{#snippet Me()}
-	<div
-		class="box-border flex flex-col-reverse items-center gap-2 rounded-box *:shadow-lg"
-		title={nameOrHandle(call.instanceID, sunburn[call.instanceID].myID, true)}
-	>
-		<PBAvatar
-			color="base-300"
-			size="xl"
-			instanceID={call.instanceID}
-			userID={sunburn[call.instanceID].myID}
-			url={sunburn[call.instanceID].users[sunburn[call.instanceID].myID].avatar}
-			name={nameOrHandle(call.instanceID, sunburn[call.instanceID].myID)}
-		/>
-		<button
-			class={[
-				'group/btn btn hidden btn-square btn-sm group-hover:flex group-focus:flex',
-				call.me?.micUnmuted && 'btn-accent',
-			]}
-			onclick={call.me?.micUnmuted ? muteMic : unmuteMic}
-			title={call.me?.micUnmuted ? 'Mute (you are unmuted)' : 'Unmute (you are muted)'}
-		>
-			<div class="group-disabled/btn:opacity-70">
-				{#if call.me?.micUnmuted}
-					<LucideMic class="size-5" />
-				{:else}
-					<LucideMicOff class="size-5 stroke-base-content" />
-				{/if}
-			</div>
-		</button>
-		<button
-			class={[
-				'group/btn btn hidden btn-square btn-sm group-hover:flex group-focus:flex',
-				call.me?.cameraUnmuted && 'btn-accent',
-			]}
-			onclick={call.me?.cameraUnmuted ? muteCamera : unmuteCamera}
-			title={call.me?.cameraUnmuted
-				? 'Stop camera (your camera is on)'
-				: 'Start camera (your camera is off)'}
-		>
-			<div class="group-disabled/btn:opacity-70">
-				{#if call.me?.cameraUnmuted}
-					<LucideVideo class="size-5" />
-				{:else}
-					<LucideVideoOff class="size-5 stroke-base-content" />
-				{/if}
-			</div>
-		</button>
-		<button
-			class={[
-				'group/btn btn hidden btn-square btn-sm group-hover:flex group-focus:flex',
-				call.me?.screenShareUnmuted && 'btn-accent',
-			]}
-			onclick={call.me?.screenShareUnmuted ? stopScreenShare : startScreenShare}
-			title={call.me?.screenShareUnmuted
-				? 'Stop sharing your screen (your screen is being shared)'
-				: 'Begin sharing your screen (your screen is not being shared)'}
-		>
-			<div class="group-disabled/btn:opacity-70">
-				{#if call.me?.screenShareUnmuted}
-					<LucideMonitorUp class="size-5" />
-				{:else}
-					<LucideMonitorX class="size-5 stroke-base-content" />
-				{/if}
-			</div>
-		</button>
-		{#if call.me?.screenShareUnmuted}
-			<button
-				class={['group/btn btn hidden btn-square btn-sm group-hover:flex group-focus:flex']}
-				onclick={() => {
-					if (!call.me) {
-						return;
-					}
-
-					focusedParticipantID = sunburn[call.instanceID].myID;
-					const focusedVideoTrack = Object.values(call.me.tracks).find(
-						(t) => t.source === Track.Source.ScreenShare,
-					);
-					focusedVideoTrackID = focusedVideoTrack ? focusedVideoTrack.trackSid : '';
-					const focusedAudioTrack = Object.values(call.me.tracks).find(
-						(t) => t.source === Track.Source.ScreenShareAudio,
-					);
-					focusedAudioTrackID = focusedAudioTrack ? focusedAudioTrack.trackSid : '';
-				}}
-				title="Preview your screen share"
-			>
-				<div class="group-disabled/btn:opacity-70">
-					<LucideWallpaper class="size-5 stroke-base-content" />
-				</div>
-			</button>
-		{/if}
-	</div>
-{/snippet}
 
 {#snippet ContentRenderer(videoTrack: TrackPublication, audioTrack: TrackPublication | null)}
 	<VideoTrackPlayer track={videoTrack} />
