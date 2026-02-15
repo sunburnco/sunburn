@@ -194,7 +194,7 @@
 		{:else if call.roomState === ConnectionState.Connecting || call.roomState === ConnectionState.Reconnecting || call.roomState === ConnectionState.SignalReconnecting}
 			<div class="flex size-full items-center justify-center">
 				<div
-					class="flex items-center justify-center gap-2 rounded-box bg-base-200 p-4 font-display text-lg font-bold text-base-content"
+					class="flex items-center justify-center gap-2 rounded-box bg-base-200 p-4 font-display text-lg font-bold text-base-content shadow-lg"
 				>
 					Connecting <LucideLoaderCircle class="size-5 animate-spin" />
 				</div>

@@ -10,6 +10,7 @@
 		LucideWallpaper,
 	} from '@lucide/svelte';
 	import { Track } from 'livekit-client';
+	import { onDestroy, onMount } from 'svelte';
 
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
 	import { call, type CallTrackID_t, type CallUserID_t } from '$lib/sunburn/call.svelte';
@@ -31,20 +32,41 @@
 	};
 
 	let { setFocusedTracks }: Props_t = $props();
+
+	let speaking = $state(false);
+	onMount(() => {
+		if (!call.me) {
+			return;
+		}
+
+		call.me.participant.on('isSpeakingChanged', (s) => (speaking = s));
+	});
+
+	onDestroy(() => {
+		call.me?.participant.removeAllListeners();
+	});
 </script>
 
 <div
 	class="box-border flex flex-col-reverse items-center gap-2 rounded-box *:shadow-lg"
 	title={nameOrHandle(call.instanceID, sunburn[call.instanceID].myID, true)}
 >
-	<PBAvatar
-		color="base-300"
-		size="xl"
-		instanceID={call.instanceID}
-		userID={sunburn[call.instanceID].myID}
-		url={sunburn[call.instanceID].users[sunburn[call.instanceID].myID].avatar}
-		name={nameOrHandle(call.instanceID, sunburn[call.instanceID].myID)}
-	/>
+	<div
+		class={[
+			'rounded-box',
+			!call.me?.micUnmuted && 'scale-85 opacity-70 grayscale',
+			speaking && 'outline-2 outline-primary',
+		]}
+	>
+		<PBAvatar
+			color="base-300"
+			size="xl"
+			instanceID={call.instanceID}
+			userID={sunburn[call.instanceID].myID}
+			url={sunburn[call.instanceID].users[sunburn[call.instanceID].myID].avatar}
+			name={nameOrHandle(call.instanceID, sunburn[call.instanceID].myID)}
+		/>
+	</div>
 	<button
 		class={[
 			'group/btn btn hidden btn-square btn-sm group-hover:flex group-focus:flex',

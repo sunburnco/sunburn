@@ -79,6 +79,8 @@ webhook:
 
 ### Docker Compose
 
+**The router name (`traefik.tcp.routers.NAME`) must be unique for all LiveKit servers running behind your reverse proxy.** Ask me how I know.
+
 ```yaml
 services:
   sunburn:
@@ -101,16 +103,16 @@ services:
     volumes:
       - './files/livekit.yaml:/etc/livekit.yaml'
     expose:
-      - '5439'
+      - '5349'
     labels:
       - coolify.enable=true
       - traefik.enable=true
-      - traefik.tcp.routers.lkturn.rule=HostSNI(`docs-rtc-turn.sunburn.gg`)
-      - traefik.tcp.routers.lkturn.entrypoints=https
-      - traefik.tcp.routers.lkturn.tls=true
-      - traefik.tcp.routers.lkturn.tls.certresolver=letsencrypt
-      - traefik.tcp.routers.lkturn.service=lkturn
-      - traefik.tcp.services.lkturn.loadbalancer.server.port=5349
+      - traefik.tcp.routers.lkdocs.rule=HostSNI(`docs-rtc-turn.sunburn.gg`)
+      - traefik.tcp.routers.lkdocs.entrypoints=https
+      - traefik.tcp.routers.lkdocs.tls=true
+      - traefik.tcp.routers.lkdocs.tls.certresolver=letsencrypt
+      - traefik.tcp.routers.lkdocs.service=lkdocs
+      - traefik.tcp.services.lkdocs.loadbalancer.server.port=5349
 ```
 
 ## Configure
@@ -245,3 +247,19 @@ Finally, let's make a voice channel for everyone to talk in. Make a new channel 
 We'll add the `everyone` role to the channel, so if you can see `#general`, you can see `voice`.
 
 ![voice channel role assignment](.images/voicecra.png)
+
+The frontend saves connection information in a key/value store, where the key is the instance URL. This means you can't use the same frontend for two accounts on the same instance URL.
+
+- `alice@sunburn.gg` and `alice@docs.sunburn.gg`: good
+- `alice@sunburn.gg` and `bob@sunburn.gg`: bad
+- `alice@sunburn.gg` and `alice@sunburn-but-its-the-same-instance-behind-the-proxy.gg`: good
+
+You can test two accounts on the same instance with one of these methods:
+
+- Private browsing
+- Browser profiles
+- Use your frontend for `alice` and [sunburn.gg](https://sunburn.gg) for `bob`
+
+![call connected](.images/calling.png)
+
+At this point, you should have a Sunburn instance configured with chat and video calling.
