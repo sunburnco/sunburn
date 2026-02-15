@@ -13,11 +13,13 @@ COPY ./backend .
 RUN go mod download
 RUN go build -o sunburn .
 
-FROM alpine
+FROM node:lts-alpine
 WORKDIR /app
+COPY ./docker-wrapper.sh .
 COPY --from=backend_builder /go/src/app/sunburn .
 RUN ./sunburn migrate up
-COPY --from=app_builder /app/build ./svelteOut
+COPY --from=app_builder /app/build ./pwa
+
 EXPOSE 3000
 
-CMD ["./sunburn", "--dir", "/data", "--http", "0.0.0.0:3000", "serve"]
+CMD ["./docker-wrapper.sh"]

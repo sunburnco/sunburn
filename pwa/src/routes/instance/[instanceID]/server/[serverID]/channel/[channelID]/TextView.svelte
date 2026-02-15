@@ -20,7 +20,9 @@
 	const channelID: Channel_t['record']['id'] = $derived(page.params.channelID || '');
 
 	let scrollRef: HTMLDivElement;
-	let noMoreMessages = $state(false);
+	let noMoreMessages = $state(
+		sunburn[instanceID].server[serverID].channel[channelID].messages.length >= 50,
+	);
 	$effect(() => {
 		const _ = instanceID + serverID + channelID;
 		noMoreMessages = false;

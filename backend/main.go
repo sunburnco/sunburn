@@ -1,16 +1,15 @@
 package main
 
 import (
-	"os"
-
 	"sunburn.co/backend/hooks"
 	"sunburn.co/backend/livekit"
 
 	"github.com/joho/godotenv"
 	"github.com/pocketbase/pocketbase"
-	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
+
+	proxyPlugin "github.com/iamelevich/pocketbase-plugin-proxy"
 
 	_ "sunburn.co/backend/migrations"
 )
@@ -20,13 +19,12 @@ func main() {
 
 	app := pocketbase.New()
 
-	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
-		se.Router.GET("/{path...}", apis.Static(os.DirFS("./svelteOut"), false))
-
-		return se.Next()
-	})
-
 	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{})
+
+	proxyPlugin.MustRegister(app, &proxyPlugin.Options{
+		Enabled: true,
+		Url:     "http://localhost:4000",
+	})
 
 	// soft delete
 	app.OnRecordDelete().BindFunc(hooks.OnRecordDelete)

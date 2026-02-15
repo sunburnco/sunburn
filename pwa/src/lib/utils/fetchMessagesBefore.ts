@@ -22,7 +22,7 @@ export const fetchChannelMessagesBefore = async (
 	try {
 		const resp = await sunburn[instanceID].pb
 			.collection('messages')
-			.getList<MessagesResponse<MessagesRecord>>(0, 50, {
+			.getList<MessagesResponse<MessagesRecord>>(1, 50, {
 				filter: sunburn[instanceID].pb.filter('created < {:ts} && channel = {:channelID}', {
 					channelID,
 					ts: before,

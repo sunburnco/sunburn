@@ -1,6 +1,6 @@
 module sunburn.co/backend
 
-go 1.24.4
+go 1.25.0
 
 require (
 	github.com/joho/godotenv v1.5.1
@@ -38,6 +38,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
+	github.com/iamelevich/pocketbase-plugin-proxy v0.17.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jxskiss/base62 v1.1.0 // indirect
 	github.com/klauspost/compress v1.18.4 // indirect

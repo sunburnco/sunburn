@@ -2,10 +2,10 @@
 	import { LucideLoaderCircle } from '@lucide/svelte';
 	import {
 		ConnectionState,
-		RemoteTrackPublication,
+		type RemoteTrackPublication,
 		Room,
 		setLogLevel,
-		TrackPublication,
+		type TrackPublication,
 	} from 'livekit-client';
 	import { DateTime } from 'luxon';
 
