@@ -1,7 +1,5 @@
 # Sunburn
 
-## Features
-
 # Get Started
 
 The goal of this guide is to set up a minimal Sunburn instance with basic text chat, voice calls, and screen sharing. We will set up a server with some public and some private channels.
