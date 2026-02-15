@@ -213,3 +213,35 @@ I'll just accept the default of `docs.sunburn.gg`. At this point, the Sunburn cl
 ![successful login](.images/tplogin.png)
 
 Notice how the server list auto-populated. The server list shows all the servers you have access to, across all instances.
+
+Each server has all the channels we can access. As server owner, you have access to all channels.
+
+![channel list](.images/channellist.png)
+
+Alice doesn't have access to our server yet because she's not a member.
+
+![alice no servers](.images/alicenoservers.png)
+
+To give Alice membership, she needs a role with the `SERVER_MEMBER` permission. Since we gave `SERVER_MEMBER` to the `everyone` role earlier, we can just give Alice the `everyone` role and she'll become a member. Use the `serverRoleAssignments` table.
+
+![alice no channels](.images/alicenochannels.png)
+
+Unfortunately, she still has no access to any channels. We need to assign the `CHANNEL_READ` permission to `everyone` (`serverRolePermissions`), then assign the `everyone` role to `#general` (`channelRoleAssignments`).
+
+![alice general access](.images/alicegeneralaccess.png)
+
+She still can't send messages, however, because the `everyone` role is missing the `CHANNEL_SEND` permission. Use the `serverRolePermissions` collection to add `CHANNEL_SEND` to `everyone`.
+
+![alice can chat](.images/alicecanchat.png)
+
+Now let's get Employee Bob set up. Bob needs the `everyone` role so he can get the `SERVER_MEMBER` permission. We'll also need to set the `employee` role to have `CHANNEL_READ` and `CHANNEL_SEND`, then assign the `employee` role to `#work`.
+
+![bob at work](.images/bobatwork.png)
+
+Finally, let's make a voice channel for everyone to talk in. Make a new channel with the `voice` column set to `true`.
+
+![make voice channel](.images/makevoicechannel.png)
+
+We'll add the `everyone` role to the channel, so if you can see `#general`, you can see `voice`.
+
+![voice channel role assignment](.images/voicecra.png)

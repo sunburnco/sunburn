@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"sunburn.co/backend/hooks"
 	"sunburn.co/backend/livekit"
 
@@ -21,9 +23,15 @@ func main() {
 
 	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{})
 
-	proxyPlugin.MustRegister(app, &proxyPlugin.Options{
+	plugin := proxyPlugin.MustRegister(app, &proxyPlugin.Options{
 		Enabled: true,
 		Url:     "http://localhost:4000",
+	})
+	plugin.SetSkipper(func(c *core.RequestEvent) bool {
+		return strings.HasPrefix(c.Request.URL.Path, "/_/") ||
+			strings.HasPrefix(c.Request.URL.Path, "/api/") ||
+			strings.HasPrefix(c.Request.URL.Path, "/lk/") ||
+			c.Request.URL.Path == "/lkwebhook"
 	})
 
 	// soft delete
