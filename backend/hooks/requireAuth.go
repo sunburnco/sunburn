@@ -3,7 +3,7 @@ package hooks
 import "github.com/pocketbase/pocketbase/core"
 
 func RequireAuthForRequestEvent(e *core.RecordRequestEvent) error {
-	if e.Auth.Id == "" {
+	if e.Auth != nil && e.Auth.Id == "" {
 		return e.ForbiddenError("Authorization required", nil)
 	}
 
@@ -11,7 +11,7 @@ func RequireAuthForRequestEvent(e *core.RecordRequestEvent) error {
 }
 
 func RequireAuthForListRequestEvent(e *core.RecordsListRequestEvent) error {
-	if e.Auth.Id == "" {
+	if e.Auth != nil && e.Auth.Id == "" {
 		return e.ForbiddenError("Authorization required", nil)
 	}
 

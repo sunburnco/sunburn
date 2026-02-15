@@ -37,7 +37,14 @@ func LockedColumns_Messages(e *core.RecordEvent) error {
 }
 
 func LockedColumns_ServerRoleAssignments(e *core.RecordEvent) error {
-	if err := checkLockedColumns([]string{"user", "role", "server"}, e); err != nil {
+	if err := checkLockedColumns([]string{"user", "role"}, e); err != nil {
+		return err
+	}
+	return e.Next()
+}
+
+func LockedColumns_ServerRolePermissions(e *core.RecordEvent) error {
+	if err := checkLockedColumns([]string{"role", "permission"}, e); err != nil {
 		return err
 	}
 	return e.Next()
@@ -45,6 +52,13 @@ func LockedColumns_ServerRoleAssignments(e *core.RecordEvent) error {
 
 func LockedColumns_ServerRoles(e *core.RecordEvent) error {
 	if err := checkLockedColumns([]string{"server"}, e); err != nil {
+		return err
+	}
+	return e.Next()
+}
+
+func LockedColumns_VoiceParticipants(e *core.RecordEvent) error {
+	if err := checkLockedColumns([]string{"user", "channel"}, e); err != nil {
 		return err
 	}
 	return e.Next()

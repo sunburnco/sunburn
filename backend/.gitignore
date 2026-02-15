@@ -5,3 +5,5 @@ pb_data/
 
 svelteOut/
 backend
+
+backend/tests/playground.http
