@@ -116,9 +116,9 @@
 
 		orientation === 'vertical' && 'writing-slr',
 
-		size === 'sm-sq' && 'flex aspect-square items-center justify-center fl-p-[0.25/0.5]',
-		size === 'md-sq' && 'flex aspect-square items-center justify-center fl-p-[0.5/0.75]',
-		size === 'lg-sq' && 'flex aspect-square items-center justify-center fl-p-[0.75/1.25]',
+		size === 'sm-sq' && 'fl-p-[0.25/0.5] flex aspect-square items-center justify-center',
+		size === 'md-sq' && 'fl-p-[0.5/0.75] flex aspect-square items-center justify-center',
+		size === 'lg-sq' && 'fl-p-[0.75/1.25] flex aspect-square items-center justify-center',
 
 		(size === 'sm' || size === 'sm-sq') && 'fl-text-xs/sm',
 		(size === 'md' || size === 'md-sq') && 'fl-text-sm/base',
