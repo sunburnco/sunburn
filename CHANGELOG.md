@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.5.3 - 2026-02-15
+#### Bug Fixes
+- do not proxy livekit endpoints - (344241d) - twopyramids
+
+- - -
+
 ## v0.5.2 - 2026-02-15
 #### Bug Fixes
 - remove changelog from pwa - (355e382) - twopyramids
