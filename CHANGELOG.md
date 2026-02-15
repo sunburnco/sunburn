@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.5.1 - 2026-02-15
+#### Bug Fixes
+- move to node server for SPA - (d4f0790) - twopyramids
+
+- - -
+
 ## v0.5.0 - 2026-02-15
 #### Features
 - (**pwa**) screenshare done - (d20ab4f) - twopyramids
