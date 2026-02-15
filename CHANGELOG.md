@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.5.2 - 2026-02-15
+#### Bug Fixes
+- remove changelog from pwa - (355e382) - twopyramids
+- use writable derived instead of state/effect - (4ba972b) - twopyramids
+- use writable derived instead of state/effect - (83b5ff1) - twopyramids
+
+- - -
+
 ## v0.5.1 - 2026-02-15
 #### Bug Fixes
 - move to node server for SPA - (d4f0790) - twopyramids
