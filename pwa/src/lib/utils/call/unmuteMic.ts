@@ -1,6 +1,6 @@
 import {
 	createLocalAudioTrack,
-	LocalTrackPublication,
+	type LocalTrackPublication,
 	MediaDeviceFailure,
 	Track,
 } from 'livekit-client';
