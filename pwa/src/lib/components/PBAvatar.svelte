@@ -64,7 +64,7 @@
 		size === 'msg' && 'size-9 gap-2 text-xl',
 		size === 'grow' && 'grow text-xl',
 
-		'grid aspect-square grid-cols-1 grid-rows-1 items-center justify-center overflow-hidden rounded-box font-bold',
+		'grid aspect-square grid-cols-1 grid-rows-1 items-center justify-center overflow-hidden rounded-box font-bold select-none',
 	]}
 >
 	{#if instanceID in sunburn && url && (userID || serverID)}

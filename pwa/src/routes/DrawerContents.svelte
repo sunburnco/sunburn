@@ -7,6 +7,7 @@
 		LucideMonitorX,
 		LucidePackageOpen,
 		LucidePhone,
+		LucidePhoneMissed,
 		LucideVideo,
 		LucideVideoOff,
 		LucideVolume2,
@@ -187,7 +188,14 @@
 
 		{#each serverList as server (server.serverID)}
 			<button
-				class={['btn btn-square', activeServerID === server.serverID ? 'btn-neutral' : 'btn-ghost']}
+				class={[
+					'btn btn-square',
+					activeServerID === server.serverID ? 'btn-neutral' : 'btn-ghost',
+					call.roomState !== ConnectionState.Disconnected &&
+						call.instanceID === activeInstanceID &&
+						call.serverID === server.serverID &&
+						'outline-2 outline-accent',
+				]}
 				onclick={() => {
 					activeInstanceID = server.instanceID;
 					activeServerID = server.serverID;
@@ -309,7 +317,11 @@
 							href={`/instance/${channel.instanceID}/server/${channel.record.server}/channel/${channel.channelID}`}
 						>
 							{#if sunburn[activeInstanceID].servers[activeServerID].channels[channel.channelID].record.voice}
-								<LucideVolume2 class="size-4" />
+								{#if call.roomState !== ConnectionState.Disconnected && call.instanceID === activeInstanceID && call.serverID === activeServerID && call.channelID === channel.channelID}
+									<LucidePhone class="size-4 text-accent" />
+								{:else}
+									<LucideVolume2 class="size-4" />
+								{/if}
 							{:else}
 								<LucideHash class="size-4" />
 							{/if}
@@ -363,6 +375,7 @@
 							call.me?.micUnmuted ? 'btn-accent' : 'btn-ghost',
 						]}
 						onclick={call.me?.micUnmuted ? muteMic : unmuteMic}
+						title={call.me?.micUnmuted ? 'Mute (you are unmuted)' : 'Unmute (you are muted)'}
 					>
 						<div class="group-disabled:opacity-20">
 							{#if call.me?.micUnmuted}
@@ -379,6 +392,9 @@
 							call.me?.cameraUnmuted ? 'btn-accent' : 'btn-ghost',
 						]}
 						onclick={call.me?.cameraUnmuted ? muteCamera : unmuteCamera}
+						title={call.me?.cameraUnmuted
+							? 'Stop camera (your camera is on)'
+							: 'Start camera (your camera is off)'}
 					>
 						<div class="text-base-content group-disabled:opacity-20">
 							{#if call.me?.cameraUnmuted}
@@ -395,6 +411,9 @@
 							call.me?.screenShareUnmuted ? 'btn-accent' : 'btn-ghost',
 						]}
 						onclick={call.me?.screenShareUnmuted ? stopScreenShare : startScreenShare}
+						title={call.me?.screenShareUnmuted
+							? 'Stop sharing your screen (your screen is being shared)'
+							: 'Begin sharing your screen (your screen is not being shared)'}
 					>
 						<div class="text-base-content group-disabled:opacity-20">
 							{#if call.me?.screenShareUnmuted}
@@ -408,9 +427,10 @@
 						disabled={call.roomState === ConnectionState.Disconnected}
 						class="group btn btn-square btn-sm btn-primary"
 						onclick={disconnect}
+						title="Disconnect"
 					>
 						<div class="text-base-content group-disabled:opacity-20">
-							<LucidePhone class="size-5" />
+							<LucidePhoneMissed class="size-5" />
 						</div>
 					</button>
 				</div>

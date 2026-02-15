@@ -18,7 +18,7 @@
 		<button class="btn btn-primary">Log In</button>
 	</a>
 
-	<div class="flex flex-wrap gap-2">
+	<div class="flex flex-wrap items-center justify-center gap-2">
 		{#each ['day', 'midnight', 'sunset', 'oasis', 'verdant', 'lilac'] as color (color)}
 			{@render ThemeChanger(color)}
 		{/each}

@@ -51,6 +51,9 @@ export const onTrackSubscriptionStatusChanged = (
 			break;
 
 		case TrackPublication.SubscriptionStatus.Desired:
+			// call.roomParticipants[participant.identity].tracks[publication.trackSid].setSubscribed(false)
+			delete call.roomParticipants[participant.identity].tracks[publication.trackSid];
+
 			// eslint-disable-next-line no-console
 			console.debug(
 				...debugPrefix,

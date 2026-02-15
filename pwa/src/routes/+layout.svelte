@@ -7,10 +7,14 @@
 	import '@fontsource-variable/playwrite-us-trad'; // script
 
 	import { LucideMenu } from '@lucide/svelte';
+	import { Track } from 'livekit-client';
 	import { themeChange } from 'theme-change';
 
 	import { page } from '$app/state';
+	import AudioTrackPlayer from '$lib/components/AudioTrackPlayer.svelte';
 	import { applicationStart } from '$lib/sunburn/applicationStart';
+	import { call, type CallUserID_t } from '$lib/sunburn/call.svelte';
+	import { callVolumes } from '$lib/utils/call/callVolumes.svelte';
 
 	import DrawerContents from './DrawerContents.svelte';
 
@@ -20,7 +24,32 @@
 	applicationStart();
 
 	const isChannel = $derived(Boolean(page.params.channelID) || Boolean(page.params.dmID));
+
+	const micTrackIDs = $derived.by(() => {
+		const tracks: Record<CallUserID_t, string> = {};
+		for (const participantID of Object.keys(call.roomParticipants)) {
+			if (!call.roomParticipants[participantID]) {
+				continue;
+			}
+			for (const trackID of Object.keys(call.roomParticipants[participantID].tracks)) {
+				if (
+					call.roomParticipants[participantID].tracks[trackID].source === Track.Source.Microphone
+				) {
+					tracks[participantID] = trackID;
+				}
+			}
+		}
+
+		return tracks;
+	});
 </script>
+
+{#snippet ParticipantMicTrack(participantID: CallUserID_t, trackID: string)}
+	<AudioTrackPlayer
+		volume={callVolumes[participantID] ?? 100}
+		track={call.roomParticipants[participantID].tracks[trackID]}
+	/>
+{/snippet}
 
 <svelte:head>
 	<title>Sunburn</title>
@@ -48,3 +77,7 @@
 		<DrawerContents />
 	</div>
 </div>
+
+{#each Object.keys(micTrackIDs) as participantID (participantID)}
+	{@render ParticipantMicTrack(participantID, micTrackIDs[participantID])}
+{/each}

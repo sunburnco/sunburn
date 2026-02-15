@@ -108,7 +108,16 @@ export class CompoundProcessor implements TrackProcessor<Track.Kind.Audio, Audio
 		this.buildChain();
 	}
 
-	async restart() {
+	async restart(opts: AudioProcessorOptions) {
+		if (!this.audioContext) {
+			return;
+		}
+
+		const { track } = opts;
+
+		const stream = new MediaStream([track]);
+		this.sourceNode = this.audioContext.createMediaStreamSource(stream);
+		this.destinationNode = this.audioContext.createMediaStreamDestination();
 		this.buildChain();
 	}
 

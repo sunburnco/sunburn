@@ -1,6 +1,6 @@
 import {
 	createLocalAudioTrack,
-	type LocalTrackPublication,
+	LocalTrackPublication,
 	MediaDeviceFailure,
 	Track,
 } from 'livekit-client';
@@ -16,17 +16,6 @@ export const unmuteMic = async () => {
 		return;
 	}
 
-	const processor = new CompoundProcessor(call.instanceID, {
-		// TODO replace with local settings
-		speexEnabled: false,
-		rnNoiseEnabled: true,
-		gain: 1,
-		noiseGateCloseThreshold: -50,
-		noiseGateOpenThreshold: -45,
-		noiseGateHoldMS: 150,
-		noiseGateEnabled: false,
-	});
-
 	try {
 		let localMicTrack: LocalTrackPublication | undefined = undefined;
 		let existingMicTrack = false;
@@ -38,12 +27,23 @@ export const unmuteMic = async () => {
 
 			if (track.source === Track.Source.Microphone) {
 				existingMicTrack = true;
-				call.me.tracks[trackID].unmute();
+				await track.unmute();
 				break;
 			}
 		}
 
 		if (!existingMicTrack) {
+			const processor = new CompoundProcessor(call.instanceID, {
+				// TODO replace with local settings
+				speexEnabled: false,
+				rnNoiseEnabled: true,
+				noiseGateEnabled: false,
+				gain: 1,
+				noiseGateCloseThreshold: -50,
+				noiseGateOpenThreshold: -45,
+				noiseGateHoldMS: 150,
+			});
+
 			const micTrack = await createLocalAudioTrack();
 			micTrack.setProcessor(processor);
 
@@ -57,6 +57,7 @@ export const unmuteMic = async () => {
 
 			call.me.tracks[localMicTrack.trackSid] = localMicTrack;
 		}
+
 		// TODO play sound
 		call.me.micUnmuted = true;
 
