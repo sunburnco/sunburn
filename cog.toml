@@ -10,13 +10,10 @@ skip_ci = "[skip ci]"
 skip_untracked = false
 pre_bump_hooks = [
   "bash -c 'read -r -p \"Only bump if the most recent commit to master passed all checks. Did the most recent commit pass all checks? (y/N): \" response && [[ \"$response\" =~ ^[Yy]$ ]] || exit 1'",
-  "jq '.version |= \"{{version}}\"' app/package.json > app/package.json.tmp && mv app/package.json.tmp app/package.json",
-  "cd ./app && pnpm prettier --write package.json",
   "jq '.version |= \"{{version}}\"' pwa/package.json > pwa/package.json.tmp && mv pwa/package.json.tmp pwa/package.json",
   "cd ./pwa && pnpm prettier --write package.json",
   "sed -i 's/const VERSION = \".*\"/const VERSION = \"{{version}}\"/' backend/lib/version.go",
   "cd ./backend && gofmt -s -w lib/version.go",
-  "git add :/app/package.json",
   "git add :/pwa/package.json",
   "git add :/backend/lib/version.go"
 ]
@@ -33,7 +30,6 @@ script = """#!/bin/sh
 set -e
 cog verify --file $1
 cog check
-cd app && pnpm lintstaged && cd ..
 cd pwa && pnpm lintstaged && cd ..
 cd backend && go vet && (gofmt -l . | grep -q . && exit 1 || exit 0) && cd ..
 """

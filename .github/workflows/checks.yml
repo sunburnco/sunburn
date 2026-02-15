@@ -2,59 +2,62 @@ name: Code Checks
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
-  app-checks:
+  pwa-checks:
     runs-on: self-hosted
     defaults:
       run:
-        working-directory: ./app
-        
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+        working-directory: ./pwa
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: latest
-        run_install: false
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
-        cache: 'pnpm'
-        cache-dependency-path: './app/pnpm-lock.yaml'
-      
-    - name: Install dependencies
-      run: pnpm install
-      
-    - name: Run lint
-      run: pnpm lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: "./pwa/pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run lint
+        run: pnpm lint
 
   backend-checks:
     runs-on: self-hosted
     defaults:
       run:
         working-directory: ./backend
-        
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21'
-        cache: true
-        cache-dependency-path: './backend/go.sum'
-        
-    - name: Run Go vet
-      run: go vet
-      
-    - name: Check Go formatting
-      run: gofmt -l
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+          cache: true
+          cache-dependency-path: "./backend/go.sum"
+
+      - name: Run Go vet
+        run: go vet
+
+      - name: Check Go formatting
+        run: gofmt -l
+
+      - name: Test
+        run: make test
