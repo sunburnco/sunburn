@@ -52,7 +52,7 @@ USER_DEFAULT_MAX_SERVERS=0
 
 ### LiveKit
 
-Run `livekit/livekit-server:latest` (available on Docker Hub). We only need to expose port `5439`, but we'll also need to pass in a config file to `/etc/livekit.yaml`, then run the server with the `command` `--config /etc/livekit.yaml`.
+Run `livekit/livekit-server:latest` (available on Docker Hub). We only need to expose port `5349`, but we'll also need to pass in a config file to `/etc/livekit.yaml`, then run the server with the `command` `--config /etc/livekit.yaml`.
 
 We also must set up the reverse proxy to expect traffic on layer 4. I did that, along with TLS termination, with the `traefik.*` labels below.
 
