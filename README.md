@@ -1,5 +1,11 @@
 # Sunburn
 
+# Update Schedule
+
+The Sunburn packages will update minor versions after every new significant feature.
+Patches address bug fixes.
+To use the UI with the most recent commit, even if the commit hasn't been bundled in a release, visit [rolling.sunburn.gg](https://rolling.sunburn.gg).
+
 # Get Started
 
 The goal of this guide is to set up a minimal Sunburn instance with basic text chat, voice calls, and screen sharing. We will set up a server with some public and some private channels.
@@ -194,7 +200,7 @@ Make the channels in the `channels` collection.
 
 Let's go see what our users can see. In a new tab, go to your Sunburn instance's UI (the first domain) and log in with your email and password. Remember, you may have reused the email from the superuser account with a different password.
 
-*I'm keeping my account `twopyramids` on the "day" theme, but Alice will be on "lilac" and Employee Bob will be on "oasis" for clarity.
+*I'm keeping my account `twopyramids` on the "day" theme, but Alice will be on "lilac" and Employee Bob will be on "oasis" for clarity.*
 
 By default, the Sunburn UI tries to connect to the instance that's serving the HTML/CSS/JS. You can connect to any Sunburn instance by changing the instance URL.
 
