@@ -52,7 +52,7 @@ export const clearChannelRecord = (
 	serverID: Server_t['record']['id'],
 	channelID: Channel_t['record']['id'],
 ) => {
-	delete sunburn[instanceID].servers[serverID].channels[channelID];
+	delete sunburn[instanceID].servers[serverID]?.channels[channelID];
 };
 
 export const fetchChannel = async (

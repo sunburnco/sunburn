@@ -305,11 +305,7 @@ export const onServerRoleAssignment = (
 
 	// const serverID = findServerIDForRole(instanceID, record.role);
 	const serverID = record.expand.role.server;
-	if (
-		!serverID ||
-		!(serverID in sunburn[instanceID].servers) ||
-		!sunburn[instanceID].servers[serverID].loaded
-	) {
+	if (!serverID) {
 		return;
 	}
 
@@ -317,7 +313,9 @@ export const onServerRoleAssignment = (
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onServerRoleAssignment', action, record);
 
 	if (action === 'create' || action === 'update') {
-		setRoleAssignment(instanceID, serverID, record.user, record.role);
+		if (serverID in sunburn[instanceID].servers && sunburn[instanceID].servers[serverID].loaded) {
+			setRoleAssignment(instanceID, serverID, record.user, record.role);
+		}
 
 		// if we just got a role with CHANNEL_READ or ADMINISTRATOR,
 		// we may have access to a new channel
@@ -327,13 +325,14 @@ export const onServerRoleAssignment = (
 				roleHasPermission(instanceID, serverID, record.role, 'ADMINISTRATOR'))
 		) {
 			fetchChannelsForServer(instanceID, serverID, null);
+			return;
 		}
 
-		// if we just got a role with SERVER_MEMBER,
-		// we may have access to a new server
+		// if we just got a role, we may have access to a new server
+		// however, we cannot check perms because the server's permissions haven't loaded yet
 		else if (
-			sunburn[instanceID].myID === record.user &&
-			roleHasPermission(instanceID, serverID, record.role, 'SERVER_MEMBER')
+			sunburn[instanceID].myID === record.user
+			// roleHasPermission(instanceID, serverID, record.role, 'SERVER_MEMBER')
 		) {
 			fetchServersForInstance(instanceID, null);
 		}
