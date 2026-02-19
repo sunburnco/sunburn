@@ -26,7 +26,7 @@ This guide assumes working knowledge of the Linux command line and Docker.
 You will need to set 3 records on a domain pointing at your server.
 1. Where your users should go to access Sunburn. I'm using `docs.sunburn.gg` --> `3000`.
 2. Where your LiveKit server will live. I'm using `docs-rtc.sunburn.gg` --> `7880`.
-3. Another domain pointing at your LiveKit server that we'll use for the TURN server. I'm using `docs-rtc-turn.sunburn.gg` --> `5349`. **Note that users will be connecting on layer 4 to this hostname, so if you're using CloudFlare/similar, make sure to NOT proxy this record.**
+3. Another domain pointing at your LiveKit server that we'll use for the TURN server. I'm using `docs-rtc-turn.sunburn.gg` --> `5349`. **Note that users will be connecting on layer 4 to this hostname, so if you're using Cloudflare/similar, make sure to NOT proxy this record.**
 
 LiveKit has [excellent docs on self-hosting](https://docs.livekit.io/transport/self-hosting/) for those who want to explore alternate configurations.
 
@@ -157,6 +157,8 @@ By default, users are allowed to log in with their email or handle. You can add 
 *Note that the Sunburn UI only supports Identity/Password and OAuth2. If you need 2FA, connect an OAuth2 provider, then configure 2FA on the provider. You can disable Identity/Password auth on the dashboard to force OAuth2.*
 
 Begin by making yourself a user. You can reuse your email and/or your password from before **because you're making two different accounts; one to sign in to the dashboard, and one to sign in to Sunburn**. Avatars will render, but they are not configurable from the UI yet.
+
+*You can disable user registration in the `users > API Rules` tab by clicking the "Create Rule" box until it says "superusers only."*
 
 ### Granular Permissions
 
