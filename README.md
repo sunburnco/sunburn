@@ -61,12 +61,6 @@ We also must set up the reverse proxy to expect traffic on layer 4. I did that, 
 port: 7880 # management API
 bind_addresses:
     - ""
-rtc:
-    tcp_port: 7881
-    port_range_start: 0
-    port_range_end: 0
-    use_external_ip: false
-    enable_loopback_candidate: false
 turn:
     enabled: true
     domain: docs-rtc-turn.sunburn.gg # changeme
@@ -74,7 +68,7 @@ turn:
     udp_port: 3478
     external_tls: true
 keys:
-    APIK<openssl rand -hex 28>: <openssl rand -hex 32> # changeme
+    APIK<openssl rand -hex 16>: <openssl rand -hex 16> # changeme
 webhook:
   api_key: 'APIK...' # generated above
   urls:
