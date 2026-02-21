@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS app_builder
+FROM --platform=$BUILDPLATFORM node:lts-alpine AS app_builder
 RUN npm install -g pnpm
 WORKDIR /app
 COPY ./pwa/package.json ./
@@ -7,19 +7,17 @@ RUN pnpm install
 COPY ./pwa .
 RUN pnpm run build
 
-FROM golang:alpine AS backend_builder
+FROM --platform=$BUILDPLATFORM golang:alpine AS backend_builder
+ARG TARGETOS TARGETARCH
 WORKDIR /go/src/app
 COPY ./backend .
-RUN go mod download
-RUN go build -o sunburn .
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go mod download
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o sunburn .
 
-FROM node:lts-alpine
+FROM scratch
 WORKDIR /app
-COPY ./docker-wrapper.sh .
-COPY --from=backend_builder /go/src/app/sunburn .
-RUN ./sunburn migrate up
 COPY --from=app_builder /app/build ./pwa
+COPY --from=backend_builder /go/src/app/sunburn .
 
 EXPOSE 3000
-
-CMD ["./docker-wrapper.sh"]
+CMD ["./sunburn", "--dir", "/data", "--http", "0.0.0.0:3000", "serve"]
