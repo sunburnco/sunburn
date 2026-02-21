@@ -1,13 +1,17 @@
 name: Build Docker Image
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Code Checks"]
     tags:
       - "v*"
+    types:
+      - completed
 
 jobs:
   build-docker:
     runs-on: self-hosted
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     permissions:
       contents: read
