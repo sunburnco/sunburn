@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.5.5 - 2026-02-21
+#### Bug Fixes
+- use docker buildx - (06bfa78) - twopyramids
+
+- - -
+
 ## v0.5.4 - 2026-02-21
 #### Bug Fixes
 - (**pwa**) conditions to recheck server list on role assignment - (d6e0bbf) - twopyramids
