@@ -2,6 +2,22 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.5.4 - 2026-02-21
+#### Bug Fixes
+- (**pwa**) conditions to recheck server list on role assignment - (d6e0bbf) - twopyramids
+- only build docker image after code checks - (9771e38) - twopyramids
+- build arm64 and amd64 - (a1153cc) - twopyramids
+- add fallback to SPA to remove dependency on node - (0731ad9) - twopyramids
+- remove extra lines from lk config - (56f8608) - twopyramids
+- typo in readme - (7dc0bdb) - twopyramids
+- typo in readme - (53a52e7) - twopyramids
+- readme typos - (7593e28) - twopyramids
+- tweak docker wrapper, add muted indicator for self - (664ea17) - twopyramids
+#### Documentation
+- add hint to disable user registration - (03d8174) - twopyramids
+
+- - -
+
 ## v0.5.3 - 2026-02-15
 #### Bug Fixes
 - do not proxy livekit endpoints - (344241d) - twopyramids
