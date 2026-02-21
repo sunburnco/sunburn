@@ -4,6 +4,7 @@ pb_data/
 .env*
 
 svelteOut/
+pwa/
 backend
 
 backend/tests/playground.http
