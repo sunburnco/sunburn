@@ -38,8 +38,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker images
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Build Container
         run: docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}:${{ steps.tag.outputs.tag }} -t ghcr.io/${{ github.repository }}:latest -t sunburnco/sunburn:${{ steps.tag.outputs.tag }} -t sunburnco/sunburn:latest .
 
       - name: Push Docker images
