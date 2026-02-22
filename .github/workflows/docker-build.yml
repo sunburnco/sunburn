@@ -69,7 +69,7 @@ jobs:
 
   build-docker:
     runs-on: self-hosted
-    needs: [pwa-checks, backend-checks]
+    needs: [build-pwa-checks, build-backend-checks]
 
     permissions:
       contents: read
