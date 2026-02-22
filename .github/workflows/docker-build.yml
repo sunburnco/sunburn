@@ -112,7 +112,7 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/sunburn:${{ steps.tag.output.tag }}
-            ${{ secrets.DOCKER_USERNAME }}/sunburn:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/sunburn:${{ steps.tag.output.tag }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/sunburn:latest
             ghcr.io/${{ github.repository_owner }}/sunburn:${{ steps.tag.output.tag }}
             ghcr.io/${{ github.repository_owner }}/sunburn:latest
