@@ -2,7 +2,6 @@ name: Build Docker Image
 
 on:
   push:
-    branches: ["master"]
     tags:
       - "v*"
   workflow_dispatch:
@@ -13,7 +12,7 @@ on:
         type: string
 
 jobs:
-  pwa-checks:
+  build-pwa-checks:
     runs-on: self-hosted
     defaults:
       run:
@@ -42,7 +41,7 @@ jobs:
       - name: Run lint
         run: pnpm lint
 
-  backend-checks:
+  build-backend-checks:
     runs-on: self-hosted
     defaults:
       run:
