@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.5.6 - 2026-02-22
+#### Bug Fixes
+- rename dependencies - (6cbb457) - twopyramids
+- do not run on every push to master - (befffb3) - twopyramids
+- only run checks manually; allow manual deployment - (af6c649) - twopyramids
+
+- - -
+
 ## v0.5.5 - 2026-02-21
 #### Bug Fixes
 - use docker buildx - (06bfa78) - twopyramids
