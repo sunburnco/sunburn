@@ -11,8 +11,8 @@ FROM --platform=$BUILDPLATFORM golang:alpine AS backend_builder
 ARG TARGETOS TARGETARCH
 WORKDIR /go/src/app
 COPY ./backend .
-RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go mod download
-RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o sunburn .
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go mod download
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o sunburn .
 
 FROM scratch
 WORKDIR /app
