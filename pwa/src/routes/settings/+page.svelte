@@ -11,12 +11,17 @@
 </script>
 
 {#snippet TextSetting(setting: LocalSetting_t)}
-	<div class="flex w-full">
+	<label class="flex w-full hover:bg-transparent active:bg-transparent active:text-current">
 		<fieldset class="fieldset w-full md:hidden">
 			<legend class="fieldset-legend">{setting.name}</legend>
 			{#if 'stringValue' in setting}
 				{#if setting.acceptableValues?.length}
-					<select class="select" bind:value={setting.stringValue} onchange={saveLocalSettings}>
+					<select
+						name={setting.name}
+						class="select"
+						bind:value={setting.stringValue}
+						onchange={saveLocalSettings}
+					>
 						{#each setting.acceptableValues as av (av.value)}
 							<option label={av.label ?? av.value} value={av.value}></option>
 						{/each}
@@ -30,10 +35,20 @@
 						onchange={saveLocalSettings}
 					/>
 				{/if}
+				{#if setting.description}
+					<p class="label text-wrap">
+						{setting.description}
+					</p>
+				{/if}
 			{/if}
 		</fieldset>
 
-		<label class="hidden grow items-center justify-between gap-4 md:flex">
+		<label
+			class={[
+				'hidden grow items-center justify-between gap-4 md:flex',
+				!setting.acceptableValues?.length && 'cursor-pointer',
+			]}
+		>
 			<div class="min-w-1/2">
 				<p class="font-bold select-none">{setting.name}</p>
 				{#if setting.description}
@@ -42,7 +57,12 @@
 			</div>
 			{#if 'stringValue' in setting}
 				{#if setting.acceptableValues?.length}
-					<select class="select" bind:value={setting.stringValue} onchange={saveLocalSettings}>
+					<select
+						name={setting.name}
+						class="select"
+						bind:value={setting.stringValue}
+						onchange={saveLocalSettings}
+					>
 						{#each setting.acceptableValues as av (av.value)}
 							<option label={av.label ?? av.value} value={av.value}></option>
 						{/each}
@@ -58,11 +78,11 @@
 				{/if}
 			{/if}
 		</label>
-	</div>
+	</label>
 {/snippet}
 
 {#snippet NumberSetting(setting: LocalSetting_t)}
-	<div class="flex w-full">
+	<label class="flex w-full hover:bg-transparent active:bg-transparent active:text-current">
 		<fieldset class="fieldset w-full md:hidden">
 			<legend class="fieldset-legend">{setting.name}</legend>
 			{#if 'numberValue' in setting}
@@ -77,17 +97,22 @@
 					onchange={saveLocalSettings}
 				/>
 				{#if setting.description}
-					<label class="label">
+					<p class="label text-wrap">
 						{setting.description}
 						{#if setting.preferRange === 'includeCurrent'}
 							(Current: {setting.numberValue})
 						{/if}
-					</label>
+					</p>
 				{/if}
 			{/if}
 		</fieldset>
 
-		<label class="hidden grow items-center justify-between gap-4 md:flex">
+		<label
+			class={[
+				'hidden grow items-center justify-between gap-4 md:flex',
+				!setting.preferRange && 'cursor-pointer',
+			]}
+		>
 			<div class="min-w-1/2">
 				<p class="font-bold text-wrap select-none">{setting.name}</p>
 				{#if setting.description}
@@ -112,11 +137,11 @@
 				/>
 			{/if}
 		</label>
-	</div>
+	</label>
 {/snippet}
 
 {#snippet BoolSetting(setting: LocalSetting_t)}
-	<div class="flex w-full">
+	<label class="flex w-full hover:bg-transparent active:bg-transparent active:text-current">
 		<fieldset class="fieldset w-full md:hidden">
 			<legend class="fieldset-legend">{setting.name}</legend>
 			{#if 'boolValue' in setting}
@@ -128,14 +153,14 @@
 					onchange={saveLocalSettings}
 				/>
 				{#if setting.description}
-					<label class="label">
+					<p class="label text-wrap">
 						{setting.description}
-					</label>
+					</p>
 				{/if}
 			{/if}
 		</fieldset>
 
-		<label class="hidden grow items-center justify-between gap-4 md:flex">
+		<label class="hidden grow cursor-pointer items-center justify-between gap-4 md:flex">
 			<div class="min-w-1/2">
 				<p class="font-bold text-wrap select-none">{setting.name}</p>
 				{#if setting.description}
@@ -154,7 +179,7 @@
 				/>
 			{/if}
 		</label>
-	</div>
+	</label>
 {/snippet}
 
 {#snippet SettingsGroup(group: LocalSettingGroup_t)}
@@ -173,6 +198,8 @@
 		</li>
 	{/each}
 {/snippet}
+
+<!-- TODO add header bar -->
 
 <div class="my-12 flex flex-col gap-2">
 	<h1 class="font-display text-xl font-bold">Local Settings</h1>
