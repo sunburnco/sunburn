@@ -3,6 +3,10 @@ export const setTheme = (theme: string) => {
 		return;
 	}
 
+	if (!theme) {
+		return;
+	}
+
 	window.localStorage.setItem('theme', theme);
 	document.documentElement.setAttribute('data-theme', theme);
 };

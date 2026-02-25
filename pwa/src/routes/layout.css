@@ -196,9 +196,9 @@
 	}
 }
 
-.fieldset-legend {
+/*.fieldset-legend {
 	@apply font-display font-normal;
-}
+}*/
 
 @plugin 'daisyui/theme' {
 	name: 'midnight';
