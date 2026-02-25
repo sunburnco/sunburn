@@ -103,6 +103,17 @@ export const defaultLocalSettings: LocalSettings_t = {
 			},
 		},
 	},
+	calls: {
+		name: 'Calls',
+		settings: {
+			clickOnce: {
+				name: 'Join calls without confirmation',
+				description:
+					'When checked, clicking a voice channel automatically starts the connection process',
+				boolValue: false,
+			},
+		},
+	},
 	_voiceParticipantVolumes: {
 		name: '',
 		settings: {
@@ -136,5 +147,3 @@ export const loadLocalSettings = async () => {
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, 'loaded local settings');
 };
-
-// $effect(() => setTheme(localSettings?.theme?.settings?.theme?.stringValue ?? 'day'));
