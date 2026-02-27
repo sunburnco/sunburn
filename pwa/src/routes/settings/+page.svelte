@@ -209,8 +209,9 @@
 	<div class="divider"></div>
 	<ul class="menu m-0 w-full p-0">
 		{#each Object.keys(localSettings) as localSettingsGroupKey (localSettingsGroupKey)}
+			{@const lsgk = localSettingsGroupKey as keyof typeof localSettings}
 			{#if !localSettingsGroupKey.startsWith('_')}
-				{@render SettingsGroup(localSettings[localSettingsGroupKey])}
+				{@render SettingsGroup(localSettings[lsgk] as LocalSettingGroup_t)}
 			{/if}
 		{/each}
 	</ul>

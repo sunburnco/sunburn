@@ -5,11 +5,11 @@ import {
 	Track,
 } from 'livekit-client';
 
-import { CompoundProcessor } from '$lib/streamProcessors/compound';
 import { call } from '$lib/sunburn/call.svelte';
 
 import { debugPrefix, errorPrefix, warnPrefix } from '../logPrefixes';
 import { logFriendly } from '../username';
+import { processor } from './processor';
 
 export const unmuteMic = async () => {
 	if (!call.me) {
@@ -33,17 +33,6 @@ export const unmuteMic = async () => {
 		}
 
 		if (!existingMicTrack) {
-			const processor = new CompoundProcessor(call.instanceID, {
-				// TODO replace with local settings
-				speexEnabled: false,
-				rnNoiseEnabled: true,
-				noiseGateEnabled: false,
-				gain: 1,
-				noiseGateCloseThreshold: -50,
-				noiseGateOpenThreshold: -45,
-				noiseGateHoldMS: 150,
-			});
-
 			const micTrack = await createLocalAudioTrack();
 			micTrack.setProcessor(processor);
 

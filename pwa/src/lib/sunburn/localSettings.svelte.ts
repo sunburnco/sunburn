@@ -33,7 +33,14 @@ export type LocalSettingGroup_t = {
 
 export type LocalSettings_t = Record<LocalSettingGroupKey_t, LocalSettingGroup_t>;
 
-export const defaultLocalSettings: LocalSettings_t = {
+// add the type when creating new local settings
+// remove the type to get intellisense
+//   |
+//   |
+//   V
+
+// export const defaultLocalSettings: LocalSettings_t = {
+export const defaultLocalSettings = {
 	appearance: {
 		name: 'Appearance',
 		settings: {
@@ -129,7 +136,7 @@ export const defaultLocalSettings: LocalSettings_t = {
 	},
 };
 
-export const localSettings = $state(defaultLocalSettings);
+export const localSettings = $state<typeof defaultLocalSettings>(defaultLocalSettings);
 
 export const saveLocalSettings = async () => {
 	set('sbLocalSettings', $state.snapshot(localSettings));
@@ -139,8 +146,10 @@ export const saveLocalSettings = async () => {
 };
 
 export const loadLocalSettings = async () => {
-	const ls: LocalSettings_t = (await get('sbLocalSettings')) ?? defaultLocalSettings;
+	const ls: LocalSettings_t =
+		(await get('sbLocalSettings')) ?? (defaultLocalSettings as LocalSettings_t);
 	for (const key of Object.keys(ls)) {
+		// @ts-expect-error I promise this is fine
 		localSettings[key] = ls[key];
 	}
 
