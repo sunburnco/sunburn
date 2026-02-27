@@ -22,7 +22,6 @@ export type LocalSettingsValue_t = XOR<
 export type LocalSetting_t = {
 	name: string;
 	description?: string;
-	advanced?: boolean;
 } & LocalSettingsValue_t;
 
 export type LocalSettingGroupKey_t = string;
@@ -133,7 +132,7 @@ export const defaultLocalSettings = {
 			//   step: 0.01
 			// }
 		},
-	},
+	} as LocalSettingGroup_t,
 };
 
 export const localSettings = $state<typeof defaultLocalSettings>(defaultLocalSettings);

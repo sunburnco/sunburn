@@ -6,9 +6,10 @@
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
 	import { call, type CallTrackID_t, type CallUserID_t } from '$lib/sunburn/call.svelte';
 	import { fetchUser } from '$lib/sunburn/data/users';
+	import { localSettings, saveLocalSettings } from '$lib/sunburn/localSettings.svelte';
 	import { sunburn } from '$lib/sunburn/sunburn.svelte';
 	import { callVolumes } from '$lib/utils/call/callVolumes.svelte';
-	import { nameOrHandle } from '$lib/utils/username';
+	import { handleAtHost, nameOrHandle } from '$lib/utils/username';
 
 	type Props_t = {
 		participantID: CallUserID_t;
@@ -20,6 +21,8 @@
 	};
 
 	let { participantID, setFocusedTracks }: Props_t = $props();
+
+	const hah = $derived(handleAtHost(call.instanceID, participantID));
 
 	let speaking = $state(false);
 	const participant = $derived(call.roomParticipants[participantID]);
@@ -96,8 +99,25 @@
 				max={100}
 				step={1}
 				bind:value={callVolumes[participantID]}
+				defaultValue={localSettings._voiceParticipantVolumes.settings[hah]?.numberValue ?? 1}
 				type="range"
 				class="range-vertical h-auto range-sm"
+				onchange={(e) => {
+					if (!(hah in localSettings._voiceParticipantVolumes.settings)) {
+						localSettings._voiceParticipantVolumes.settings[hah] = {
+							name: '',
+							numberValue: Number(e.currentTarget.value),
+							min: 0,
+							max: 2,
+							step: 0.01,
+						};
+					} else {
+						localSettings._voiceParticipantVolumes.settings[hah].numberValue = Number(
+							e.currentTarget.value,
+						);
+						saveLocalSettings();
+					}
+				}}
 			/>
 		</div>
 	</div>
