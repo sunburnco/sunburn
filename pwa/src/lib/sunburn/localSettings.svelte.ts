@@ -109,17 +109,6 @@ export const defaultLocalSettings = {
 			},
 		},
 	},
-	calls: {
-		name: 'Calls',
-		settings: {
-			clickOnce: {
-				name: 'Join calls without confirmation',
-				description:
-					'When checked, clicking a voice channel automatically starts the connection process',
-				boolValue: false,
-			},
-		},
-	},
 	_voiceParticipantVolumes: {
 		name: '',
 		settings: {
@@ -128,8 +117,8 @@ export const defaultLocalSettings = {
 			//   name: "",
 			//   numberValue: 1,
 			//   min: 0,
-			//   max: 2,
-			//   step: 0.01
+			//   max: 100,
+			//   step: 1
 			// }
 		},
 	} as LocalSettingGroup_t,

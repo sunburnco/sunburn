@@ -99,7 +99,7 @@
 				max={100}
 				step={1}
 				bind:value={callVolumes[participantID]}
-				defaultValue={localSettings._voiceParticipantVolumes.settings[hah]?.numberValue ?? 1}
+				defaultValue={localSettings._voiceParticipantVolumes.settings[hah]?.numberValue ?? 50}
 				type="range"
 				class="range-vertical h-auto range-sm"
 				onchange={(e) => {
@@ -108,8 +108,8 @@
 							name: '',
 							numberValue: Number(e.currentTarget.value),
 							min: 0,
-							max: 2,
-							step: 0.01,
+							max: 100,
+							step: 1,
 						};
 					} else {
 						localSettings._voiceParticipantVolumes.settings[hah].numberValue = Number(
