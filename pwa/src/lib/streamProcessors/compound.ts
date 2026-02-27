@@ -11,11 +11,11 @@ import speexWasmPath from '@sapphi-red/web-noise-suppressor/speex.wasm?url';
 import speexWorkletPath from '@sapphi-red/web-noise-suppressor/speexWorklet.js?url';
 import type { AudioProcessorOptions, Track, TrackProcessor } from 'livekit-client';
 
+import { call } from '$lib/sunburn/call.svelte';
 import { debugPrefix } from '$lib/utils/logPrefixes';
 import { logFriendly } from '$lib/utils/username';
 
 export class CompoundProcessor implements TrackProcessor<Track.Kind.Audio, AudioProcessorOptions> {
-	instanceID: string;
 	name: string;
 	audioContext: AudioContext | null;
 	sourceNode: MediaStreamAudioSourceNode | null;
@@ -34,19 +34,15 @@ export class CompoundProcessor implements TrackProcessor<Track.Kind.Audio, Audio
 	noiseGateHoldMS: number;
 	gain: number;
 
-	constructor(
-		instanceID: string,
-		opts: {
-			speexEnabled: boolean;
-			rnNoiseEnabled: boolean;
-			noiseGateEnabled: boolean;
-			noiseGateCloseThreshold: number;
-			noiseGateOpenThreshold: number;
-			noiseGateHoldMS: number;
-			gain: number;
-		},
-	) {
-		this.instanceID = instanceID;
+	constructor(opts: {
+		speexEnabled: boolean;
+		rnNoiseEnabled: boolean;
+		noiseGateEnabled: boolean;
+		noiseGateCloseThreshold: number;
+		noiseGateOpenThreshold: number;
+		noiseGateHoldMS: number;
+		gain: number;
+	}) {
 		this.name = 'CompoundProcessor';
 		this.audioContext = null;
 		this.sourceNode = null;
@@ -209,7 +205,7 @@ export class CompoundProcessor implements TrackProcessor<Track.Kind.Audio, Audio
 		// eslint-disable-next-line no-console
 		console.debug(
 			...debugPrefix,
-			logFriendly(this.instanceID),
+			logFriendly(call.instanceID),
 			'built audio processing chain',
 			logChain,
 		);

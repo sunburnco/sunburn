@@ -132,8 +132,6 @@
 			// eslint-disable-next-line no-console
 			console.debug(...debugPrefix, logFriendly(iID), 'preparing call for channel', cID);
 
-			// TODO local setting to allow instant connect
-
 			return {
 				room: _room,
 				baseURL: _baseURL,
@@ -178,6 +176,15 @@
 
 		connect();
 	};
+
+	// https://developer.chrome.com/blog/autoplay/#web_audio
+	// onMount(() => {
+	// 	if (localSettings.calls.settings.clickOnce.boolValue) {
+	// 		// eslint-disable-next-line no-console
+	// 		console.debug(...debugPrefix, logFriendly(instanceID), 'auto-connecting to call', channelID);
+	// 		startConnecting();
+	// 	}
+	// });
 </script>
 
 <div class="dots-300 relative size-full max-h-full">

@@ -8,6 +8,7 @@
 		LucidePackageOpen,
 		LucidePhone,
 		LucidePhoneMissed,
+		LucideSettings,
 		LucideVideo,
 		LucideVideoOff,
 		LucideVolume2,
@@ -364,8 +365,11 @@
 		>
 			<div class="flex w-full justify-between">
 				<div class="flex gap-2">
-					<!-- TODO add settings -->
-					<button disabled class="btn btn-square btn-ghost btn-sm"></button>
+					<a href="/settings">
+						<span class="btn btn-square btn-ghost btn-sm">
+							<LucideSettings class="size-5" />
+						</span>
+					</a>
 				</div>
 				<div class="flex gap-2">
 					<button

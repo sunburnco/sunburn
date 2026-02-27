@@ -14,7 +14,9 @@
 	import AudioTrackPlayer from '$lib/components/AudioTrackPlayer.svelte';
 	import { applicationStart } from '$lib/sunburn/applicationStart';
 	import { call, type CallUserID_t } from '$lib/sunburn/call.svelte';
+	import { localSettings } from '$lib/sunburn/localSettings.svelte';
 	import { callVolumes } from '$lib/utils/call/callVolumes.svelte';
+	import { processor } from '$lib/utils/call/processor';
 
 	import DrawerContents from './DrawerContents.svelte';
 
@@ -41,6 +43,24 @@
 		}
 
 		return tracks;
+	});
+
+	$effect(() => {
+		processor.setNoiseGateOptions({
+			enabled: localSettings.audio.settings.noiseGateEnabled.boolValue,
+			closeThreshold: localSettings.audio.settings.noiseGateCloseThreshold.numberValue,
+			openThreshold: localSettings.audio.settings.noiseGateOpenThreshold.numberValue,
+			holdMS: localSettings.audio.settings.noiseGateOpenMS.numberValue,
+		});
+	});
+	$effect(() => {
+		processor.setSpeexOptions({ enabled: localSettings.audio.settings.speexEnabled.boolValue });
+	});
+	$effect(() => {
+		processor.setRNNoiseOptions({ enabled: localSettings.audio.settings.rnNoiseEnabled.boolValue });
+	});
+	$effect(() => {
+		processor.setGainOptions({ gain: localSettings.audio.settings.gain.numberValue });
 	});
 </script>
 
