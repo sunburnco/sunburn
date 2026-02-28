@@ -65,6 +65,6 @@
 			tinyMDE.setContent('');
 		}}
 	>
-		<LucideSend class="flicon-md translate-y-px" />
+		<LucideSend class="size-4 translate-y-px" />
 	</button>
 </div>

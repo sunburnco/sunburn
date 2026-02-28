@@ -1,13 +1,35 @@
 <script lang="ts">
+	import { LucideLogIn, LucidePlus, LucideX } from '@lucide/svelte';
+	import { set } from 'idb-keyval';
+
 	import {
 		type LocalSetting_t,
 		type LocalSettingGroup_t,
 		localSettings,
 		saveLocalSettings,
 	} from '$lib/sunburn/localSettings.svelte';
+	import { localAuthStoreKeys, sunburn } from '$lib/sunburn/sunburn.svelte';
+	import { debugPrefix } from '$lib/utils/logPrefixes';
+	import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 	import { setTheme } from '$lib/utils/setTheme';
+	import { logFriendly } from '$lib/utils/username';
 
 	$effect(() => setTheme(localSettings?.appearance?.settings?.theme?.stringValue ?? ''));
+
+	const removeAccount = (localAuthStoreKey: `${string}@${string}`) => {
+		const instanceID = parseInstanceSlug(localAuthStoreKey, '');
+		if (instanceID && instanceID in sunburn) {
+			// eslint-disable-next-line no-console
+			console.debug(...debugPrefix, logFriendly(instanceID), 'removing all event listeners');
+			sunburn[instanceID].pb.collection('*').unsubscribe();
+
+			// eslint-disable-next-line no-console
+			console.debug(...debugPrefix, logFriendly(instanceID), 'removing account');
+			delete sunburn[instanceID];
+		}
+		delete localAuthStoreKeys[localAuthStoreKey];
+		set('sbLocalAuthStoreKeys', $state.snapshot(localAuthStoreKeys));
+	};
 </script>
 
 {#snippet TextSetting(setting: LocalSetting_t)}
@@ -18,7 +40,7 @@
 				{#if setting.acceptableValues?.length}
 					<select
 						name={setting.name}
-						class="select"
+						class="select w-full"
 						bind:value={setting.stringValue}
 						onchange={saveLocalSettings}
 					>
@@ -29,7 +51,7 @@
 				{:else}
 					<input
 						name={setting.name}
-						class="input"
+						class="input w-full"
 						bind:value={setting.stringValue}
 						placeholder={setting.placeholder}
 						onchange={saveLocalSettings}
@@ -88,7 +110,7 @@
 			{#if 'numberValue' in setting}
 				<input
 					name={setting.name}
-					class={setting.preferRange ? 'range' : 'input'}
+					class={['w-full', setting.preferRange ? 'range' : 'input']}
 					type={setting.preferRange ? 'range' : 'number'}
 					bind:value={setting.numberValue}
 					min={setting.min}
@@ -183,7 +205,7 @@
 {/snippet}
 
 {#snippet SettingsGroup(group: LocalSettingGroup_t)}
-	<li class="mt-8 menu-title first:mt-0 md:mt-4" id={group.name.toLocaleLowerCase()}>
+	<li class="mt-8 menu-title md:mt-4" id={group.name.toLocaleLowerCase()}>
 		{group.name}
 	</li>
 	{#each Object.keys(group.settings) as settingKey (settingKey)}
@@ -208,6 +230,53 @@
 	</p>
 	<div class="divider"></div>
 	<ul class="menu m-0 w-full p-0">
+		<li class="mt-8 menu-title md:mt-4" id="accounts">Accounts</li>
+		{#each Object.keys(localAuthStoreKeys) as localAuthStoreKey (localAuthStoreKey)}
+			{@const instanceID = parseInstanceSlug(localAuthStoreKey, '')}
+			{@const ready = sunburn[instanceID]?.ready ?? false}
+			<li class="w-full">
+				<span class="flex w-full hover:bg-transparent active:bg-transparent active:text-inherit">
+					<span class="flex grow items-center justify-between gap-4">
+						<div class="min-w-1/2">
+							<p class="font-bold text-wrap select-none">
+								{localAuthStoreKey}
+							</p>
+							<p class="text-wrap select-none">
+								{#if ready}
+									<span class="badge badge-success">Ready</span>
+								{:else}
+									<span class="badge badge-error">Not Ready</span>
+								{/if}
+							</p>
+						</div>
+						<div class="flex gap-2">
+							<a href={`/login/${instanceID}`}>
+								<button class="btn btn-square" title="Log In">
+									<LucideLogIn class="size-5" />
+								</button>
+							</a>
+							<button
+								class="btn btn-square btn-error"
+								title="Remove Account"
+								onclick={() => removeAccount(localAuthStoreKey as keyof typeof localAuthStoreKeys)}
+							>
+								<LucideX class="size-5" />
+							</button>
+						</div>
+					</span>
+				</span>
+			</li>
+		{/each}
+		<li class="w-full">
+			<span class="flex w-full hover:bg-transparent active:bg-transparent active:text-inherit">
+				<a href="/login" class="grow">
+					<button class="btn w-full btn-ghost">
+						<LucidePlus class="size-4" /> Add Account
+					</button>
+				</a>
+			</span>
+		</li>
+
 		{#each Object.keys(localSettings) as localSettingsGroupKey (localSettingsGroupKey)}
 			{@const lsgk = localSettingsGroupKey as keyof typeof localSettings}
 			{#if !localSettingsGroupKey.startsWith('_')}
