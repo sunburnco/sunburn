@@ -35,7 +35,7 @@
 		<a class="" href={`${page.url.href}/${instanceSlug.current}`}>
 			<button class="btn w-full btn-primary" type="submit">
 				Log in to {instanceSlug.current}
-				<LucideLogIn class="flicon-md" />
+				<LucideLogIn class="size-4" />
 			</button>
 		</a>
 	</form>

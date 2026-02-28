@@ -25,7 +25,7 @@ export const logInWithPassword = async (
 
 	const authStoreKey: LocalAuthStoreKey_t = `${handle}@${instanceID}`;
 	localAuthStoreKeys[authStoreKey] = baseURL;
-	await set('sbLocalAuthStoreKeys', localAuthStoreKeys);
+	await set('sbLocalAuthStoreKeys', $state.snapshot(localAuthStoreKeys));
 
 	return resp.record.handle;
 };
@@ -45,7 +45,7 @@ export const logInWithOAuth2 = async (
 
 	const authStoreKey: LocalAuthStoreKey_t = `${handle}@${instanceID}`;
 	localAuthStoreKeys[authStoreKey] = baseURL;
-	await set('sbLocalAuthStoreKeys', localAuthStoreKeys);
+	await set('sbLocalAuthStoreKeys', $state.snapshot(localAuthStoreKeys));
 
 	return resp.record.handle;
 };

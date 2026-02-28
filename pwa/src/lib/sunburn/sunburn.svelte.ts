@@ -14,7 +14,7 @@ import type { WithRequired } from '$lib/utils/withRequired';
 
 export type LocalAuthStoreKey_t = `${string}@${string}`; // x@localhost:8090
 export type BaseURL_t = string; // http://localhost:8090
-export const localAuthStoreKeys = {} as Record<LocalAuthStoreKey_t, BaseURL_t>;
+export const localAuthStoreKeys = $state<Record<LocalAuthStoreKey_t, BaseURL_t>>({});
 
 export type DMMessage_t = WithRequired<Omit<MessagesRecord, 'channel'>, 'to'>;
 export type ChannelMessage_t = WithRequired<Omit<MessagesRecord, 'to'>, 'channel'>;

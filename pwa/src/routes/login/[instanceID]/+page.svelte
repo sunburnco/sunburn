@@ -8,7 +8,7 @@
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { logInWithOAuth2, logInWithPassword } from '$lib/sunburn/logIn';
+	import { logInWithOAuth2, logInWithPassword } from '$lib/sunburn/logIn.svelte';
 	import { debugPrefix, errorPrefix, warnPrefix } from '$lib/utils/logPrefixes';
 	import { logFriendly } from '$lib/utils/username';
 
