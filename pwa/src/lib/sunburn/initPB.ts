@@ -11,7 +11,7 @@ import {
 	type VoiceParticipantsRecord,
 	type VoiceParticipantsResponse,
 } from '$lib/pb-types';
-import { debugPrefix } from '$lib/utils/logPrefixes';
+import { debugPrefix, warnPrefix } from '$lib/utils/logPrefixes';
 import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 import { logFriendly } from '$lib/utils/username';
 
@@ -36,9 +36,41 @@ import { sunburn } from './sunburn.svelte';
 export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boolean) => {
 	const instanceID = parseInstanceSlug(pb.baseURL, '');
 
+	let version = '';
+	try {
+		version = (await fetch(pb.buildURL('/api/health'))).headers.get('x-sb-version') ?? '';
+		if (!version) {
+			throw new Error('no x-sb-version header');
+		}
+	} catch (err: unknown) {
+		// eslint-disable-next-line no-console
+		console.warn(
+			...warnPrefix,
+			`<${instanceID}> could not fetch version; is Sunburn running?\n`,
+			err,
+		);
+		sunburn[instanceID] = {
+			id: instanceID,
+			version: '?',
+			ready: false,
+
+			myID: '',
+			pb,
+
+			permissionDefinitions: {},
+			servers: {},
+			dms: {},
+			users: {},
+
+			pinnedServerIDs: new SvelteSet(),
+			pinnedDMIDs: new SvelteSet(),
+		};
+		return;
+	}
+
 	sunburn[instanceID] = {
 		id: instanceID,
-		version: (await fetch(pb.buildURL('/api/health'))).headers.get('x-sb-version') ?? '',
+		version,
 		ready: false,
 
 		myID: '',
