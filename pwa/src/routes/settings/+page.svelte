@@ -32,21 +32,21 @@
 	};
 </script>
 
-<!-- TODO add header bar -->
-
-<div class="my-12 flex flex-col gap-2">
+<div class="my-4 flex flex-col gap-2">
 	<h1 class="font-display text-xl font-bold">Local Settings</h1>
 	<p class="opacity-60">
 		These settings only apply to this device, and are not synced to the cloud.
 	</p>
 	<div class="divider"></div>
 	<ul class="menu m-0 w-full p-0">
-		<li class="mt-8 menu-title md:mt-4" id="accounts">Accounts</li>
+		<li class="menu-title" id="accounts">Accounts</li>
 		{#each Object.keys(localAuthStoreKeys) as localAuthStoreKey (localAuthStoreKey)}
 			{@const instanceID = parseInstanceSlug(localAuthStoreKey, '')}
 			{@const ready = sunburn[instanceID]?.ready ?? false}
 			<li class="w-full">
-				<span class="flex w-full hover:bg-transparent active:bg-transparent active:text-inherit">
+				<span
+					class="flex w-full cursor-default hover:bg-transparent active:bg-transparent active:text-inherit"
+				>
 					<span class="flex grow items-center justify-between gap-4">
 						<div class="min-w-1/2">
 							<p class="font-bold text-wrap select-none">
@@ -270,7 +270,7 @@
 {/snippet}
 
 {#snippet SettingsGroup(group: LocalSettingGroup_t)}
-	<li class="mt-8 menu-title md:mt-4" id={group.name.toLocaleLowerCase()}>
+	<li class="mt-4 menu-title" id={group.name.toLocaleLowerCase()}>
 		{group.name}
 	</li>
 	{#each Object.keys(group.settings) as settingKey (settingKey)}
