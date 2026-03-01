@@ -6,6 +6,10 @@ export const logFriendly = (instanceID: Instance_t['id']) => {
 };
 
 export const handleAtHost = (instanceID: Instance_t['id'], userID?: UsersRecord['id']) => {
+	if (!userID && !(sunburn[instanceID].myID in sunburn[instanceID].users)) {
+		return `<unknown>@${instanceID}`;
+	}
+
 	if (!userID) {
 		return `${sunburn[instanceID].users[sunburn[instanceID].myID].handle}@${instanceID}`;
 	}

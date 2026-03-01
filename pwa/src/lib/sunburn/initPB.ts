@@ -1,3 +1,4 @@
+import { ClientResponseError } from 'pocketbase';
 import { SvelteSet } from 'svelte/reactivity';
 
 import {
@@ -11,7 +12,7 @@ import {
 	type VoiceParticipantsRecord,
 	type VoiceParticipantsResponse,
 } from '$lib/pb-types';
-import { debugPrefix, warnPrefix } from '$lib/utils/logPrefixes';
+import { debugPrefix, errorPrefix, warnPrefix } from '$lib/utils/logPrefixes';
 import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 import { logFriendly } from '$lib/utils/username';
 
@@ -84,6 +85,30 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 		pinnedServerIDs: new SvelteSet(),
 		pinnedDMIDs: new SvelteSet(),
 	};
+
+	if (!noReauth) {
+		try {
+			await pb.collection('users').authRefresh({ requestKey: null });
+		} catch (err) {
+			if (err instanceof ClientResponseError && err.status >= 400 && err.status < 500) {
+				// eslint-disable-next-line no-console
+				console.warn(
+					...warnPrefix,
+					`<${instanceID}> could not refresh auth token (you may need to log in again)\n`,
+					err,
+				);
+			} else {
+				// eslint-disable-next-line no-console
+				console.error(
+					...errorPrefix,
+					`<${instanceID}> unknown error while refreshing auth token\n`,
+					err,
+				);
+			}
+
+			return;
+		}
+	}
 
 	if (pb.authStore.record?.id) {
 		sunburn[instanceID].myID = pb.authStore.record.id;

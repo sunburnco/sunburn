@@ -32,6 +32,71 @@
 	};
 </script>
 
+<!-- TODO add header bar -->
+
+<div class="my-12 flex flex-col gap-2">
+	<h1 class="font-display text-xl font-bold">Local Settings</h1>
+	<p class="opacity-60">
+		These settings only apply to this device, and are not synced to the cloud.
+	</p>
+	<div class="divider"></div>
+	<ul class="menu m-0 w-full p-0">
+		<li class="mt-8 menu-title md:mt-4" id="accounts">Accounts</li>
+		{#each Object.keys(localAuthStoreKeys) as localAuthStoreKey (localAuthStoreKey)}
+			{@const instanceID = parseInstanceSlug(localAuthStoreKey, '')}
+			{@const ready = sunburn[instanceID]?.ready ?? false}
+			<li class="w-full">
+				<span class="flex w-full hover:bg-transparent active:bg-transparent active:text-inherit">
+					<span class="flex grow items-center justify-between gap-4">
+						<div class="min-w-1/2">
+							<p class="font-bold text-wrap select-none">
+								{localAuthStoreKey}
+							</p>
+							<p class="text-wrap select-none">
+								{#if ready}
+									<span class="badge badge-success">Ready</span>
+								{:else}
+									<span class="badge badge-error">Not Ready</span>
+								{/if}
+							</p>
+						</div>
+						<div class="flex gap-2">
+							<a href={`/login/${instanceID}`}>
+								<button class="btn btn-square" title="Log In">
+									<LucideLogIn class="size-5" />
+								</button>
+							</a>
+							<button
+								class="btn btn-square btn-error"
+								title="Remove Account"
+								onclick={() => removeAccount(localAuthStoreKey as keyof typeof localAuthStoreKeys)}
+							>
+								<LucideX class="size-5" />
+							</button>
+						</div>
+					</span>
+				</span>
+			</li>
+		{/each}
+		<li class="w-full">
+			<span class="flex w-full hover:bg-transparent active:bg-transparent active:text-inherit">
+				<a href="/login" class="grow">
+					<button class="btn w-full btn-ghost">
+						<LucidePlus class="size-4" /> Add Account
+					</button>
+				</a>
+			</span>
+		</li>
+
+		{#each Object.keys(localSettings) as localSettingsGroupKey (localSettingsGroupKey)}
+			{@const lsgk = localSettingsGroupKey as keyof typeof localSettings}
+			{#if !localSettingsGroupKey.startsWith('_')}
+				{@render SettingsGroup(localSettings[lsgk] as LocalSettingGroup_t)}
+			{/if}
+		{/each}
+	</ul>
+</div>
+
 {#snippet TextSetting(setting: LocalSetting_t)}
 	<label class="flex w-full hover:bg-transparent active:bg-transparent active:text-current">
 		<fieldset class="fieldset w-full md:hidden">
@@ -220,68 +285,3 @@
 		</li>
 	{/each}
 {/snippet}
-
-<!-- TODO add header bar -->
-
-<div class="my-12 flex flex-col gap-2">
-	<h1 class="font-display text-xl font-bold">Local Settings</h1>
-	<p class="opacity-60">
-		These settings only apply to this device, and are not synced to the cloud.
-	</p>
-	<div class="divider"></div>
-	<ul class="menu m-0 w-full p-0">
-		<li class="mt-8 menu-title md:mt-4" id="accounts">Accounts</li>
-		{#each Object.keys(localAuthStoreKeys) as localAuthStoreKey (localAuthStoreKey)}
-			{@const instanceID = parseInstanceSlug(localAuthStoreKey, '')}
-			{@const ready = sunburn[instanceID]?.ready ?? false}
-			<li class="w-full">
-				<span class="flex w-full hover:bg-transparent active:bg-transparent active:text-inherit">
-					<span class="flex grow items-center justify-between gap-4">
-						<div class="min-w-1/2">
-							<p class="font-bold text-wrap select-none">
-								{localAuthStoreKey}
-							</p>
-							<p class="text-wrap select-none">
-								{#if ready}
-									<span class="badge badge-success">Ready</span>
-								{:else}
-									<span class="badge badge-error">Not Ready</span>
-								{/if}
-							</p>
-						</div>
-						<div class="flex gap-2">
-							<a href={`/login/${instanceID}`}>
-								<button class="btn btn-square" title="Log In">
-									<LucideLogIn class="size-5" />
-								</button>
-							</a>
-							<button
-								class="btn btn-square btn-error"
-								title="Remove Account"
-								onclick={() => removeAccount(localAuthStoreKey as keyof typeof localAuthStoreKeys)}
-							>
-								<LucideX class="size-5" />
-							</button>
-						</div>
-					</span>
-				</span>
-			</li>
-		{/each}
-		<li class="w-full">
-			<span class="flex w-full hover:bg-transparent active:bg-transparent active:text-inherit">
-				<a href="/login" class="grow">
-					<button class="btn w-full btn-ghost">
-						<LucidePlus class="size-4" /> Add Account
-					</button>
-				</a>
-			</span>
-		</li>
-
-		{#each Object.keys(localSettings) as localSettingsGroupKey (localSettingsGroupKey)}
-			{@const lsgk = localSettingsGroupKey as keyof typeof localSettings}
-			{#if !localSettingsGroupKey.startsWith('_')}
-				{@render SettingsGroup(localSettings[lsgk] as LocalSettingGroup_t)}
-			{/if}
-		{/each}
-	</ul>
-</div>
