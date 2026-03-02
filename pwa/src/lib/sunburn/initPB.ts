@@ -27,6 +27,7 @@ import {
 	onServerRole,
 	onServerRoleAssignment,
 	onServerRolePermission,
+	onUser,
 	onVoiceParticipant,
 } from './data/realtime.svelte';
 import { setServerRecord } from './data/server';
@@ -200,6 +201,8 @@ export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boo
 
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, `${logFriendly(instanceID)} registering event listeners`);
+
+	pb.collection('users').subscribe('*', (e) => onUser(instanceID, e));
 
 	pb.collection('messages').subscribe('*', (e) => onMessage(instanceID, e));
 

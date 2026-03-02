@@ -13,6 +13,8 @@ import type {
 	ServerRolesRecord,
 	ServerRolesResponse,
 	ServersResponse,
+	UsersRecord,
+	UsersResponse,
 	VoiceParticipantsRecord,
 	VoiceParticipantsResponse,
 } from '$lib/pb-types';
@@ -34,6 +36,7 @@ import { setDMMessages } from './dmMessages';
 import { clearRoleAssignment, setRoleAssignment } from './roleAssignments';
 import { clearRolePermission, clearRoleRecord, setRolePermission, setRoleRecord } from './roles';
 import { clearServerRecord, fetchServer, fetchServersForInstance, setServerRecord } from './server';
+import { setUserRecord } from './users';
 import { clearVoiceParticipant, setVoiceParticipant } from './voiceParticipants';
 
 // TODO this whole file is probably buggy
@@ -360,5 +363,21 @@ export const onServerRoleAssignment = (
 		) {
 			fetchServer(instanceID, serverID, null);
 		}
+	}
+};
+
+export const onUser = (
+	instanceID: Instance_t['id'],
+	e: RecordSubscription<UsersResponse<UsersRecord>>,
+) => {
+	const { action, record } = e;
+
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), 'onUser', action, record);
+
+	// TODO figure out what needs to happen on backend for user to be deleted
+	// for now, we only care about update
+	if (action === 'update') {
+		setUserRecord(instanceID, record.id, record);
 	}
 };
