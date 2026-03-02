@@ -74,7 +74,7 @@
 			}
 		}
 
-		ret.sort((a, b) => a.updated.diff(b.updated).as('seconds'));
+		ret.sort((a, b) => b.updated.diff(a.updated).as('seconds'));
 
 		return ret;
 	});

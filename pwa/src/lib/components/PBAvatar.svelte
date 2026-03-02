@@ -74,7 +74,7 @@
 				`/api/files/${userID ? `users/${userID}` : `servers/${serverID}`}/${url}`,
 			)}
 			alt={name}
-			class={['col-start-1 row-start-1 bg-transparent', imgClassName]}
+			class={['col-start-1 row-start-1 size-full bg-transparent object-cover', imgClassName]}
 		/>
 	{/if}
 
