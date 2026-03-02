@@ -2,6 +2,38 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.6.0 - 2026-03-02
+#### Features
+- (**pwa**) virtual list - (e231a2a) - twopyramids
+- (**pwa**) add title for settings and login pages - (68c1949) - twopyramids
+- account manager in settings - (cd56e30) - twopyramids
+- local settings page - (9913598) - twopyramids
+- local settings page - (6573d5a) - twopyramids
+#### Bug Fixes
+- square pfps, dm sort order, type error - (286ec14) - twopyramids
+- dm order no longer reversed - (9d41f16) - twopyramids
+- type error on subscription - (2346aa6) - twopyramids
+- square avatars - (04a39ec) - twopyramids
+- subscribe to user update events - (76af934) - twopyramids
+- subscribe to user update events - (47486b7) - twopyramids
+- use nameOrHandle in dm search results - (da6d9d4) - twopyramids
+- use nameOrHandle in dm search results - (903f4e1) - twopyramids
+- handle expired tokens - (01a70e7) - twopyramids
+- handle expired tokens - (e2dbf21) - twopyramids
+- gracefully handle backend offline - (07df679) - twopyramids
+- remove setting to auto-connect to calls and default to 50pct participant volume if not in localSettings - (328f0c8) - twopyramids
+- save participant volume on change - (e0fd3cd) - twopyramids
+- audio settings hooked in - (17ce06a) - twopyramids
+- add connect without confirmation setting - (724a492) - twopyramids
+- no hover or active states for menu - (0bbc67c) - twopyramids
+- typo referencing tag output - (38f73b4) - twopyramids
+- log tag - (8e17d78) - twopyramids
+- hardcode container tags - (61ee299) - twopyramids
+- dockerhub username - (3191667) - twopyramids
+- use build push action - (e9915dd) - twopyramids
+
+- - -
+
 ## v0.5.6 - 2026-02-22
 #### Bug Fixes
 - rename dependencies - (6cbb457) - twopyramids
