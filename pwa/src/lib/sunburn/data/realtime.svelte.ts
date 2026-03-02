@@ -13,7 +13,6 @@ import type {
 	ServerRolesRecord,
 	ServerRolesResponse,
 	ServersResponse,
-	UsersRecord,
 	UsersResponse,
 	VoiceParticipantsRecord,
 	VoiceParticipantsResponse,
@@ -366,10 +365,7 @@ export const onServerRoleAssignment = (
 	}
 };
 
-export const onUser = (
-	instanceID: Instance_t['id'],
-	e: RecordSubscription<UsersResponse<UsersRecord>>,
-) => {
+export const onUser = (instanceID: Instance_t['id'], e: RecordSubscription<UsersResponse>) => {
 	const { action, record } = e;
 
 	// eslint-disable-next-line no-console
