@@ -3,6 +3,7 @@ import { ClientResponseError } from 'pocketbase';
 import type { MessagesRecord, MessagesResponse } from '$lib/pb-types';
 import {
 	type Channel_t,
+	type DM_t,
 	type Instance_t,
 	type Server_t,
 	sunburn,
@@ -68,6 +69,69 @@ export const fetchChannelMessagesBefore = async (
 			logFriendly(instanceID),
 			'error fetching extra messages for channel',
 			channelID,
+			'\n',
+			err,
+		);
+	}
+
+	return 0;
+};
+
+export const fetchDMMessagesBefore = async (
+	instanceID: Instance_t['id'],
+	dmID: DM_t['recipientID'],
+	before: MessagesRecord['created'],
+	_requestKey?: string | null,
+) => {
+	try {
+		const resp = await sunburn[instanceID].pb
+			.collection('messages')
+			.getList<MessagesResponse<MessagesRecord>>(1, 50, {
+				filter: sunburn[instanceID].pb.filter(
+					'created < {:ts} && (from = {:dmID} || to = {:dmID})',
+					{
+						dmID,
+						ts: before,
+					},
+				),
+				sort: '-created',
+				requestKey: null,
+			});
+
+		// eslint-disable-next-line no-console
+		console.debug(
+			...debugPrefix,
+			logFriendly(instanceID),
+			'fetched',
+			resp.items.length,
+			'extra messages for dm',
+			dmID,
+		);
+
+		for (const message of resp.items) {
+			binaryUpdateOrInsert(message, sunburn[instanceID].dms[dmID].messages);
+		}
+
+		return resp.items.length;
+	} catch (err) {
+		if (err instanceof ClientResponseError && err.status === 0) {
+			// eslint-disable-next-line no-console
+			console.debug(
+				...debugPrefix,
+				logFriendly(instanceID),
+				'duplicate fetch request aborted for extra dm messages',
+				dmID,
+				_requestKey,
+			);
+			return;
+		}
+
+		// eslint-disable-next-line no-console
+		console.error(
+			...errorPrefix,
+			logFriendly(instanceID),
+			'error fetching extra messages for dm',
+			dmID,
 			'\n',
 			err,
 		);
