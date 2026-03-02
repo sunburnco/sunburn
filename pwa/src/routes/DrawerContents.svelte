@@ -248,8 +248,8 @@
 									name={user.name ?? user.handle}
 								/>
 								<div>
-									<p>{user.name ?? user.handle}</p>
-									<p class="text-sm italic">{user.instanceID}</p>
+									<p>{nameOrHandle(user.instanceID, user.id, true)}</p>
+									<p class="text-xs opacity-60">{user.instanceID}</p>
 								</div>
 							</a>
 						</li>
