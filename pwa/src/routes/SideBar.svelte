@@ -6,6 +6,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
 	import ScrollArea from '$lib/components/ScrollArea.svelte';
+	import { ChannelType } from '$lib/constants';
 	import { loadServer } from '$lib/sunburn/data/server';
 	import { fetchUser } from '$lib/sunburn/data/users';
 	import { type Channel_t, type Server_t, sunburn } from '$lib/sunburn/sunburn.svelte';
@@ -168,7 +169,7 @@
 						}}
 					>
 						<div class="fl-gap-[0.5/0.75] flex items-center justify-center">
-							{#if channel.record.voice}
+							{#if channel.record.type === ChannelType.VOICE}
 								<LucideVolume2 class="flicon-sm90" />
 							{:else}
 								<LucideHash class="flicon-sm90" />

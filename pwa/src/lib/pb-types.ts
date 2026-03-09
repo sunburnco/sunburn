@@ -132,8 +132,8 @@ export type ChannelsRecord = {
 	id: string;
 	name: string;
 	server: RecordIdString;
+	type: string;
 	updated: IsoAutoDateString;
-	voice?: boolean;
 };
 
 export type CumulativeChannelPermissionsRecord<Tpermissions = unknown> = {

@@ -3,6 +3,7 @@
 
 	import { page } from '$app/state';
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
+	import { ChannelType } from '$lib/constants';
 	import { fetchInitialMessageForChannel } from '$lib/sunburn/data/channels';
 	import {
 		type Channel_t,
@@ -38,7 +39,7 @@
 			/>
 			{sunburn[instanceID].servers[serverID].record.name}
 			<div class="divider m-0 my-1 divider-horizontal"></div>
-			{#if sunburn[instanceID].servers[serverID].channels[channelID].record.voice}
+			{#if sunburn[instanceID].servers[serverID].channels[channelID].record.type === ChannelType.VOICE}
 				<div>
 					<LucideVolume2 class="inline size-4 -translate-y-px" />
 					{sunburn[instanceID].servers[serverID].channels[channelID].record.name}
@@ -52,7 +53,7 @@
 		</div>
 	</div>
 
-	{#if sunburn[instanceID].servers[serverID].channels[channelID].record.voice}
+	{#if sunburn[instanceID].servers[serverID].channels[channelID].record.type === ChannelType.VOICE}
 		<CallView />
 	{:else}
 		<TextView />
