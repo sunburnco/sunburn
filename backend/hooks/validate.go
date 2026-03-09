@@ -2,6 +2,8 @@ package hooks
 
 import (
 	"errors"
+	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/pocketbase/pocketbase/core"
@@ -41,6 +43,17 @@ func Messages_MutuallyExclusiveDestinations(e *core.RecordEvent) error {
 	// xor
 	if (e.Record.GetString("to") != "") == (e.Record.GetString("channel") != "") {
 		return errors.New("message must be to exactly one recipient or channel")
+	}
+
+	return e.Next()
+}
+
+func Channels_ValidTypes(e *core.RecordEvent) error {
+	validChannelTypes := []string{"text", "voice"}
+	channelType := e.Record.GetString("type")
+
+	if slices.Index(validChannelTypes, channelType) == -1 {
+		return fmt.Errorf("invalid channel type (valid types are %q)", validChannelTypes)
 	}
 
 	return e.Next()
