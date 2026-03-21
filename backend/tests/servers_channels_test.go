@@ -18,7 +18,7 @@ func makeDeleteMe() func(t testing.TB, app *tests.TestApp, e *core.ServeEvent) {
 			"id":     DUMMY_IDA,
 			"name":   "deleteme",
 			"server": SERVER_MAIN,
-			"voice":  false,
+			"type":   "text",
 		}).Execute(); err != nil {
 			t.Fatal(err)
 		}
@@ -172,7 +172,7 @@ func TestServersChannels(t *testing.T) {
 					"id": "%s",
 				  "name": "deleteme",
 					"server": "%s",
-					"voice": false
+					"type": "text"
 				}`, DUMMY_IDA, SERVER_MAIN),
 				ExpectedStatus:  expectedStatus[testID][testColumn],
 				ExpectedContent: expectedContents[testID][testColumn],

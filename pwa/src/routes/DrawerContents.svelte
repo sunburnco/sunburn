@@ -20,6 +20,7 @@
 	import { page } from '$app/state';
 	import LucideSunburn from '$lib/components/LucideSunburn.svelte';
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
+	import { ChannelType } from '$lib/constants';
 	import type { UsersRecord, UsersResponse } from '$lib/pb-types';
 	import { call } from '$lib/sunburn/call.svelte';
 	import { loadServer } from '$lib/sunburn/data/server';
@@ -317,7 +318,7 @@
 							}}
 							href={`/instance/${channel.instanceID}/server/${channel.record.server}/channel/${channel.channelID}`}
 						>
-							{#if sunburn[activeInstanceID].servers[activeServerID].channels[channel.channelID].record.voice}
+							{#if sunburn[activeInstanceID].servers[activeServerID].channels[channel.channelID].record.type === ChannelType.VOICE}
 								{#if call.roomState !== ConnectionState.Disconnected && call.instanceID === activeInstanceID && call.serverID === activeServerID && call.channelID === channel.channelID}
 									<LucidePhone class="size-4 text-accent" />
 								{:else}
