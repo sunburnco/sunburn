@@ -19,6 +19,22 @@ func init() {
 		collection := core.NewBaseCollection("invites")
 
 		collection.ViewRule = types.Pointer("")
+		collection.ListRule = types.Pointer(`(
+  // is owner
+  server.owner = @request.auth.id
+)
+||
+(
+  // user has "server member"
+  @request.auth.cumulativeServerPermissions_via_user.server ?= server.id &&
+  @request.auth.cumulativeServerPermissions_via_user.user = @request.auth.id &&
+  @request.auth.cumulativeServerPermissions_via_user.permissions ?~ "SERVER_MEMBER" &&
+  // and "admin" or "manage server"
+  (
+    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ "MANAGE_SERVER" ||
+    @request.auth.cumulativeServerPermissions_via_user.permissions ?~ "ADMINISTRATOR"
+  )
+)`)
 		collection.CreateRule = types.Pointer(`(
   // is owner
   server.owner = @request.auth.id
