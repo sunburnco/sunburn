@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"sunburn.co/backend/handlers"
 	"sunburn.co/backend/hooks"
 	"sunburn.co/backend/livekit"
 
@@ -77,8 +78,11 @@ func main() {
 	})
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
+		// TODO move to /api/sb/...
 		se.Router.POST("/lkwebhook", livekit.LiveKitWebhook)
 		se.Router.POST("/lk/{channel}/token", livekit.LiveKitToken)
+
+		se.Router.POST("/api/sb/acceptInvite", handlers.AcceptInvite)
 
 		return se.Next()
 	})
