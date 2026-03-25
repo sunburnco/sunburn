@@ -1,4 +1,5 @@
 pb_data/
+pb_data*/
 
 .env
 .env*
@@ -8,3 +9,8 @@ pwa/
 backend
 
 backend/tests/playground.http
+
+test_data/auxiliary.db-shm
+test_data/auxiliary.db-wal
+test_data/data.db-shm
+test_data/data.db-wal

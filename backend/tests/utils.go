@@ -9,6 +9,7 @@ import (
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tests"
+	"sunburn.co/backend/handlers"
 )
 
 const (
@@ -68,6 +69,13 @@ func makeFactory(t testing.TB) *tests.TestApp {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	// TODO is this the idiomatic PB way to test custom routes?
+	testApp.OnServe().BindFunc(func(se *core.ServeEvent) error {
+		se.Router.POST("/api/sb/acceptInvite/{slug}", handlers.AcceptInvite)
+
+		return se.Next()
+	})
 
 	return testApp
 }
