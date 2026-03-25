@@ -82,7 +82,7 @@ func main() {
 		se.Router.POST("/lkwebhook", livekit.LiveKitWebhook)
 		se.Router.POST("/lk/{channel}/token", livekit.LiveKitToken)
 
-		se.Router.POST("/api/sb/acceptInvite", handlers.AcceptInvite)
+		se.Router.POST("/api/sb/acceptInvite/{slug}", handlers.AcceptInvite)
 
 		return se.Next()
 	})

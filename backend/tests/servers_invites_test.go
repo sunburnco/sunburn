@@ -68,6 +68,7 @@ func TestServersInvites(t *testing.T) {
 		{_200, _200, _200, _200, _200, _200, _200, _200},
 		{_404, _404, _204, _204, _204, _404, _404, _404},
 		{_404, _404, _404, _204, _204, _404, _404, _404},
+		{_200, _200, _200, _200, _200, _400, _400, _400},
 	}
 
 	expectedContents := [][][]string{
@@ -78,6 +79,7 @@ func TestServersInvites(t *testing.T) {
 		{{`"totalItems":0`}, {`"totalItems":0`}, {`"totalItems":0`}, {`"totalItems":1`}, {`"totalItems":1`}, {`"totalItems":0`}, {`"totalItems":0`}, {`"totalItems":0`}},
 		{{``}, {``}, {``}, {``}, {``}, {``}, {``}, {``}},
 		{{``}, {``}, {``}, {``}, {``}, {``}, {``}, {``}},
+		{{``}, {``}, {``}, {``}, {``}, {``}, {``}, {``}},
 	}
 
 	scenarios := []func(testID, testColumn int, authToken string, args ...any) *tests.ApiScenario{
@@ -85,7 +87,7 @@ func TestServersInvites(t *testing.T) {
 			return &tests.ApiScenario{
 				Name:   fmt.Sprintf("%d.%d View an invite", testID+1, testColumn+1),
 				Method: http.MethodGet,
-				URL:    fmt.Sprintf("/api/collections/invites/records?filter=(slug='%s')", INVITE_SLUG_MAIN),
+				URL:    fmt.Sprintf("/api/collections/invites/records?filter=(slug='%s')", INVITE_MAIN_SLUG),
 				Headers: map[string]string{
 					"Authorization": authToken,
 				},
@@ -195,7 +197,20 @@ func TestServersInvites(t *testing.T) {
 				TestAppFactory:  makeFactory,
 			}
 		},
-		// TODO add test for accepting invites
+		func(testID int, testColumn int, authToken string, args ...any) *tests.ApiScenario {
+			return &tests.ApiScenario{
+				Name:   fmt.Sprintf("%d.%d Accept the `charlie` invite", testID+1, testColumn+1),
+				Method: http.MethodPost,
+				URL:    fmt.Sprintf("/api/sb/acceptInvite/%s", INVITE_CHARLIE_SLUG),
+				Headers: map[string]string{
+					"Authorization": authToken,
+				},
+				ExpectedStatus:  expectedStatuses[testID][testColumn],
+				ExpectedContent: expectedContents[testID][testColumn],
+				// no roles needed
+				TestAppFactory: makeFactory,
+			}
+		},
 	}
 
 	for i, scenario := range scenarios {

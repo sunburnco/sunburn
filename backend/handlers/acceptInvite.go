@@ -50,16 +50,23 @@ func AcceptInvite(e *core.RequestEvent) error {
 		"serverRoleAssignments",
 		"role={:roleID} && user={:userID}",
 		dbx.Params{"roleID": roleID, "userID": userID}); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			// user already has role with ordinal 0
-			return e.JSON(http.StatusOK, map[string]any{})
+		if !errors.Is(err, sql.ErrNoRows) {
+			// no rows error just means the user doesn't have the role yet
+			return e.InternalServerError("", err)
 		}
+	} else {
+		return e.BadRequestError("user already member of requested server", nil)
 	}
 
-	if _, err := e.App.DB().Insert("serverRoleAssignments", dbx.Params{
-		"role": roleID,
-		"user": userID,
-	}).Execute(); err != nil {
+	sraCollection, err := e.App.FindCollectionByNameOrId("serverRoleAssignments")
+	if err != nil {
+		return e.InternalServerError("", err)
+	}
+
+	newAssignmentRecord := core.NewRecord(sraCollection)
+	newAssignmentRecord.Set("role", roleID)
+	newAssignmentRecord.Set("user", userID)
+	if err := e.App.Save(newAssignmentRecord); err != nil {
 		return e.InternalServerError("", err)
 	}
 

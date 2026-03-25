@@ -139,16 +139,16 @@ utilization/quota: owner 1/2, others 0/0
 
 "mod" roles need `MANAGE_SERVER` ("a" tests) and `CREATE_INVITES` ("b" tests)
 
-|                       | Bob (.1) | Alice (.2) | Mod (.3) | Admin (.4) | Owner (.5) | CharlieMod (.6) | CharlieAdmin (.7) | Charlie (owner) (.8) |
-| --------------------- | :------: | :--------: | :------: | :--------: | :--------: | :-------------: | :---------------: | :------------------: |
-| (1) View an invite    |    🟩    |     🟩     |    🟩    |     🟩     |     🟩     |       🟩        |        🟩         |          🟩          |
-| (2a) Create an invite |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (3b) Create an invite |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (4a) List invites     |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (5b) List invites     |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (6a) Delete an invite |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (7b) Delete an invite |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
-| (8) Accept an invite  |    🟩    |     🟩     |    🟩    |     🟩     |     🟩     |       🟩        |        🟩         |          🟩          |
+|                                 | Bob (.1) | Alice (.2) | Mod (.3) | Admin (.4) | Owner (.5) | CharlieMod (.6) | CharlieAdmin (.7) | Charlie (owner) (.8) |
+| ------------------------------- | :------: | :--------: | :------: | :--------: | :--------: | :-------------: | :---------------: | :------------------: |
+| (1) View an invite              |    🟩    |     🟩     |    🟩    |     🟩     |     🟩     |       🟩        |        🟩         |          🟩          |
+| (2a) Create an invite           |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (3b) Create an invite           |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (4a) List invites               |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (5b) List invites               |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (6a) Delete an invite           |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (7b) Delete an invite           |    ⛔    |     ⛔     |    ⛔    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
+| (8) Accept the `charlie` invite |    🟩    |     🟩     |    🟩    |     🟩     |     🟩     |       🟩        |        🟩         |          🟩          |
 
 🟩 x32<br />
 ⛔ x32

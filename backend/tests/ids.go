@@ -58,7 +58,7 @@ const (
 	ALICE_MESSAGE_IN_MUTED    = "76lezqq2eu99t6b"
 	_                         = ""
 	INVITE_MAIN               = "51eei2rafksjf8y"
-	INVITE_SLUG_MAIN          = "server"
+	INVITE_MAIN_SLUG          = "main"
 	INVITE_CHARLIE            = "ft4hlvjk9cv55sq"
 	INVITE_CHARLIE_SLUG       = "charlie"
 )
