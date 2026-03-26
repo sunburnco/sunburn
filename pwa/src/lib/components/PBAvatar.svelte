@@ -47,12 +47,7 @@
 		// no need to fetch server because server icons are always loaded
 	});
 
-	let imgLoaded = $state(false);
-	$effect(() => {
-		if (!url) {
-			imgLoaded = false;
-		}
-	});
+	let imgLoaded = $derived(!!url);
 </script>
 
 <div

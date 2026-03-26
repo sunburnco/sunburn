@@ -2,14 +2,11 @@
 	import { messageToHTML } from './messageToHTML';
 
 	const { text }: { text: string } = $props();
-	let output = $state('');
 
-	$effect(() => {
-		messageToHTML(text).then((res) => {
-			output = res;
-		});
-	});
+	let outputPromise = $derived(messageToHTML(text));
 </script>
 
-<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-{@html output}
+{#await outputPromise then output}
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html output}
+{/await}
