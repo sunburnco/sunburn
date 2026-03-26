@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		LucideCog,
 		LucideHash,
 		LucideMic,
 		LucideMicOff,
@@ -8,7 +9,7 @@
 		LucidePackageOpen,
 		LucidePhone,
 		LucidePhoneMissed,
-		LucideSettings,
+		LucidePlus,
 		LucideVideo,
 		LucideVideoOff,
 		LucideVolume2,
@@ -37,7 +38,16 @@
 	import { nameOrHandle } from '$lib/utils/username';
 
 	let activeInstanceID = $state(page.params.instanceID || '');
-	let activeServerID = $state(page.params.serverID || 'dms');
+	// TODO add check for settings
+	let activeServerID = $state(
+		page.params.serverID
+			? page.params.serverID
+			: page.route.id === '/settings'
+				? 'settings'
+				: page.route.id === '/new'
+					? 'new'
+					: 'dms',
+	);
 	let activeChannelID = $state(page.params.channelID || '');
 	let activeDMID = $state(page.params.dmID || '');
 
@@ -218,6 +228,33 @@
 				<LucidePackageOpen class="size-6" />
 			</div>
 		{/each}
+
+		<div class="divider m-0"></div>
+
+		<a
+			title="Settings"
+			href="/settings"
+			class={['btn btn-square', activeServerID === 'settings' ? 'btn-neutral' : 'btn-ghost']}
+			onclick={() => {
+				activeServerID = 'settings';
+				activeDMID = '';
+				activeChannelID = '';
+			}}
+		>
+			<LucideCog class="size-6" />
+		</a>
+		<a
+			title="New Server"
+			href="/new"
+			class={['btn btn-square', activeServerID === 'new' ? 'btn-neutral' : 'btn-ghost']}
+			onclick={() => {
+				activeServerID = 'new';
+				activeDMID = '';
+				activeChannelID = '';
+			}}
+		>
+			<LucidePlus class="size-6" />
+		</a>
 	</div>
 
 	<!-- channel list -->
@@ -353,7 +390,7 @@
 						{/if}
 					</li>
 				{:else}
-					<div class="select-none opacity-50 gap-1 w-full flex items-center flex-col">
+					<div class="select-none opacity-50 gap-1 w-full mt-2 flex items-center flex-col">
 						<LucidePackageOpen class="size-6" />
 						<div class="w-1/2 text-center">Nothing to display</div>
 					</div>
@@ -364,81 +401,69 @@
 		<div
 			class="sticky bottom-0 mt-auto w-full border-t border-base-content/50 bg-base-100 p-2 text-base-content"
 		>
-			<div class="flex w-full justify-between">
-				<div class="flex gap-2">
-					<a href="/settings">
-						<span class="btn btn-square btn-ghost btn-sm">
-							<LucideSettings class="size-5" />
-						</span>
-					</a>
-				</div>
-				<div class="flex gap-2">
-					<button
-						disabled={call.roomState !== ConnectionState.Connected}
-						class={[
-							'group btn btn-square btn-sm',
-							call.me?.micUnmuted ? 'btn-accent' : 'btn-ghost',
-						]}
-						onclick={call.me?.micUnmuted ? muteMic : unmuteMic}
-						title={call.me?.micUnmuted ? 'Mute (you are unmuted)' : 'Unmute (you are muted)'}
-					>
-						<div class="group-disabled:opacity-20">
-							{#if call.me?.micUnmuted}
-								<LucideMic class="size-5" />
-							{:else}
-								<LucideMicOff class="size-5 stroke-base-content" />
-							{/if}
-						</div>
-					</button>
-					<button
-						disabled={call.roomState !== ConnectionState.Connected}
-						class={[
-							'group btn btn-square btn-sm',
-							call.me?.cameraUnmuted ? 'btn-accent' : 'btn-ghost',
-						]}
-						onclick={call.me?.cameraUnmuted ? muteCamera : unmuteCamera}
-						title={call.me?.cameraUnmuted
-							? 'Stop camera (your camera is on)'
-							: 'Start camera (your camera is off)'}
-					>
-						<div class="text-base-content group-disabled:opacity-20">
-							{#if call.me?.cameraUnmuted}
-								<LucideVideo class="size-5" />
-							{:else}
-								<LucideVideoOff class="size-5" />
-							{/if}
-						</div>
-					</button>
-					<button
-						disabled={call.roomState !== ConnectionState.Connected}
-						class={[
-							'group btn btn-square btn-sm',
-							call.me?.screenShareUnmuted ? 'btn-accent' : 'btn-ghost',
-						]}
-						onclick={call.me?.screenShareUnmuted ? stopScreenShare : startScreenShare}
-						title={call.me?.screenShareUnmuted
-							? 'Stop sharing your screen (your screen is being shared)'
-							: 'Begin sharing your screen (your screen is not being shared)'}
-					>
-						<div class="text-base-content group-disabled:opacity-20">
-							{#if call.me?.screenShareUnmuted}
-								<LucideMonitorUp class="size-5" />
-							{:else}
-								<LucideMonitorX class="size-5" />
-							{/if}
-						</div>
-					</button>
-					<button
-						disabled={call.roomState === ConnectionState.Disconnected}
-						class="group btn btn-square btn-sm btn-primary"
-						onclick={disconnect}
-						title="Disconnect"
-					>
-						<div class="text-base-content group-disabled:opacity-20">
-							<LucidePhoneMissed class="size-5" />
-						</div>
-					</button>
-				</div>
+			<div class="flex w-full justify-end gap-2">
+				<button
+					disabled={call.roomState !== ConnectionState.Connected}
+					class={['group btn btn-square btn-sm', call.me?.micUnmuted ? 'btn-accent' : 'btn-ghost']}
+					onclick={call.me?.micUnmuted ? muteMic : unmuteMic}
+					title={call.me?.micUnmuted ? 'Mute (you are unmuted)' : 'Unmute (you are muted)'}
+				>
+					<div class="group-disabled:opacity-20">
+						{#if call.me?.micUnmuted}
+							<LucideMic class="size-5" />
+						{:else}
+							<LucideMicOff class="size-5 stroke-base-content" />
+						{/if}
+					</div>
+				</button>
+				<button
+					disabled={call.roomState !== ConnectionState.Connected}
+					class={[
+						'group btn btn-square btn-sm',
+						call.me?.cameraUnmuted ? 'btn-accent' : 'btn-ghost',
+					]}
+					onclick={call.me?.cameraUnmuted ? muteCamera : unmuteCamera}
+					title={call.me?.cameraUnmuted
+						? 'Stop camera (your camera is on)'
+						: 'Start camera (your camera is off)'}
+				>
+					<div class="text-base-content group-disabled:opacity-20">
+						{#if call.me?.cameraUnmuted}
+							<LucideVideo class="size-5" />
+						{:else}
+							<LucideVideoOff class="size-5" />
+						{/if}
+					</div>
+				</button>
+				<button
+					disabled={call.roomState !== ConnectionState.Connected}
+					class={[
+						'group btn btn-square btn-sm',
+						call.me?.screenShareUnmuted ? 'btn-accent' : 'btn-ghost',
+					]}
+					onclick={call.me?.screenShareUnmuted ? stopScreenShare : startScreenShare}
+					title={call.me?.screenShareUnmuted
+						? 'Stop sharing your screen (your screen is being shared)'
+						: 'Begin sharing your screen (your screen is not being shared)'}
+				>
+					<div class="text-base-content group-disabled:opacity-20">
+						{#if call.me?.screenShareUnmuted}
+							<LucideMonitorUp class="size-5" />
+						{:else}
+							<LucideMonitorX class="size-5" />
+						{/if}
+					</div>
+				</button>
+				<button
+					disabled={call.roomState === ConnectionState.Disconnected}
+					class="group btn btn-square btn-sm btn-primary"
+					onclick={disconnect}
+					title="Disconnect"
+				>
+					<div class="text-base-content group-disabled:opacity-20">
+						<LucidePhoneMissed class="size-5" />
+					</div>
+				</button>
 			</div>
 		</div>
 	</div>
