@@ -2,18 +2,10 @@
 	import { LucideLoaderCircle } from '@lucide/svelte';
 
 	import { goto } from '$app/navigation';
-	import { ChannelType, Permissions } from '$lib/constants';
 	import { drawerState } from '$lib/drawerState.svelte';
-	import type {
-		ChannelRoleAssignmentsRecord,
-		ChannelsRecord,
-		ServerRolePermissionsRecord,
-		ServerRolesRecord,
-		ServersRecord,
-	} from '$lib/pb-types';
 	import { type Instance_t, sunburn } from '$lib/sunburn/sunburn.svelte';
+	import { createServer } from '$lib/utils/createServer';
 	import { errorPrefix } from '$lib/utils/logPrefixes';
-	import { pbID } from '$lib/utils/pbID';
 	import { logFriendly } from '$lib/utils/username';
 
 	import QuotaOption from './QuotaOption.svelte';
@@ -23,142 +15,30 @@
 	let newServerName = $state('');
 	let loading = $state(false);
 
-	let errorStep = $state<'' | 'server' | 'role' | 'permissions' | 'general' | 'voice' | 'cra'>('');
+	let serverCreationError = $state(false);
 
-	const onSubmit = async () => {
-		loading = true;
-
+	const onNewServerSubmit = async () => {
 		const instanceID = chosenInstance;
 
-		const serverID = pbID();
-		const roleID = pbID();
-		const generalID = pbID();
-		const voiceID = pbID();
-
 		try {
-			await sunburn[instanceID].pb.collection('servers').create({
-				id: serverID,
-				name: newServerName,
-				owner: sunburn[instanceID].myID,
-			} as ServersRecord);
-		} catch (err) {
-			// eslint-disable-next-line no-console
-			console.error(...errorPrefix, logFriendly(instanceID), 'error creating server\n', err);
-			errorStep = 'server';
-			loading = false;
-			return;
-		}
+			const { serverID } = await createServer(instanceID, newServerName);
 
-		try {
-			await sunburn[instanceID].pb.collection('serverRoles').create({
-				id: roleID,
-				server: serverID,
-				name: 'everyone',
-				ordinal: 0,
-			} as ServerRolesRecord);
+			goto(`/instance/${instanceID}/server/${serverID}`);
+			drawerState.activeChannelID = '';
+			drawerState.activeDMID = '';
+			drawerState.activeInstanceID = instanceID;
+			drawerState.activeServerID = serverID;
 		} catch (err) {
+			serverCreationError = true;
 			// eslint-disable-next-line no-console
-			console.error(...errorPrefix, logFriendly(instanceID), 'error creating role\n', err);
-			errorStep = 'role';
-			loading = false;
-			return;
+			console.error(...errorPrefix, logFriendly(instanceID), 'error during server creation\n', err);
 		}
-
-		try {
-			for (const permission of [
-				Permissions.SERVER_MEMBER,
-				Permissions.CHANNEL_READ,
-				Permissions.CHANNEL_SEND,
-				Permissions.CALL_VIDEO,
-				Permissions.ADD_REACTIONS,
-				Permissions.USE_ATTACHMENTS,
-			]) {
-				await sunburn[instanceID].pb.collection('serverRolePermissions').create({
-					role: roleID,
-					permission,
-				} as ServerRolePermissionsRecord);
-			}
-		} catch (err) {
-			// eslint-disable-next-line no-console
-			console.error(
-				...errorPrefix,
-				logFriendly(instanceID),
-				'error creating role permissions\n',
-				err,
-			);
-			errorStep = 'permissions';
-			loading = false;
-			return;
-		}
-
-		try {
-			await sunburn[instanceID].pb.collection('channels').create({
-				id: generalID,
-				name: 'general',
-				server: serverID,
-				type: ChannelType.TEXT,
-			} as ChannelsRecord);
-		} catch (err) {
-			// eslint-disable-next-line no-console
-			console.error(
-				...errorPrefix,
-				logFriendly(instanceID),
-				'error creating general channel\n',
-				err,
-			);
-			errorStep = 'general';
-			loading = false;
-			return;
-		}
-
-		try {
-			await sunburn[instanceID].pb.collection('channels').create({
-				id: voiceID,
-				name: 'voice',
-				server: serverID,
-				type: ChannelType.VOICE,
-			} as ChannelsRecord);
-		} catch (err) {
-			// eslint-disable-next-line no-console
-			console.error(...errorPrefix, logFriendly(instanceID), 'error creating voice channel\n', err);
-			errorStep = 'voice';
-			loading = false;
-			return;
-		}
-
-		try {
-			await sunburn[instanceID].pb.collection('channelRoleAssignments').create({
-				channel: generalID,
-				role: roleID,
-			} as ChannelRoleAssignmentsRecord);
-			await sunburn[instanceID].pb.collection('channelRoleAssignments').create({
-				channel: voiceID,
-				role: roleID,
-			} as ChannelRoleAssignmentsRecord);
-		} catch (err) {
-			// eslint-disable-next-line no-console
-			console.error(
-				...errorPrefix,
-				logFriendly(instanceID),
-				'error creating channel role assignments\n',
-				err,
-			);
-			errorStep = 'cra';
-			loading = false;
-			return;
-		}
-
-		goto(`/instance/${instanceID}/server/${serverID}`);
-		drawerState.activeChannelID = '';
-		drawerState.activeDMID = '';
-		drawerState.activeInstanceID = instanceID;
-		drawerState.activeServerID = serverID;
 	};
 </script>
 
 <div class="my-4">
 	<h1 class="font-display text-xl font-bold">Accept Invite</h1>
-	<form class="flex w-full flex-col gap-2" title="coming soon">
+	<form class="flex w-full flex-col gap-2">
 		<fieldset class="fieldset" disabled>
 			<legend class="fieldset-legend">Invite URL</legend>
 			<input required id="inviteURL" type="text" class="input w-full" />
@@ -173,13 +53,13 @@
 
 	<h1 class="font-display text-xl font-bold">New Server</h1>
 
-	{#if errorStep}
+	{#if serverCreationError}
 		<div class="my-2 rounded-box bg-error p-2 text-error-content">
 			Something went wrong while creating your new server. Check the console for more information.
 		</div>
 	{/if}
 
-	<form onsubmit={onSubmit} class="flex w-full flex-col gap-2">
+	<form onsubmit={onNewServerSubmit} class="flex w-full flex-col gap-2">
 		<fieldset class="fieldset" disabled={loading}>
 			<legend class="fieldset-legend">Instance</legend>
 			<select id="instanceID" required class="select w-full" bind:value={chosenInstance}>
@@ -199,6 +79,7 @@
 				type="text"
 				class="input w-full"
 				placeholder="My Server"
+				autocomplete="off"
 			/>
 		</fieldset>
 
