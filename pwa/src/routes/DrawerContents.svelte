@@ -252,7 +252,7 @@
 			<LucideCog class="size-6" />
 		</a>
 		<a
-			title="New Server"
+			title="Add Server"
 			href="/new"
 			class={['btn btn-square', drawerState.activeServerID === 'new' ? 'btn-neutral' : 'btn-ghost']}
 			onclick={() => {

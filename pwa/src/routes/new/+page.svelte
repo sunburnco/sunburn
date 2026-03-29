@@ -1,27 +1,37 @@
 <script lang="ts">
-	import { LucideLoaderCircle } from '@lucide/svelte';
+	import { LucideArrowRight, LucideLoaderCircle } from '@lucide/svelte';
+	import { Debounced } from 'runed';
 
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { drawerState } from '$lib/drawerState.svelte';
 	import { type Instance_t, sunburn } from '$lib/sunburn/sunburn.svelte';
 	import { createServer } from '$lib/utils/createServer';
 	import { errorPrefix } from '$lib/utils/logPrefixes';
+	import { parseInviteSlug } from '$lib/utils/parseInviteSlug';
 	import { logFriendly } from '$lib/utils/username';
 
 	import QuotaOption from './QuotaOption.svelte';
 
+	let defaultURL = $state(page.url.host);
+
+	let inviteURL = $state('');
+	const inviteSlug = new Debounced(() => parseInviteSlug(inviteURL, defaultURL), 175);
+
 	const quota = $state<Record<Instance_t['id'], boolean>>({});
 	let chosenInstance = $state('');
-	let newServerName = $state('');
-	let loading = $state(false);
-
 	let serverCreationError = $state(false);
 
-	const onNewServerSubmit = async () => {
-		const instanceID = chosenInstance;
+	let loading = $state(false);
+
+	const onNewServerSubmit = async (e: SubmitEvent) => {
+		e.preventDefault();
+		const fd = new FormData(e.target as HTMLFormElement);
+		const instanceID = fd.get('instanceID') as string;
+		const serverName = fd.get('serverName') as string;
 
 		try {
-			const { serverID } = await createServer(instanceID, newServerName);
+			const { serverID } = await createServer(instanceID, serverName);
 
 			goto(`/instance/${instanceID}/server/${serverID}`);
 			drawerState.activeChannelID = '';
@@ -38,13 +48,38 @@
 
 <div class="my-4">
 	<h1 class="font-display text-xl font-bold">Accept Invite</h1>
-	<form class="flex w-full flex-col gap-2">
-		<fieldset class="fieldset" disabled>
+	<form
+		action={!inviteSlug.current.display
+			? page.url.href
+			: `/instance/${inviteSlug.current.instanceID}/invite/${inviteSlug.current.slug}`}
+		class="flex w-full flex-col gap-2"
+	>
+		<fieldset class="fieldset" disabled={loading}>
 			<legend class="fieldset-legend">Invite URL</legend>
-			<input required id="inviteURL" type="text" class="input w-full" />
+			<input
+				required
+				id="inviteURL"
+				bind:value={inviteURL}
+				type="text"
+				class="input w-full"
+				autocomplete="off"
+				autocorrect="off"
+			/>
 		</fieldset>
 
-		<button type="submit" class="btn w-full btn-primary" disabled>Accept Invite</button>
+		<a
+			href={!inviteSlug.current.display
+				? undefined
+				: inviteSlug.current.instanceID === 'on.sb'
+					? // TODO on.sb short invites
+						'https://on.sb'
+					: `${inviteSlug.current.instanceID in sunburn && sunburn[inviteSlug.current.instanceID].ready ? '' : `/login/${inviteSlug.current.instanceID}?next=`}/instance/${inviteSlug.current.instanceID}/invite/${inviteSlug.current.slug}`}
+		>
+			<button class="btn w-full btn-primary" disabled={loading || !inviteSlug.current.display}>
+				{inviteSlug.current.display || 'Accept Invite'}
+				<LucideArrowRight class="size-4" />
+			</button>
+		</a>
 	</form>
 
 	<div class="divider my-8">
@@ -62,7 +97,7 @@
 	<form onsubmit={onNewServerSubmit} class="flex w-full flex-col gap-2">
 		<fieldset class="fieldset" disabled={loading}>
 			<legend class="fieldset-legend">Instance</legend>
-			<select id="instanceID" required class="select w-full" bind:value={chosenInstance}>
+			<select name="instanceID" required class="select w-full" bind:value={chosenInstance}>
 				<option label="Choose an instance..." value=""></option>
 				{#each Object.keys(sunburn) as instanceID (instanceID)}
 					<QuotaOption {instanceID} bind:disabled={quota[instanceID]} />
@@ -74,8 +109,7 @@
 			<legend class="fieldset-legend">Server Name</legend>
 			<input
 				required
-				bind:value={newServerName}
-				id="serverName"
+				name="serverName"
 				type="text"
 				class="input w-full"
 				placeholder="My Server"

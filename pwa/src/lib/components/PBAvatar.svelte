@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	import type { ServersRecord } from '$lib/pb-types';
 	import { fetchUser } from '$lib/sunburn/data/users';
 	import { sunburn } from '$lib/sunburn/sunburn.svelte';
 	import { parseInitials } from '$lib/utils/parseInitials';
@@ -11,7 +12,7 @@
 		serverID?: string;
 		url?: string;
 		name: string;
-		size?: 'sm' | 'md' | 'lg' | 'xl' | 'msg' | 'grow';
+		size?: 'sm' | 'md' | 'lg' | 'xl' | 'msg' | 'grow' | 'full';
 		color?:
 			| 'base-100'
 			| 'base-200'
@@ -24,8 +25,11 @@
 			| 'success'
 			| 'warning'
 			| 'error';
+		className?: string;
 		imgClassName?: string;
 		fallbackClassName?: string;
+		// use this prop when rendering invites, since the server isn't loaded yet
+		server?: ServersRecord;
 	};
 
 	const {
@@ -36,8 +40,10 @@
 		name,
 		size = 'md',
 		color = 'base-100',
+		className,
 		imgClassName,
 		fallbackClassName,
+		server,
 	}: Props_t = $props();
 
 	onMount(() => {
@@ -58,15 +64,18 @@
 		size === 'xl' && 'size-8 text-lg',
 		size === 'msg' && 'size-9 gap-2 text-xl',
 		size === 'grow' && 'grow text-xl',
+		size === 'full' && 'size-full text-xl',
 
 		'grid aspect-square grid-cols-1 grid-rows-1 items-center justify-center overflow-hidden rounded-box font-bold select-none',
+
+		className,
 	]}
 >
-	{#if instanceID in sunburn && url && (userID || serverID)}
+	{#if instanceID in sunburn && url && (userID || serverID || server)}
 		<img
 			onload={() => (imgLoaded = true)}
 			src={sunburn[instanceID].pb.buildURL(
-				`/api/files/${userID ? `users/${userID}` : `servers/${serverID}`}/${url}`,
+				`/api/files/${userID ? `users/${userID}` : `servers/${server ? server.id : serverID}`}/${url}`,
 			)}
 			alt={name}
 			class={['col-start-1 row-start-1 size-full bg-transparent object-cover', imgClassName]}
@@ -94,7 +103,7 @@
 				fallbackClassName,
 			]}
 		>
-			{parseInitials(name)}
+			{parseInitials(server ? server.name : name)}
 		</p>
 	{/if}
 </div>

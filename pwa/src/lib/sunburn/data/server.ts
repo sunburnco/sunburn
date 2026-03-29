@@ -114,7 +114,6 @@ export const loadServer = async (
 ) => {
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'loading server', serverID);
-	sunburn[instanceID].servers[serverID].loaded = true;
 	await fetchServer(instanceID, serverID, null);
 
 	await Promise.all([
@@ -124,6 +123,8 @@ export const loadServer = async (
 		// this also fetches channel role assignments and voice participants
 		fetchChannelsForServer(instanceID, serverID, null),
 	]);
+
+	sunburn[instanceID].servers[serverID].loaded = true;
 
 	// fetch member role assignments, but do not fetch the user
 	// users are fetched when rendered (i.e. message, user list, etc)
