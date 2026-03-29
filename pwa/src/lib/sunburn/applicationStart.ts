@@ -19,7 +19,8 @@ export const applicationStart = async () => {
 			ks[k as LocalAuthStoreKey_t],
 			new LocalAuthStore(parseInstanceSlug(ks[k as LocalAuthStoreKey_t], '')),
 		) as TypedPocketBase;
-		wait.push(initPB(pb, k.split('@')[0]));
+		const parts = k.split('@');
+		wait.push(initPB(pb, parts[0], parts[1]));
 	}
 
 	await Promise.all(wait);

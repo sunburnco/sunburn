@@ -11,7 +11,10 @@
 	const serverID = $derived(page.params.serverID || '');
 
 	onMount(() => {
-		if (!sunburn[instanceID].servers[serverID].loaded) {
+		if (
+			!(serverID in sunburn[instanceID].servers) ||
+			!sunburn[instanceID].servers[serverID].loaded
+		) {
 			loadServer(instanceID, serverID);
 		}
 	});

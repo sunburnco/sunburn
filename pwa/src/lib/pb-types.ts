@@ -19,6 +19,7 @@ export enum Collections {
 	Deleted = 'deleted',
 	DmListFrom = 'dmListFrom',
 	DmListTo = 'dmListTo',
+	Invites = 'invites',
 	MaxOrdinal = 'maxOrdinal',
 	Messages = 'messages',
 	PinnedDMs = 'pinnedDMs',
@@ -169,6 +170,14 @@ export type DmListToRecord<Tusers = unknown> = {
 	users?: null | Tusers;
 };
 
+export type InvitesRecord = {
+	created: IsoAutoDateString;
+	id: string;
+	server: RecordIdString;
+	slug: string;
+	updated: IsoAutoDateString;
+};
+
 export type MaxOrdinalRecord<TmaxOrdinal = unknown> = {
 	id: string;
 	maxOrdinal?: null | TmaxOrdinal;
@@ -310,6 +319,8 @@ export type DmListToResponse<Tusers = unknown, Texpand = unknown> = Required<
 	DmListToRecord<Tusers>
 > &
 	BaseSystemFields<Texpand>;
+export type InvitesResponse<Texpand = unknown> = Required<InvitesRecord> &
+	BaseSystemFields<Texpand>;
 export type MaxOrdinalResponse<TmaxOrdinal = unknown, Texpand = unknown> = Required<
 	MaxOrdinalRecord<TmaxOrdinal>
 > &
@@ -352,6 +363,7 @@ export type CollectionRecords = {
 	deleted: DeletedRecord;
 	dmListFrom: DmListFromRecord;
 	dmListTo: DmListToRecord;
+	invites: InvitesRecord;
 	maxOrdinal: MaxOrdinalRecord;
 	messages: MessagesRecord;
 	pinnedDMs: PinnedDMsRecord;
@@ -380,6 +392,7 @@ export type CollectionResponses = {
 	deleted: DeletedResponse;
 	dmListFrom: DmListFromResponse;
 	dmListTo: DmListToResponse;
+	invites: InvitesResponse;
 	maxOrdinal: MaxOrdinalResponse;
 	messages: MessagesResponse;
 	pinnedDMs: PinnedDMsResponse;

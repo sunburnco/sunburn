@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		LucideCog,
 		LucideHash,
 		LucideMic,
 		LucideMicOff,
@@ -8,7 +9,7 @@
 		LucidePackageOpen,
 		LucidePhone,
 		LucidePhoneMissed,
-		LucideSettings,
+		LucidePlus,
 		LucideVideo,
 		LucideVideoOff,
 		LucideVolume2,
@@ -17,10 +18,10 @@
 	import type { DateTime } from 'luxon';
 	import { Debounced } from 'runed';
 
-	import { page } from '$app/state';
 	import LucideSunburn from '$lib/components/LucideSunburn.svelte';
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
 	import { ChannelType } from '$lib/constants';
+	import { drawerState } from '$lib/drawerState.svelte';
 	import type { UsersRecord, UsersResponse } from '$lib/pb-types';
 	import { call } from '$lib/sunburn/call.svelte';
 	import { loadServer } from '$lib/sunburn/data/server';
@@ -35,11 +36,6 @@
 	import { unmuteMic } from '$lib/utils/call/unmuteMic';
 	import { debugPrefix } from '$lib/utils/logPrefixes';
 	import { nameOrHandle } from '$lib/utils/username';
-
-	let activeInstanceID = $state(page.params.instanceID || '');
-	let activeServerID = $state(page.params.serverID || 'dms');
-	let activeChannelID = $state(page.params.channelID || '');
-	let activeDMID = $state(page.params.dmID || '');
 
 	const serverList = $derived.by(() => {
 		const ret: { instanceID: string; serverID: string; record: Server_t['record'] }[] = [];
@@ -56,7 +52,7 @@
 	});
 
 	let dmList = $derived.by(() => {
-		if (activeServerID !== 'dms') {
+		if (drawerState.activeServerID !== 'dms') {
 			return [];
 		}
 		const ret: { dmID: string; instanceID: string; updated: DateTime }[] = [];
@@ -81,28 +77,39 @@
 	});
 
 	$effect(() => {
-		if (!activeInstanceID || !activeServerID || activeServerID === 'dms') {
+		if (
+			!drawerState.activeInstanceID ||
+			!drawerState.activeServerID ||
+			drawerState.activeServerID === 'dms'
+		) {
 			return;
 		}
 
-		if (!(activeInstanceID in sunburn) || !(activeServerID in sunburn[activeInstanceID].servers)) {
+		if (
+			!(drawerState.activeInstanceID in sunburn) ||
+			!(drawerState.activeServerID in sunburn[drawerState.activeInstanceID].servers)
+		) {
 			return;
 		}
 
-		if (!sunburn[activeInstanceID].ready) {
+		if (!sunburn[drawerState.activeInstanceID].ready) {
 			return;
 		}
 
-		if (!sunburn[activeInstanceID].servers[activeServerID].loaded) {
-			loadServer(activeInstanceID, activeServerID, activeServerID);
+		if (!sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].loaded) {
+			loadServer(
+				drawerState.activeInstanceID,
+				drawerState.activeServerID,
+				drawerState.activeServerID,
+			);
 		}
 	});
 
 	let channelList = $derived.by(() => {
 		if (
-			!(activeInstanceID in sunburn) ||
-			!sunburn[activeInstanceID].ready ||
-			!(activeServerID in sunburn[activeInstanceID].servers)
+			!(drawerState.activeInstanceID in sunburn) ||
+			!sunburn[drawerState.activeInstanceID].ready ||
+			!(drawerState.activeServerID in sunburn[drawerState.activeInstanceID].servers)
 		) {
 			return [];
 		}
@@ -110,15 +117,23 @@
 		const ret: { instanceID: string; channelID: string; record: Channel_t['record'] }[] = [];
 
 		for (const channelID of Object.keys(
-			sunburn[activeInstanceID].servers[activeServerID].channels,
+			sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].channels,
 		)) {
-			if (!(channelID in sunburn[activeInstanceID].servers[activeServerID].channels)) {
+			if (
+				!(
+					channelID in
+					sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].channels
+				)
+			) {
 				continue;
 			}
 			ret.push({
-				instanceID: activeInstanceID,
+				instanceID: drawerState.activeInstanceID,
 				channelID,
-				record: sunburn[activeInstanceID].servers[activeServerID].channels[channelID].record,
+				record:
+					sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].channels[
+						channelID
+					].record,
 			});
 		}
 
@@ -180,8 +195,8 @@
 	<!-- server list -->
 	<div class="flex shrink-0 flex-col gap-2 overflow-y-auto bg-base-100 p-2">
 		<button
-			class={['btn btn-square', activeServerID === 'dms' ? 'btn-neutral' : 'btn-ghost']}
-			onclick={() => (activeServerID = 'dms')}
+			class={['btn btn-square', drawerState.activeServerID === 'dms' ? 'btn-neutral' : 'btn-ghost']}
+			onclick={() => (drawerState.activeServerID = 'dms')}
 		>
 			<LucideSunburn size={32} />
 		</button>
@@ -192,22 +207,22 @@
 			<button
 				class={[
 					'btn btn-square',
-					activeServerID === server.serverID ? 'btn-neutral' : 'btn-ghost',
+					drawerState.activeServerID === server.serverID ? 'btn-neutral' : 'btn-ghost',
 					call.roomState !== ConnectionState.Disconnected &&
-						call.instanceID === activeInstanceID &&
+						call.instanceID === drawerState.activeInstanceID &&
 						call.serverID === server.serverID &&
 						'outline-2 outline-accent',
 				]}
 				onclick={() => {
-					activeInstanceID = server.instanceID;
-					activeServerID = server.serverID;
+					drawerState.activeInstanceID = server.instanceID;
+					drawerState.activeServerID = server.serverID;
 				}}
 			>
 				<PBAvatar
 					size="grow"
 					instanceID={server.instanceID}
 					serverID={server.serverID}
-					color={activeServerID === server.serverID ? 'base-100' : 'neutral'}
+					color={drawerState.activeServerID === server.serverID ? 'base-100' : 'neutral'}
 					url={sunburn[server.instanceID].servers[server.serverID].record.icon}
 					name={sunburn[server.instanceID].servers[server.serverID].record.name}
 					fallbackClassName="bg-transparent"
@@ -218,13 +233,43 @@
 				<LucidePackageOpen class="size-6" />
 			</div>
 		{/each}
+
+		<div class="divider m-0"></div>
+
+		<a
+			title="Settings"
+			href="/settings"
+			class={[
+				'btn btn-square',
+				drawerState.activeServerID === 'settings' ? 'btn-neutral' : 'btn-ghost',
+			]}
+			onclick={() => {
+				drawerState.activeServerID = 'settings';
+				drawerState.activeDMID = '';
+				drawerState.activeChannelID = '';
+			}}
+		>
+			<LucideCog class="size-6" />
+		</a>
+		<a
+			title="Add Server"
+			href="/new"
+			class={['btn btn-square', drawerState.activeServerID === 'new' ? 'btn-neutral' : 'btn-ghost']}
+			onclick={() => {
+				drawerState.activeServerID = 'new';
+				drawerState.activeDMID = '';
+				drawerState.activeChannelID = '';
+			}}
+		>
+			<LucidePlus class="size-6" />
+		</a>
 	</div>
 
 	<!-- channel list -->
 	<div
 		class="relative box-border flex min-h-full grow flex-col gap-2 overflow-y-auto border-x border-base-content/50 bg-base-200"
 	>
-		{#if activeServerID === 'dms'}
+		{#if drawerState.activeServerID === 'dms'}
 			<div class="p-2">
 				<input class="input" placeholder="Search for a user..." bind:value={dmSearch} />
 			</div>
@@ -236,8 +281,8 @@
 							<a
 								href={`/instance/${user.instanceID}/dm/${user.id}`}
 								onclick={() => {
-									activeDMID = user.id;
-									activeChannelID = '';
+									drawerState.activeDMID = user.id;
+									drawerState.activeChannelID = '';
 									dmSearch = '';
 								}}
 							>
@@ -263,16 +308,16 @@
 				{:else}
 					{#each dmList as dm (dm.dmID)}
 						{#if dm.dmID in sunburn[dm.instanceID].users}
-							<li class={['rounded-box', activeDMID === dm.dmID && 'menu-active']}>
+							<li class={['rounded-box', drawerState.activeDMID === dm.dmID && 'menu-active']}>
 								<a
 									href={`/instance/${dm.instanceID}/dm/${dm.dmID}`}
 									onclick={() => {
-										activeDMID = dm.dmID;
-										activeChannelID = '';
+										drawerState.activeDMID = dm.dmID;
+										drawerState.activeChannelID = '';
 									}}
 								>
 									<PBAvatar
-										color={activeDMID === dm.dmID ? 'neutral' : 'base-200'}
+										color={drawerState.activeDMID === dm.dmID ? 'neutral' : 'base-200'}
 										instanceID={dm.instanceID}
 										userID={dm.dmID}
 										url={sunburn[dm.instanceID].users[dm.dmID].avatar}
@@ -291,7 +336,7 @@
 				{/if}
 			</ul>
 		{:else}
-			{#if activeInstanceID in sunburn && sunburn[activeInstanceID].ready && activeServerID in sunburn[activeInstanceID].servers}
+			{#if drawerState.activeInstanceID in sunburn && sunburn[drawerState.activeInstanceID].ready && drawerState.activeServerID in sunburn[drawerState.activeInstanceID].servers}
 				<div
 					class="flex min-h-24 w-full flex-row items-center justify-start gap-2 border-b border-base-content/50 bg-base-100 p-4 text-lg font-bold select-none"
 				>
@@ -299,27 +344,34 @@
 						<PBAvatar
 							size="grow"
 							color="base-200"
-							instanceID={activeInstanceID}
-							serverID={activeServerID}
-							name={sunburn[activeInstanceID].servers[activeServerID].record.name}
-							url={sunburn[activeInstanceID].servers[activeServerID].record.icon}
+							instanceID={drawerState.activeInstanceID}
+							serverID={drawerState.activeServerID}
+							name={sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].record
+								.name}
+							url={sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].record
+								.icon}
 						/>
 					</div>
-					{sunburn[activeInstanceID].servers[activeServerID].record.name}
+					{sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].record.name}
 				</div>
 			{/if}
 			<ul class="menu w-full">
 				{#each channelList as channel (channel.channelID)}
-					<li class={['rounded-box', activeChannelID === channel.channelID && 'menu-active']}>
+					<li
+						class={[
+							'rounded-box',
+							drawerState.activeChannelID === channel.channelID && 'menu-active',
+						]}
+					>
 						<a
 							onclick={() => {
-								activeChannelID = channel.channelID;
-								activeDMID = '';
+								drawerState.activeChannelID = channel.channelID;
+								drawerState.activeDMID = '';
 							}}
 							href={`/instance/${channel.instanceID}/server/${channel.record.server}/channel/${channel.channelID}`}
 						>
-							{#if sunburn[activeInstanceID].servers[activeServerID].channels[channel.channelID].record.type === ChannelType.VOICE}
-								{#if call.roomState !== ConnectionState.Disconnected && call.instanceID === activeInstanceID && call.serverID === activeServerID && call.channelID === channel.channelID}
+							{#if sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].channels[channel.channelID].record.type === ChannelType.VOICE}
+								{#if call.roomState !== ConnectionState.Disconnected && call.instanceID === drawerState.activeInstanceID && call.serverID === drawerState.activeServerID && call.channelID === channel.channelID}
 									<LucidePhone class="size-4 text-accent" />
 								{:else}
 									<LucideVolume2 class="size-4" />
@@ -327,24 +379,27 @@
 							{:else}
 								<LucideHash class="size-4" />
 							{/if}
-							{sunburn[activeInstanceID].servers[activeServerID].channels[channel.channelID].record
-								.name}
+							{sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].channels[
+								channel.channelID
+							].record.name}
 						</a>
-						{#if sunburn[activeInstanceID].servers[activeServerID].channels[channel.channelID].voiceParticipants.size > 0}
+						{#if sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].channels[channel.channelID].voiceParticipants.size > 0}
 							<ul>
-								{#each sunburn[activeInstanceID].servers[activeServerID].channels[channel.channelID].voiceParticipants.keys() as vp (vp)}
-									{#if vp in sunburn[activeInstanceID].users}
+								{#each sunburn[drawerState.activeInstanceID].servers[drawerState.activeServerID].channels[channel.channelID].voiceParticipants.keys() as vp (vp)}
+									{#if vp in sunburn[drawerState.activeInstanceID].users}
 										<li>
 											<span class="inline-flex items-center gap-2 px-1.5">
 												<PBAvatar
 													size="sm"
-													color={activeChannelID === channel.channelID ? 'neutral' : 'base-200'}
-													instanceID={activeInstanceID}
+													color={drawerState.activeChannelID === channel.channelID
+														? 'neutral'
+														: 'base-200'}
+													instanceID={drawerState.activeInstanceID}
 													userID={vp}
-													name={nameOrHandle(activeInstanceID, vp)}
-													url={sunburn[activeInstanceID].users[vp].avatar}
+													name={nameOrHandle(drawerState.activeInstanceID, vp)}
+													url={sunburn[drawerState.activeInstanceID].users[vp].avatar}
 												/>
-												{nameOrHandle(activeInstanceID, vp)}
+												{nameOrHandle(drawerState.activeInstanceID, vp)}
 											</span>
 										</li>
 									{/if}
@@ -353,7 +408,7 @@
 						{/if}
 					</li>
 				{:else}
-					<div class="select-none opacity-50 gap-1 w-full flex items-center flex-col">
+					<div class="select-none opacity-50 gap-1 w-full mt-2 flex items-center flex-col">
 						<LucidePackageOpen class="size-6" />
 						<div class="w-1/2 text-center">Nothing to display</div>
 					</div>
@@ -364,81 +419,69 @@
 		<div
 			class="sticky bottom-0 mt-auto w-full border-t border-base-content/50 bg-base-100 p-2 text-base-content"
 		>
-			<div class="flex w-full justify-between">
-				<div class="flex gap-2">
-					<a href="/settings">
-						<span class="btn btn-square btn-ghost btn-sm">
-							<LucideSettings class="size-5" />
-						</span>
-					</a>
-				</div>
-				<div class="flex gap-2">
-					<button
-						disabled={call.roomState !== ConnectionState.Connected}
-						class={[
-							'group btn btn-square btn-sm',
-							call.me?.micUnmuted ? 'btn-accent' : 'btn-ghost',
-						]}
-						onclick={call.me?.micUnmuted ? muteMic : unmuteMic}
-						title={call.me?.micUnmuted ? 'Mute (you are unmuted)' : 'Unmute (you are muted)'}
-					>
-						<div class="group-disabled:opacity-20">
-							{#if call.me?.micUnmuted}
-								<LucideMic class="size-5" />
-							{:else}
-								<LucideMicOff class="size-5 stroke-base-content" />
-							{/if}
-						</div>
-					</button>
-					<button
-						disabled={call.roomState !== ConnectionState.Connected}
-						class={[
-							'group btn btn-square btn-sm',
-							call.me?.cameraUnmuted ? 'btn-accent' : 'btn-ghost',
-						]}
-						onclick={call.me?.cameraUnmuted ? muteCamera : unmuteCamera}
-						title={call.me?.cameraUnmuted
-							? 'Stop camera (your camera is on)'
-							: 'Start camera (your camera is off)'}
-					>
-						<div class="text-base-content group-disabled:opacity-20">
-							{#if call.me?.cameraUnmuted}
-								<LucideVideo class="size-5" />
-							{:else}
-								<LucideVideoOff class="size-5" />
-							{/if}
-						</div>
-					</button>
-					<button
-						disabled={call.roomState !== ConnectionState.Connected}
-						class={[
-							'group btn btn-square btn-sm',
-							call.me?.screenShareUnmuted ? 'btn-accent' : 'btn-ghost',
-						]}
-						onclick={call.me?.screenShareUnmuted ? stopScreenShare : startScreenShare}
-						title={call.me?.screenShareUnmuted
-							? 'Stop sharing your screen (your screen is being shared)'
-							: 'Begin sharing your screen (your screen is not being shared)'}
-					>
-						<div class="text-base-content group-disabled:opacity-20">
-							{#if call.me?.screenShareUnmuted}
-								<LucideMonitorUp class="size-5" />
-							{:else}
-								<LucideMonitorX class="size-5" />
-							{/if}
-						</div>
-					</button>
-					<button
-						disabled={call.roomState === ConnectionState.Disconnected}
-						class="group btn btn-square btn-sm btn-primary"
-						onclick={disconnect}
-						title="Disconnect"
-					>
-						<div class="text-base-content group-disabled:opacity-20">
-							<LucidePhoneMissed class="size-5" />
-						</div>
-					</button>
-				</div>
+			<div class="flex w-full justify-end gap-2">
+				<button
+					disabled={call.roomState !== ConnectionState.Connected}
+					class={['group btn btn-square btn-sm', call.me?.micUnmuted ? 'btn-accent' : 'btn-ghost']}
+					onclick={call.me?.micUnmuted ? muteMic : unmuteMic}
+					title={call.me?.micUnmuted ? 'Mute (you are unmuted)' : 'Unmute (you are muted)'}
+				>
+					<div class="group-disabled:opacity-20">
+						{#if call.me?.micUnmuted}
+							<LucideMic class="size-5" />
+						{:else}
+							<LucideMicOff class="size-5 stroke-base-content" />
+						{/if}
+					</div>
+				</button>
+				<button
+					disabled={call.roomState !== ConnectionState.Connected}
+					class={[
+						'group btn btn-square btn-sm',
+						call.me?.cameraUnmuted ? 'btn-accent' : 'btn-ghost',
+					]}
+					onclick={call.me?.cameraUnmuted ? muteCamera : unmuteCamera}
+					title={call.me?.cameraUnmuted
+						? 'Stop camera (your camera is on)'
+						: 'Start camera (your camera is off)'}
+				>
+					<div class="text-base-content group-disabled:opacity-20">
+						{#if call.me?.cameraUnmuted}
+							<LucideVideo class="size-5" />
+						{:else}
+							<LucideVideoOff class="size-5" />
+						{/if}
+					</div>
+				</button>
+				<button
+					disabled={call.roomState !== ConnectionState.Connected}
+					class={[
+						'group btn btn-square btn-sm',
+						call.me?.screenShareUnmuted ? 'btn-accent' : 'btn-ghost',
+					]}
+					onclick={call.me?.screenShareUnmuted ? stopScreenShare : startScreenShare}
+					title={call.me?.screenShareUnmuted
+						? 'Stop sharing your screen (your screen is being shared)'
+						: 'Begin sharing your screen (your screen is not being shared)'}
+				>
+					<div class="text-base-content group-disabled:opacity-20">
+						{#if call.me?.screenShareUnmuted}
+							<LucideMonitorUp class="size-5" />
+						{:else}
+							<LucideMonitorX class="size-5" />
+						{/if}
+					</div>
+				</button>
+				<button
+					disabled={call.roomState === ConnectionState.Disconnected}
+					class="group btn btn-square btn-sm btn-primary"
+					onclick={disconnect}
+					title="Disconnect"
+				>
+					<div class="text-base-content group-disabled:opacity-20">
+						<LucidePhoneMissed class="size-5" />
+					</div>
+				</button>
 			</div>
 		</div>
 	</div>

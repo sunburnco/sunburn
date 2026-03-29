@@ -13,7 +13,6 @@ import {
 	type VoiceParticipantsResponse,
 } from '$lib/pb-types';
 import { debugPrefix, errorPrefix, warnPrefix } from '$lib/utils/logPrefixes';
-import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 import { logFriendly } from '$lib/utils/username';
 
 import { fetchInitialMessagesForDM } from './data/dmMessages';
@@ -35,9 +34,12 @@ import { sunburn } from './sunburn.svelte';
 
 // TODO why did we have onAuthChange?
 
-export const initPB = async (pb: TypedPocketBase, handle: string, noReauth?: boolean) => {
-	const instanceID = parseInstanceSlug(pb.baseURL, '');
-
+export const initPB = async (
+	pb: TypedPocketBase,
+	handle: string,
+	instanceID: string,
+	noReauth?: boolean,
+) => {
 	let version = '';
 	try {
 		version = (await fetch(pb.buildURL('/api/health'))).headers.get('x-sb-version') ?? '';

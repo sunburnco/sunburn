@@ -13,7 +13,7 @@ func AcceptInvite(e *core.RequestEvent) error {
 	// adds the ordinal-0 role to the user
 	slug := e.Request.PathValue("slug")
 
-	inviteRecord, err := e.App.FindFirstRecordByData("invites", "slug", slug)
+	inviteRecord, err := e.App.FindRecordById("invites", slug)
 	if err != nil {
 		return e.NotFoundError("", err)
 	}

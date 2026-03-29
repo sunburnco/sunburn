@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LucideCheck, LucideCloudAlert } from '@lucide/svelte';
+	import { LucideCheck, LucideCloudAlert, LucideRedo2 } from '@lucide/svelte';
 	import { LucideLock } from '@lucide/svelte';
 	import { LucideLockOpen } from '@lucide/svelte';
 	import { type AuthMethodsList, BaseAuthStore, ClientResponseError } from 'pocketbase';
@@ -110,8 +110,13 @@
 		disabled = true;
 		isError = false;
 		try {
-			const handle = await logInWithPassword(baseURL, username, password);
-			goto(`${page.url.pathname}/success?handle=${handle}`);
+			const handle = await logInWithPassword(
+				baseURL,
+				page.params.instanceID || '',
+				username,
+				password,
+			);
+			goto(page.url.searchParams.get('next') || `${page.url.pathname}/success?handle=${handle}`);
 		} catch (err) {
 			// eslint-disable-next-line no-console
 			console.error(...errorPrefix, 'could not sign in\n', err);
@@ -122,7 +127,7 @@
 	const attemptOAuthLogin = async (provider: string) => {
 		isError = false;
 		try {
-			const handle = await logInWithOAuth2(baseURL, provider);
+			const handle = await logInWithOAuth2(baseURL, page.params.instanceID || '', provider);
 			goto(`${page.url.pathname}/success?handle=${handle}`);
 		} catch (err) {
 			// eslint-disable-next-line no-console
@@ -167,6 +172,13 @@
 			{#if version !== __SB_VERSION__}
 				<p>
 					<LucideCloudAlert class="inline size-4" /> Client: v{__SB_VERSION__}, Server: v{version}
+				</p>
+			{/if}
+
+			{#if page.url.searchParams.has('next')}
+				<p>
+					<LucideRedo2 class="inline size-4" /> Up next:
+					{page.url.searchParams.get('next')}
 				</p>
 			{/if}
 		</div>
