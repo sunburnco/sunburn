@@ -41,7 +41,7 @@
 	<ul class="menu m-0 w-full p-0">
 		<li class="menu-title" id="accounts">Accounts</li>
 		{#each Object.keys(localAuthStoreKeys) as localAuthStoreKey (localAuthStoreKey)}
-			{@const instanceID = parseInstanceSlug(localAuthStoreKey, '')}
+			{@const instanceID = localAuthStoreKey.split('@')[1]}
 			{@const ready = sunburn[instanceID]?.ready ?? false}
 			<li class="w-full">
 				<span
