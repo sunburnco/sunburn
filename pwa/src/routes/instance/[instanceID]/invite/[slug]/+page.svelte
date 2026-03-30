@@ -5,7 +5,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import { drawerState } from '$lib/drawerState.svelte';
 	import type { ServersRecord } from '$lib/pb-types';
 	import { fetchUser } from '$lib/sunburn/data/users';
 	import { sunburn } from '$lib/sunburn/sunburn.svelte';
@@ -64,10 +63,6 @@
 			return;
 		}
 
-		drawerState.activeChannelID = '';
-		drawerState.activeDMID = '';
-		drawerState.activeInstanceID = instanceID;
-		drawerState.activeServerID = server?.id || '';
 		goto(`/instance/${instanceID}/server/${server?.id || ''}`);
 	};
 </script>

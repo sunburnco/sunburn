@@ -8,12 +8,9 @@
 
 	import { LucideMenu } from '@lucide/svelte';
 	import { Track } from 'livekit-client';
-	import { onMount } from 'svelte';
 	import { themeChange } from 'theme-change';
 
-	import { page } from '$app/state';
 	import AudioTrackPlayer from '$lib/components/AudioTrackPlayer.svelte';
-	import { drawerState } from '$lib/drawerState.svelte';
 	import { applicationStart } from '$lib/sunburn/applicationStart';
 	import { call, type CallUserID_t } from '$lib/sunburn/call.svelte';
 	import { localSettings } from '$lib/sunburn/localSettings.svelte';
@@ -23,19 +20,6 @@
 	import DrawerContents from './DrawerContents.svelte';
 
 	let { children } = $props();
-
-	onMount(() => {
-		drawerState.activeInstanceID = page.params.instanceID || '';
-		drawerState.activeServerID = page.params.serverID
-			? page.params.serverID
-			: page.route.id === '/settings'
-				? 'settings'
-				: page.route.id === '/new'
-					? 'new'
-					: 'dms';
-		drawerState.activeChannelID = page.params.channelID || '';
-		drawerState.activeDMID = page.params.dmID || '';
-	});
 
 	themeChange(false);
 	applicationStart();

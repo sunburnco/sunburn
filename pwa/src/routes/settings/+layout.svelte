@@ -9,7 +9,7 @@
 		<p>Local Settings</p>
 	</div>
 	<div class="flex grow items-center justify-center overflow-y-auto">
-		<div class="max-h-full overflow-y-auto">
+		<div class="max-h-full overflow-y-auto scroll-smooth">
 			<div class="mx-auto w-xl max-w-11/12">
 				{@render children()}
 			</div>
