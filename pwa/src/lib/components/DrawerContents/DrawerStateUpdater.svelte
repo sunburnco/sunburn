@@ -32,6 +32,12 @@
 				drawerState.instanceID = page.params.instanceID || '';
 				drawerState.serverID = page.params.serverID || '';
 				break;
+			case '/instance/[instanceID]/server/[serverID]/settings':
+				drawerState.channelID = 'settings';
+				drawerState.dmID = '';
+				drawerState.instanceID = page.params.instanceID || '';
+				drawerState.serverID = page.params.serverID || '';
+				break;
 
 			case '/settings':
 				drawerState.channelID = '';

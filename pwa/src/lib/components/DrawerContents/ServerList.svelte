@@ -59,6 +59,8 @@
 		onclick={() => {
 			drawerState.instanceID = server.instanceID;
 			drawerState.serverID = server.serverID;
+			drawerState.channelID = '';
+			drawerState.dmID = '';
 		}}
 	>
 		<PBAvatar

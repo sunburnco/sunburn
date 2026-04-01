@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { LucideCog } from '@lucide/svelte';
+
 	import { page } from '$app/state';
-	import Filler from '$lib/components/Filler.svelte';
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
 	import { sunburn } from '$lib/sunburn/sunburn.svelte';
+
+	const { children } = $props();
 
 	const instanceID = $derived(page.params.instanceID || '');
 	const serverID = $derived(page.params.serverID || '');
@@ -28,11 +31,15 @@
 					url={sunburn[instanceID].servers[serverID].record.icon}
 				/>
 				{sunburn[instanceID].servers[serverID].record.name}
+				<div class="divider m-0 my-1 divider-horizontal"></div>
+				<div><LucideCog class="inline size-4 -translate-y-px" /> Server Settings</div>
 			</div>
 		</header>
 		<content class="flex grow items-center justify-center overflow-y-auto">
 			<div class="max-h-full overflow-y-auto">
-				<Filler />
+				<div class="mx-auto w-xl max-w-11/12">
+					{@render children()}
+				</div>
 			</div>
 		</content>
 	</section>

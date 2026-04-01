@@ -16,6 +16,7 @@ import { debugPrefix, errorPrefix, warnPrefix } from '$lib/utils/logPrefixes';
 import { logFriendly } from '$lib/utils/username';
 
 import { fetchInitialMessagesForDM } from './data/dmMessages';
+import { fetchPermissionDefinitions } from './data/permissions';
 import { fetchPinnedDMs } from './data/pinnedDMs';
 import { fetchPinnedServers } from './data/pinnedServers';
 import {
@@ -187,6 +188,15 @@ export const initPB = async (
 			// eslint-disable-next-line no-console
 			console.debug(...debugPrefix, `${logFriendly(instanceID)} fetching pinned servers`);
 			fetchPinnedServers(instanceID, instanceID);
+		} catch {
+			// noop
+			const _ = null;
+		}
+
+		try {
+			// eslint-disable-next-line no-console
+			console.debug(...debugPrefix, logFriendly(instanceID), 'fetching permissions');
+			fetchPermissionDefinitions(instanceID);
 		} catch {
 			// noop
 			const _ = null;

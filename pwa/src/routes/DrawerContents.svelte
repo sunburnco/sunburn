@@ -8,6 +8,7 @@
 	import ServerHeader from '$lib/components/DrawerContents/ServerHeader.svelte';
 	import ServerList from '$lib/components/DrawerContents/ServerList.svelte';
 	import ServerListExtras from '$lib/components/DrawerContents/ServerListExtras.svelte';
+	import ServerSettingsLinks from '$lib/components/DrawerContents/ServerSettingsLinks.svelte';
 	import SettingsLinks from '$lib/components/DrawerContents/SettingsLinks.svelte';
 	import LucideSunburn from '$lib/components/LucideSunburn.svelte';
 	import { sunburn } from '$lib/sunburn/sunburn.svelte';
@@ -44,7 +45,11 @@
 			<SettingsLinks />
 		{:else if drawerState.instanceID in sunburn && sunburn[drawerState.instanceID].ready && drawerState.serverID in sunburn[drawerState.instanceID].servers}
 			<ServerHeader instanceID={drawerState.instanceID} serverID={drawerState.serverID} />
-			<ChannelList instanceID={drawerState.instanceID} serverID={drawerState.serverID} />
+			{#if drawerState.channelID === 'settings'}
+				<ServerSettingsLinks />
+			{:else}
+				<ChannelList instanceID={drawerState.instanceID} serverID={drawerState.serverID} />
+			{/if}
 		{/if}
 
 		<CallControls />

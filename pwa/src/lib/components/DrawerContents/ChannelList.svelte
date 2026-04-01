@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { LucideHash, LucidePackageOpen, LucidePhone, LucideVolume2 } from '@lucide/svelte';
+	import {
+		LucideCog,
+		LucideHash,
+		LucidePackageOpen,
+		LucidePhone,
+		LucideVolume2,
+	} from '@lucide/svelte';
 	import { ConnectionState } from 'livekit-client';
 
 	import { ChannelType } from '$lib/constants';
@@ -44,9 +50,7 @@
 <ul class="menu w-full">
 	{#each channelList as channel (channel.channelID)}
 		<li class={['rounded-box', drawerState.channelID === channel.channelID && 'menu-active']}>
-			<a
-				href={`/instance/${channel.instanceID}/server/${channel.record.server}/channel/${channel.channelID}`}
-			>
+			<a href={`/instance/${instanceID}/server/${serverID}/channel/${channel.channelID}`}>
 				{#if sunburn[instanceID].servers[serverID].channels[channel.channelID].record.type === ChannelType.VOICE}
 					{#if call.roomState !== ConnectionState.Disconnected && call.instanceID === instanceID && call.serverID === serverID && call.channelID === channel.channelID}
 						<LucidePhone class="size-4 text-accent" />
@@ -86,4 +90,12 @@
 			<div class="w-1/2 text-center">Nothing to display</div>
 		</div>
 	{/each}
+
+	<div class="divider m-2"></div>
+	<li class={['rounded-box', drawerState.channelID === 'settings' && 'menu-active']}>
+		<a href={`/instance/${instanceID}/server/${serverID}/settings`}>
+			<LucideCog class="size-4" />
+			Server Settings
+		</a>
+	</li>
 </ul>
