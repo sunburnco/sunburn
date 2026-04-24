@@ -3,7 +3,6 @@ import PocketBase, { LocalAuthStore } from 'pocketbase';
 
 import type { TypedPocketBase } from '$lib/pb-types';
 import { infoPrefix } from '$lib/utils/logPrefixes';
-import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 
 import { initPB } from './initPB';
 import { loadLocalSettings } from './localSettings.svelte';
@@ -15,9 +14,10 @@ export const applicationStart = async () => {
 	const wait: Promise<unknown>[] = [];
 	for (const k of Object.keys(ks)) {
 		localAuthStoreKeys[k as LocalAuthStoreKey_t] = ks[k as LocalAuthStoreKey_t];
+		const storageKey = k.split('@').at(1) || '';
 		const pb = new PocketBase(
 			ks[k as LocalAuthStoreKey_t],
-			new LocalAuthStore(parseInstanceSlug(ks[k as LocalAuthStoreKey_t], '')),
+			new LocalAuthStore(storageKey),
 		) as TypedPocketBase;
 		const parts = k.split('@');
 		wait.push(initPB(pb, parts[0], parts[1]));

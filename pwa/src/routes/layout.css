@@ -409,10 +409,10 @@
 	--font-mono: '"Oxygen Mono", monospace';
 	--font-display: '"League Mono", monospace';
 	--font-script: '"Playwrite US Trad Variable", cursive';
-	--color-base-100: oklch(0.25 0.08 160);
-	--color-base-200: oklch(0.18 0.1 165);
-	--color-base-300: oklch(0.12 0.05 170);
-	--color-base-content: oklch(0.92 0.03 100);
+	--color-base-100: oklch(0.22 0.1 160);
+	--color-base-200: oklch(0.18 0.1 160);
+	--color-base-300: oklch(0.14 0.1 160);
+	--color-base-content: oklch(0.92 0.03 140);
 	--color-base-dots: oklch(0.3516 0.0715 142.94);
 	--color-primary: oklch(0.8 0.25 170);
 	--color-primary-content: oklch(0.1941 0.037 170);

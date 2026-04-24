@@ -1,7 +1,14 @@
 <script>
-	import { LucideCookingPot, LucidePartyPopper, LucideSun, LucideVolleyball } from '@lucide/svelte';
+	import {
+		LucideCookingPot,
+		LucideDrumstick,
+		LucideEgg,
+		LucidePartyPopper,
+		LucideSun,
+		LucideVolleyball,
+	} from '@lucide/svelte';
 
-	const NUM_CHOICES = 3;
+	const NUM_CHOICES = 4;
 	let option = $derived(Math.floor(Math.random() * NUM_CHOICES));
 </script>
 
@@ -18,5 +25,11 @@
 	{:else if option === 2}
 		<LucidePartyPopper class="size-6" />
 		<p>Yippee!</p>
+	{:else if option === 3}
+		<div class="flex gap-1">
+			<LucideDrumstick class="size-6" />
+			<LucideEgg class="size-6" />
+		</div>
+		<p>Which came first?</p>
 	{/if}
 </div>

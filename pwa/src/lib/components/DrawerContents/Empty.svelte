@@ -2,4 +2,6 @@
 	import Filler from '../Filler.svelte';
 </script>
 
-<Filler />
+<div class="flex h-full items-center justify-center">
+	<Filler />
+</div>

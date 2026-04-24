@@ -7,6 +7,7 @@
 		LucideVolume2,
 	} from '@lucide/svelte';
 	import { ConnectionState } from 'livekit-client';
+	import { DateTime } from 'luxon';
 
 	import { ChannelType } from '$lib/constants';
 	import { call } from '$lib/sunburn/call.svelte';
@@ -41,7 +42,9 @@
 		}
 
 		// TODO sort by ordinal
-		ret.sort((a, b) => a.record.name.localeCompare(b.record.name));
+		ret.sort((a, b) =>
+			DateTime.fromSQL(a.record.created).diff(DateTime.fromSQL(b.record.created)).as('seconds'),
+		);
 
 		return ret;
 	});
