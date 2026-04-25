@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { LucideLogOut } from '@lucide/svelte';
+	import { LucideLoaderCircle, LucideLogOut } from '@lucide/svelte';
+	import type { BeforeNavigate } from '@sveltejs/kit';
 	import { type Component } from 'svelte';
 
-	import { beforeNavigate } from '$app/navigation';
+	import { beforeNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Permissions } from '$lib/constants';
 	import {
@@ -11,11 +12,14 @@
 		isOwner,
 	} from '$lib/sunburn/cumulativePermissions';
 	import { sunburn } from '$lib/sunburn/sunburn.svelte';
+	import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
+	import { logFriendly } from '$lib/utils/username';
 
 	import Channels from './Channels.svelte';
 	import Meta from './Meta.svelte';
 
 	let confirmDialog: HTMLDialogElement;
+	let nav = $state<BeforeNavigate | null>(null);
 
 	const instanceID = $derived(page.params.instanceID || '');
 	const serverID = $derived(page.params.serverID || '');
@@ -27,6 +31,15 @@
 	const dirty = $derived(
 		Object.keys(dirtySections).some((k) => dirtySections[k as keyof typeof dirtySections]),
 	);
+	const saveFunctions = $state({
+		meta: async () => {
+			return;
+		},
+		channels: async () => {
+			return;
+		},
+	});
+	let saving = $state(false);
 
 	const serverPermissions = $derived<Set<string>>(
 		!instanceID || !serverID
@@ -45,25 +58,87 @@
 	beforeNavigate((navigation) => {
 		if (dirty) {
 			navigation.cancel();
+			nav = navigation;
+			// eslint-disable-next-line no-console
+			console.debug(
+				...debugPrefix,
+				logFriendly(instanceID),
+				'cancelled navigation because one or more sections are dirty',
+				$state.snapshot(dirtySections),
+			);
 			confirmDialog.showModal();
 		}
 	});
+
+	const saveAll = async () => {
+		saving = true;
+		try {
+			// must await so dependency chains can resolve (e.g. channels -> roles -> CRA -> SRP)
+			if (dirtySections.meta) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving meta');
+				await saveFunctions.meta();
+			}
+			if (dirtySections.channels) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving channels');
+				await saveFunctions.channels();
+			}
+
+			if (nav) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'resuming navigation');
+				// https://discord.com/channels/457912077277855764/1023340103071965194/threads/1270482626502983680
+				if (nav.delta) {
+					history.go(nav.delta);
+				} else if (nav.to?.url) {
+					goto(nav.to?.url);
+				}
+			}
+		} catch (err) {
+			// eslint-disable-next-line no-console
+			console.error(...errorPrefix, 'one or more errors occurred while saving changes\n', err);
+		} finally {
+			saving = false;
+		}
+	};
+
+	const exitWithoutSaving = () => {
+		if (nav) {
+			dirtySections.meta = false;
+			dirtySections.channels = false;
+			// eslint-disable-next-line no-console
+			console.debug(...debugPrefix, logFriendly(instanceID), 'resuming navigation');
+			// thanks @rchaoz https://discord.com/channels/457912077277855764/1023340103071965194/threads/1270482626502983680
+			if (nav.delta) {
+				history.go(nav.delta);
+			} else if (nav.to?.url) {
+				goto(nav.to?.url);
+			}
+		}
+	};
 </script>
 
 <dialog class="modal" bind:this={confirmDialog}>
 	<div class="modal-box flex flex-col gap-2">
-		<h1 class="text-xl font-bold">Unsaved Changes</h1>
-		<p>You have unsaved changes. What do you want to do?</p>
-		<div class="mt-2 flex justify-end gap-2">
-			<button class="btn btn-primary">Save and Exit</button>
-			<button class="btn btn-outline">Discard Changes</button>
-			<form method="dialog">
-				<button class="btn btn-outline">Cancel</button>
-			</form>
-		</div>
+		{#if saving}
+			<h1 class="text-xl font-bold">Unsaved Changes</h1>
+			<div class="mt-2 flex items-center gap-2">
+				Saving <LucideLoaderCircle class="inline size-4 animate-spin" />
+			</div>
+		{:else}<h1 class="text-xl font-bold">Unsaved Changes</h1>
+			<p>You have unsaved changes. What do you want to do?</p>
+			<div class="mt-2 flex flex-col items-stretch justify-end gap-2 sm:flex-row">
+				<button class="btn btn-primary" onclick={saveAll}>Save and Exit</button>
+				<button class="btn btn-outline" onclick={exitWithoutSaving}>Discard Changes</button>
+				<form method="dialog">
+					<button class="btn w-full btn-outline" onclick={() => (nav = null)}>Cancel</button>
+				</form>
+			</div>
+		{/if}
 	</div>
 	<form method="dialog" class="modal-backdrop">
-		<button>close</button>
+		<button onclick={() => (nav = null)}>close</button>
 	</form>
 </dialog>
 
@@ -78,13 +153,14 @@
 		{/if}
 
 		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_CHANNELS)}
-			<Channels bind:dirty={dirtySections.channels} />
+			<Channels bind:dirty={dirtySections.channels} bind:saveChanges={saveFunctions.channels} />
 		{/if}
 
 		<li class="mt-4 menu-title" id="danger">Danger Zone</li>
 		<li class="w-full">
 			{@render ButtonSetting({
 				name: 'Leave Server',
+				description: 'hehehe',
 				onclick: () => alert('hi'),
 				color: 'btn-error',
 				icon: LucideLogOut,
@@ -95,19 +171,7 @@
 
 {#snippet ButtonSetting(setting: ButtonSetting_t)}
 	<label class="flex w-full hover:bg-transparent active:bg-transparent active:text-current">
-		<fieldset class="fieldset w-full md:hidden">
-			<legend class="fieldset-legend">{setting.name}</legend>
-			<button class={['btn', setting.color]} onclick={setting.onclick}>
-				<setting.icon class="size-4" />
-			</button>
-			{#if setting.description}
-				<p class="label text-wrap">
-					{setting.description}
-				</p>
-			{/if}
-		</fieldset>
-
-		<label class="hidden grow cursor-pointer items-center justify-between gap-4 md:flex">
+		<label class="flex grow cursor-pointer items-center justify-between gap-4">
 			<div class="min-w-1/2">
 				<p class="font-bold text-wrap select-none">{setting.name}</p>
 				{#if setting.description}
@@ -116,7 +180,7 @@
 					</p>
 				{/if}
 			</div>
-			<button class={['btn', setting.color]} onclick={setting.onclick}>
+			<button class={['btn btn-square', setting.color]} onclick={setting.onclick}>
 				<setting.icon class="size-4" />
 			</button>
 		</label>

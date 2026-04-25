@@ -4,13 +4,22 @@
 
 	import { page } from '$app/state';
 	import { ChannelType } from '$lib/constants';
-	import type { IsoAutoDateString } from '$lib/pb-types';
+	import type { ChannelsRecord, IsoAutoDateString } from '$lib/pb-types';
 	import { type Channel_t, sunburn } from '$lib/sunburn/sunburn.svelte';
+	import { createChannel, deleteChannel, renameChannel } from '$lib/utils/changeServerSettings';
+	import { debugPrefix } from '$lib/utils/logPrefixes';
 	import { pbID } from '$lib/utils/pbID';
+	import { logFriendly } from '$lib/utils/username';
 
 	import ChannelEditor from './ChannelEditor.svelte';
 
-	let { dirty = $bindable() }: { dirty: boolean } = $props();
+	let {
+		dirty = $bindable(),
+		saveChanges = $bindable(),
+	}: {
+		dirty: boolean;
+		saveChanges: () => Promise<void>;
+	} = $props();
 	const instanceID = $derived(page.params.instanceID || '');
 	const serverID = $derived(page.params.serverID || '');
 
@@ -24,10 +33,7 @@
 	};
 	type CreateAction_t = {
 		action: 'create';
-		value: {
-			name: string;
-			type: ChannelType;
-		};
+		value: ChannelsRecord;
 	};
 	type DeleteAction_t = {
 		action: 'delete';
@@ -66,6 +72,13 @@
 		if (channels[channelID]?._local) {
 			const index = changes[channelID].findIndex((c) => c.action === 'create');
 			if (index > -1) {
+				// eslint-disable-next-line no-console
+				console.debug(
+					...debugPrefix,
+					logFriendly(instanceID),
+					'renaming CREATE change for channel',
+					channelID,
+				);
 				(changes[channelID][index] as CreateAction_t).value.name = value;
 			}
 			return;
@@ -74,16 +87,56 @@
 		if (value === sunburn[instanceID].servers[serverID].channels[channelID].record.name) {
 			const index = changes[channelID].findIndex((c) => c.action === 'rename');
 			if (index > -1) {
+				// eslint-disable-next-line no-console
+				console.debug(
+					...debugPrefix,
+					logFriendly(instanceID),
+					'reverting RENAME change for channel',
+					channelID,
+				);
 				changes[channelID].splice(index, 1);
 			}
 		} else {
+			// if there's already a RENAME, reuse it
+			const index = changes[channelID].findIndex((c) => c.action === 'rename');
+			if (index > -1) {
+				// eslint-disable-next-line no-console
+				console.debug(
+					...debugPrefix,
+					logFriendly(instanceID),
+					'reusing existing RENAME for channel',
+					channelID,
+				);
+				(changes[channelID][index] as RenameAction_t).value = value;
+				return;
+			}
+
+			// otherwise, push a new RENAME
+			// eslint-disable-next-line no-console
+			console.debug(
+				...debugPrefix,
+				logFriendly(instanceID),
+				'adding RENAME change for channel',
+				channelID,
+			);
 			changes[channelID].push({ action: 'rename', value });
 		}
 	};
 	const create = (name: string, type: ChannelType) => {
 		const channelID = pbID();
+		// eslint-disable-next-line no-console
+		console.debug(
+			...debugPrefix,
+			logFriendly(instanceID),
+			'adding CREATE for local channel',
+			channelID,
+		);
 		changes[channelID] = [];
-		changes[channelID].push({ action: 'create', value: { name, type } });
+		const now = DateTime.now().toSQL() as IsoAutoDateString;
+		changes[channelID].push({
+			action: 'create',
+			value: { id: channelID, name, type, server: serverID, created: now, updated: now },
+		});
 		channels = {
 			...channels,
 			[channelID]: {
@@ -102,12 +155,43 @@
 		// for local channels, remove the "create" action
 		if (channels[channelID]?._local) {
 			changes[channelID] = [];
+			// eslint-disable-next-line no-console
+			console.debug(
+				...debugPrefix,
+				logFriendly(instanceID),
+				'removing CREATE for local channel',
+				channelID,
+			);
 			channels = { ...channels, [channelID]: undefined };
 			return;
 		}
 
 		// for other channels, push the change
+		// eslint-disable-next-line no-console
+		console.debug(...debugPrefix, logFriendly(instanceID), 'adding DELETE for channel', channelID);
 		changes[channelID].push({ action: 'delete' });
+	};
+
+	saveChanges = async () => {
+		for (const channelID of Object.keys(changes)) {
+			for (const action of changes[channelID]) {
+				switch (action.action) {
+					case 'rename':
+						await renameChannel(instanceID, channelID, action.value);
+						break;
+					case 'create':
+						await createChannel(instanceID, serverID, action.value);
+						break;
+					case 'delete':
+						await deleteChannel(instanceID, channelID);
+						break;
+					case 'ordinal':
+						// TODO implement
+						break;
+				}
+			}
+			delete changes[channelID];
+		}
 	};
 </script>
 
@@ -120,40 +204,40 @@
 	{/each}
 	<li>
 		{#if creatingChannel}
-			<div class="flex justify-between active:bg-inherit active:text-current">
-				<div class="flex w-1/2 gap-1">
-					<select title="Channel Type" bind:value={newType} class="select w-min select-sm">
-						<option value={ChannelType.TEXT} label="Text"></option>
-						<option value={ChannelType.VOICE} label="Voice"></option>
-					</select>
-					<input title="Channel Name" bind:value={newName} class="input input-sm grow" />
-				</div>
-
-				<div class="flex gap-1">
-					<button
-						title="Save"
-						class="btn btn-square btn-sm btn-primary"
-						onclick={() => {
-							create(newName, newType);
-							newType = ChannelType.TEXT;
-							newName = '';
-						}}
-					>
-						<LucideCheck class="size-4" />
-					</button>
-					<button
-						title="Cancel"
-						class="btn btn-square btn-outline btn-sm"
-						onclick={() => {
-							creatingChannel = false;
-							newType = ChannelType.TEXT;
-							newName = '';
-						}}
-					>
-						<LucideX class="size-4" />
-					</button>
-				</div>
-			</div>
+			<form
+				onsubmit={(e) => {
+					e.preventDefault();
+					if (newName === '') {
+						return;
+					}
+					create(newName, newType);
+					creatingChannel = false;
+					newType = ChannelType.TEXT;
+					newName = '';
+				}}
+				class="flex justify-between gap-1 active:bg-inherit active:text-current"
+			>
+				<select title="Channel Type" bind:value={newType} class="select w-min select-sm">
+					<option value={ChannelType.TEXT} label="Text"></option>
+					<option value={ChannelType.VOICE} label="Voice"></option>
+				</select>
+				<input title="Channel Name" bind:value={newName} class="input input-sm grow" />
+				<button title="Save" type="submit" class="btn btn-square btn-sm btn-primary">
+					<LucideCheck class="size-4" />
+				</button>
+				<button
+					title="Cancel"
+					type="reset"
+					class="btn btn-square btn-outline btn-sm"
+					onclick={() => {
+						creatingChannel = false;
+						newType = ChannelType.TEXT;
+						newName = '';
+					}}
+				>
+					<LucideX class="size-4" />
+				</button>
+			</form>
 		{:else}
 			<button class="flex w-full justify-center" onclick={() => (creatingChannel = true)}>
 				<LucidePlus class="size-4" />

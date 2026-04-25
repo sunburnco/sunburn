@@ -40,56 +40,50 @@
 
 {#if channel}
 	<li>
-		<div class="flex w-full flex-row justify-between active:bg-inherit active:text-current">
-			{#if !editing}
-				<div class="flex items-center gap-1">
-					{#if channel.type === ChannelType.TEXT}
-						<LucideHash class="inline size-4" />
-					{:else if channel.type === ChannelType.VOICE}
-						<LucideVolume2 class="inline size-4" />
-					{/if}
-					{channelName}
-				</div>
-			{:else}
-				<input
-					class="input input-sm w-1/2"
-					bind:value={channelName}
-					onkeydown={(e) => {
-						if (e.key === 'Enter') {
-							onSave();
-						}
-					}}
-				/>
-			{/if}
-
-			<div class="flex gap-1">
-				{#if !editing}
-					<button title="Edit" class="btn btn-square btn-sm" onclick={() => (editing = true)}>
-						<LucidePencil class="size-4" />
-					</button>
-					<button
-						title="Delete"
-						class="btn btn-square btn-sm btn-error"
-						onclick={() => del(channel.id)}
-					>
-						<LucideTrash class="size-4" />
-					</button>
-				{:else}
-					<button title="Save" onclick={onSave} class="btn btn-square btn-sm btn-primary">
-						<LucideCheck class="size-4" />
-					</button>
-					<button
-						title="Revert"
-						onclick={() => {
-							editing = false;
-							channelName = channel.name;
-						}}
-						class="btn btn-square btn-outline btn-sm"
-					>
-						<LucideX class="size-4" />
-					</button>
+		{#if !editing}
+			<div class="flex w-full flex-row justify-between gap-1 active:bg-inherit active:text-current">
+				{#if channel.type === ChannelType.TEXT}
+					<LucideHash class="inline size-4" />
+				{:else if channel.type === ChannelType.VOICE}
+					<LucideVolume2 class="inline size-4" />
 				{/if}
+				<div class="grow">{channelName}</div>
+				<button title="Edit" class="btn btn-square btn-sm" onclick={() => (editing = true)}>
+					<LucidePencil class="size-4" />
+				</button>
+				<button
+					title="Delete"
+					class="btn btn-square btn-sm btn-error"
+					onclick={() => del(channel.id)}
+				>
+					<LucideTrash class="size-4" />
+				</button>
 			</div>
-		</div>
+		{:else}
+			<form
+				class="flex w-full flex-row justify-between gap-1 active:bg-inherit active:text-current"
+				onsubmit={(e) => {
+					e.preventDefault();
+					onSave();
+				}}
+			>
+				<input class="input input-sm grow" bind:value={channelName} />
+				<button title="Save" type="submit" class="btn btn-square btn-sm btn-primary">
+					<LucideCheck class="size-4" />
+				</button>
+				<button
+					title="Revert"
+					type="reset"
+					onclick={() => {
+						editing = false;
+						channelName = channel.name;
+						rename(channel.id, channel.name);
+					}}
+					class="btn btn-square btn-outline btn-sm"
+				>
+					<LucideX class="size-4" />
+				</button>
+			</form>
+		{/if}
 	</li>
 {/if}
