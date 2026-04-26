@@ -2,6 +2,7 @@
 	import { LucideLoaderCircle, LucideLogOut } from '@lucide/svelte';
 	import type { BeforeNavigate } from '@sveltejs/kit';
 	import { type Component } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	import { beforeNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -168,6 +169,28 @@
 		</li>
 	</ul>
 </div>
+{#if dirty}
+	<div
+		in:fade={{ duration: 150 }}
+		out:fade={{ duration: 150 }}
+		class="sticky bottom-4 mt-8 w-full rounded-box border border-base-content/50 bg-base-200 px-3 py-2 drop-shadow-md"
+	>
+		<div class="flex items-center justify-between">
+			<h2 class="font-display text-lg">Unsaved Changes</h2>
+			<button
+				disabled={saving}
+				class={['btn btn-primary', saving && 'btn-square']}
+				onclick={saveAll}
+			>
+				{#if saving}
+					<LucideLoaderCircle class="size-4 animate-spin" />
+				{:else}
+					Save
+				{/if}
+			</button>
+		</div>
+	</div>
+{/if}
 
 {#snippet ButtonSetting(setting: ButtonSetting_t)}
 	<label class="flex w-full hover:bg-transparent active:bg-transparent active:text-current">

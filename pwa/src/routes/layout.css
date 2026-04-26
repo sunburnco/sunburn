@@ -162,9 +162,9 @@
 
 	.modal {
 		transition:
-			translate 0.3s ease-out,
-			background-color 0.3s ease-out,
-			opacity 0.1s ease-out;
+			translate 150ms ease-out,
+			background-color 150ms ease-out,
+			opacity 150ms ease-out;
 		@starting-style {
 			&.modal-open,
 			&[open],
@@ -172,6 +172,13 @@
 				visibility: visible;
 			}
 		}
+	}
+	.drawer-side,
+	.drawer-overlay {
+		transition-duration: 150ms !important;
+	}
+	.drawer-side > * {
+		transition-duration: 150ms !important;
 	}
 
 	.dots-100 {

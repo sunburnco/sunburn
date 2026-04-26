@@ -54,17 +54,19 @@
 	});
 
 	let channels = $derived.by(() => {
-		const ret = {} as Record<
-			Channel_t['record']['id'],
-			(Channel_t['record'] & { _local?: boolean }) | undefined
-		>;
+		const ret = $state(
+			{} as Record<
+				Channel_t['record']['id'],
+				(Channel_t['record'] & { _local?: boolean }) | undefined
+			>,
+		);
+
 		// no checks for instance or server existence because that's handled by +layout.svelte
 		for (const channelID of Object.keys(sunburn[instanceID].servers[serverID].channels)) {
 			ret[channelID] = { ...sunburn[instanceID].servers[serverID].channels[channelID].record };
 		}
 		return ret;
 	});
-	let channelIDList = $derived<(keyof typeof channels)[]>(Object.keys(channels));
 
 	const rename = (channelID: string, value: string) => {
 		changes[channelID] = changes[channelID] || [];
@@ -137,24 +139,20 @@
 			action: 'create',
 			value: { id: channelID, name, type, server: serverID, created: now, updated: now },
 		});
-		channels = {
-			...channels,
-			[channelID]: {
-				id: channelID,
-				created: DateTime.now().toSQL() as IsoAutoDateString,
-				updated: DateTime.now().toSQL() as IsoAutoDateString,
-				name,
-				server: serverID,
-				type,
-				_local: true,
-			},
+		channels[channelID] = {
+			id: channelID,
+			created: DateTime.now().toSQL() as IsoAutoDateString,
+			updated: DateTime.now().toSQL() as IsoAutoDateString,
+			name,
+			server: serverID,
+			type,
+			_local: true,
 		};
 	};
 	const del = (channelID: string) => {
 		changes[channelID] = changes[channelID] || [];
 		// for local channels, remove the "create" action
 		if (channels[channelID]?._local) {
-			changes[channelID] = [];
 			// eslint-disable-next-line no-console
 			console.debug(
 				...debugPrefix,
@@ -162,7 +160,8 @@
 				'removing CREATE for local channel',
 				channelID,
 			);
-			channels = { ...channels, [channelID]: undefined };
+			delete changes[channelID];
+			delete channels[channelID];
 			return;
 		}
 
@@ -197,7 +196,8 @@
 
 {#if sunburn[instanceID]?.servers[serverID]?.loaded}
 	<li class="menu-title" id="channels">Channels</li>
-	{#each channelIDList as channelID (channelID)}
+	<!-- {#each channelIDList as channelID (channelID)} -->
+	{#each Object.keys(channels) as channelID (channelID)}
 		{#if !(changes[channelID] || []).find((c) => c.action === 'delete')}
 			<ChannelEditor channel={channels[channelID]} {rename} {del} />
 		{/if}
