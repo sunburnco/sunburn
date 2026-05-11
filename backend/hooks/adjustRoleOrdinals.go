@@ -12,7 +12,7 @@ func AdjustRoleOrdinals(e *core.RecordEvent) error {
 
 	// no decimal point
 	if ord == math.Round(ord) {
-		return nil
+		return e.Next()
 	}
 
 	server := e.Record.GetString("server")
@@ -42,5 +42,5 @@ func AdjustRoleOrdinals(e *core.RecordEvent) error {
 		e.App.Logger().Info("res", "res", res)
 	}
 
-	return nil
+	return e.Next()
 }
