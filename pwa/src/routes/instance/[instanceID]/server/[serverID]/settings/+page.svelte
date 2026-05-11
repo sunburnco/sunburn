@@ -18,6 +18,7 @@
 
 	import Channels from './Channels.svelte';
 	import Meta from './Meta.svelte';
+	import Roles from './Roles.svelte';
 
 	let confirmDialog: HTMLDialogElement;
 	let nav = $state<BeforeNavigate | null>(null);
@@ -28,6 +29,7 @@
 	const dirtySections = $state({
 		meta: false,
 		channels: false,
+		roles: false,
 	});
 	const dirty = $derived(
 		Object.keys(dirtySections).some((k) => dirtySections[k as keyof typeof dirtySections]),
@@ -37,6 +39,9 @@
 			return;
 		},
 		channels: async () => {
+			return;
+		},
+		roles: async () => {
 			return;
 		},
 	});
@@ -85,6 +90,11 @@
 				console.debug(...debugPrefix, logFriendly(instanceID), 'saving channels');
 				await saveFunctions.channels();
 			}
+			if (dirtySections.roles) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving roles');
+				await saveFunctions.roles();
+			}
 
 			if (nav) {
 				// eslint-disable-next-line no-console
@@ -108,6 +118,7 @@
 		if (nav) {
 			dirtySections.meta = false;
 			dirtySections.channels = false;
+			dirtySections.roles = false;
 			// eslint-disable-next-line no-console
 			console.debug(...debugPrefix, logFriendly(instanceID), 'resuming navigation');
 			// thanks @rchaoz https://discord.com/channels/457912077277855764/1023340103071965194/threads/1270482626502983680
@@ -157,11 +168,15 @@
 			<Channels bind:dirty={dirtySections.channels} bind:saveChanges={saveFunctions.channels} />
 		{/if}
 
+		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_ROLES)}
+			<Roles bind:dirty={dirtySections.roles} bind:saveChanges={saveFunctions.roles} />
+		{/if}
+
 		<li class="mt-4 menu-title" id="danger">Danger Zone</li>
 		<li class="w-full">
 			{@render ButtonSetting({
 				name: 'Leave Server',
-				description: 'hehehe',
+				description: 'You cannot rejoin without an invite',
 				onclick: () => alert('hi'),
 				color: 'btn-error',
 				icon: LucideLogOut,
@@ -176,7 +191,7 @@
 		class="sticky bottom-4 mt-8 w-full rounded-box border border-base-content/50 bg-base-200 px-3 py-2 drop-shadow-md"
 	>
 		<div class="flex items-center justify-between">
-			<h2 class="font-display text-lg">Unsaved Changes</h2>
+			<h3 class="font-bold">Unsaved Changes</h3>
 			<button
 				disabled={saving}
 				class={['btn btn-primary', saving && 'btn-square']}

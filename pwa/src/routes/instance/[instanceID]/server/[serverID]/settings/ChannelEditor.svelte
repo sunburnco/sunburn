@@ -15,14 +15,13 @@
 		channel,
 		rename,
 		del,
+		dirty,
 	}: {
 		channel?: Channel_t['record'];
 		rename: (channelID: string, value: string) => void;
 		del: (channelID: string) => void;
+		dirty: boolean;
 	} = $props();
-
-	// const instanceID = $derived(page.params.instanceID || '');
-	// const serverID = $derived(page.params.serverID || '');
 
 	let channelName = $derived(channel?.name || '');
 
@@ -41,7 +40,12 @@
 {#if channel}
 	<li>
 		{#if !editing}
-			<div class="flex w-full flex-row justify-between gap-1 active:bg-inherit active:text-current">
+			<div
+				class={[
+					'flex w-full flex-row justify-between gap-1 active:bg-inherit active:text-current',
+					dirty && 'italic',
+				]}
+			>
 				{#if channel.type === ChannelType.TEXT}
 					<LucideHash class="inline size-4" />
 				{:else if channel.type === ChannelType.VOICE}

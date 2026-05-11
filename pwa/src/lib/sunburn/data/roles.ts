@@ -31,6 +31,8 @@ export const setRoleRecord = (
 			permissions: new SvelteSet(),
 			record,
 		};
+	} else {
+		sunburn[instanceID].servers[serverID].roles[roleID].record = record;
 	}
 };
 

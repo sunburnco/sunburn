@@ -65,6 +65,33 @@
 		for (const channelID of Object.keys(sunburn[instanceID].servers[serverID].channels)) {
 			ret[channelID] = { ...sunburn[instanceID].servers[serverID].channels[channelID].record };
 		}
+
+		for (const channelID of Object.keys(changes)) {
+			for (const change of changes[channelID as keyof typeof changes]) {
+				if (!(channelID in ret)) {
+					// local channel
+					if (change.action !== 'create') {
+						continue;
+					}
+					ret[channelID] = { ...change.value, _local: true };
+				} else if (ret[channelID]) {
+					switch (change.action) {
+						case 'rename':
+							ret[channelID].name = change.value;
+							break;
+						case 'create':
+							ret[channelID] = { ...change.value, _local: true };
+							break;
+						case 'delete':
+							delete ret[channelID];
+							break;
+						case 'ordinal':
+							// TODO implement
+							continue;
+					}
+				}
+			}
+		}
 		return ret;
 	});
 
@@ -106,7 +133,7 @@
 				console.debug(
 					...debugPrefix,
 					logFriendly(instanceID),
-					'reusing existing RENAME for channel',
+					'reusing existing RENAME change for channel',
 					channelID,
 				);
 				(changes[channelID][index] as RenameAction_t).value = value;
@@ -139,15 +166,6 @@
 			action: 'create',
 			value: { id: channelID, name, type, server: serverID, created: now, updated: now },
 		});
-		channels[channelID] = {
-			id: channelID,
-			created: DateTime.now().toSQL() as IsoAutoDateString,
-			updated: DateTime.now().toSQL() as IsoAutoDateString,
-			name,
-			server: serverID,
-			type,
-			_local: true,
-		};
 	};
 	const del = (channelID: string) => {
 		changes[channelID] = changes[channelID] || [];
@@ -161,7 +179,6 @@
 				channelID,
 			);
 			delete changes[channelID];
-			delete channels[channelID];
 			return;
 		}
 
@@ -179,7 +196,7 @@
 						await renameChannel(instanceID, channelID, action.value);
 						break;
 					case 'create':
-						await createChannel(instanceID, serverID, action.value);
+						await createChannel(instanceID, action.value);
 						break;
 					case 'delete':
 						await deleteChannel(instanceID, channelID);
@@ -194,55 +211,57 @@
 	};
 </script>
 
-{#if sunburn[instanceID]?.servers[serverID]?.loaded}
-	<li class="menu-title" id="channels">Channels</li>
-	<!-- {#each channelIDList as channelID (channelID)} -->
-	{#each Object.keys(channels) as channelID (channelID)}
-		{#if !(changes[channelID] || []).find((c) => c.action === 'delete')}
-			<ChannelEditor channel={channels[channelID]} {rename} {del} />
-		{/if}
-	{/each}
-	<li>
-		{#if creatingChannel}
-			<form
-				onsubmit={(e) => {
-					e.preventDefault();
-					if (newName === '') {
-						return;
-					}
-					create(newName, newType);
+<li class="menu-title" id="channels">Channels</li>
+{#each Object.keys(channels) as channelID (channelID)}
+	{#if !(changes[channelID] || []).find((c) => c.action === 'delete')}
+		<ChannelEditor
+			channel={channels[channelID]}
+			{rename}
+			{del}
+			dirty={(changes[channelID]?.length || 0) > 0}
+		/>
+	{/if}
+{/each}
+<li>
+	{#if creatingChannel}
+		<form
+			onsubmit={(e) => {
+				e.preventDefault();
+				if (newName === '') {
+					return;
+				}
+				create(newName, newType);
+				creatingChannel = false;
+				newType = ChannelType.TEXT;
+				newName = '';
+			}}
+			class="flex justify-between gap-1 active:bg-inherit active:text-current"
+		>
+			<select title="Channel Type" bind:value={newType} class="select w-fit select-sm">
+				<option value={ChannelType.TEXT} label="Text"></option>
+				<option value={ChannelType.VOICE} label="Voice"></option>
+			</select>
+			<input title="Channel Name" bind:value={newName} class="input input-sm grow" />
+			<button title="Save" type="submit" class="btn btn-square btn-sm btn-primary">
+				<LucideCheck class="size-4" />
+			</button>
+			<button
+				title="Cancel"
+				type="reset"
+				class="btn btn-square btn-outline btn-sm"
+				onclick={() => {
 					creatingChannel = false;
 					newType = ChannelType.TEXT;
 					newName = '';
 				}}
-				class="flex justify-between gap-1 active:bg-inherit active:text-current"
 			>
-				<select title="Channel Type" bind:value={newType} class="select w-min select-sm">
-					<option value={ChannelType.TEXT} label="Text"></option>
-					<option value={ChannelType.VOICE} label="Voice"></option>
-				</select>
-				<input title="Channel Name" bind:value={newName} class="input input-sm grow" />
-				<button title="Save" type="submit" class="btn btn-square btn-sm btn-primary">
-					<LucideCheck class="size-4" />
-				</button>
-				<button
-					title="Cancel"
-					type="reset"
-					class="btn btn-square btn-outline btn-sm"
-					onclick={() => {
-						creatingChannel = false;
-						newType = ChannelType.TEXT;
-						newName = '';
-					}}
-				>
-					<LucideX class="size-4" />
-				</button>
-			</form>
-		{:else}
-			<button class="flex w-full justify-center" onclick={() => (creatingChannel = true)}>
-				<LucidePlus class="size-4" />
-				Add Channel
+				<LucideX class="size-4" />
 			</button>
-		{/if}
-	</li>
-{/if}
+		</form>
+	{:else}
+		<button class="flex w-full justify-center" onclick={() => (creatingChannel = true)}>
+			<LucidePlus class="size-4" />
+			Add Channel
+		</button>
+	{/if}
+</li>

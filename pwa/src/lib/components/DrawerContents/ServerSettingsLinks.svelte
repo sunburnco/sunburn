@@ -32,6 +32,10 @@
 		<li><a href="#channels">Channels</a></li>
 	{/if}
 
+	{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_ROLES)}
+		<li><a href="#roles">Roles</a></li>
+	{/if}
+
 	<li>
 		<a href="#danger">Danger Zone</a>
 	</li>

@@ -105,7 +105,10 @@ export const onServerRole = (
 ) => {
 	const { action, record } = e;
 
-	if (!(record.server in sunburn[instanceID].servers) || !sunburn[instanceID].servers.loaded) {
+	if (
+		!(record.server in sunburn[instanceID].servers) ||
+		!sunburn[instanceID].servers[record.server].loaded
+	) {
 		return;
 	}
 
