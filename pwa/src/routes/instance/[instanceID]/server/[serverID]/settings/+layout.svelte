@@ -29,7 +29,7 @@
 			<div><LucideCog class="inline size-4 -translate-y-px" /> Server Settings</div>
 		</div>
 	</header>
-	<content class="flex grow items-center justify-center overflow-y-auto">
+	<content class="relative flex grow items-center justify-center overflow-y-auto">
 		<div class="max-h-full overflow-y-auto">
 			<div class="mx-auto w-2xl max-w-11/12">
 				{@render children()}

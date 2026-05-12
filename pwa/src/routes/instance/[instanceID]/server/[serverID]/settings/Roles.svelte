@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { LucideCheck, LucidePlus, LucideX } from '@lucide/svelte';
 	import { DateTime } from 'luxon';
+	import { flip } from 'svelte/animate';
+	import { cubicInOut } from 'svelte/easing';
 
 	import { page } from '$app/state';
 	import type { IsoAutoDateString, ServerRolesRecord } from '$lib/pb-types';
@@ -57,7 +59,7 @@
 	$effect(() => {
 		dirty =
 			Object.keys(changes).length > 0 &&
-			Object.keys(changes).every((key) => changes[key] && changes[key].length !== 0);
+			Object.keys(changes).some((key) => changes[key]?.length > 0);
 	});
 
 	let roles = $derived.by(() => {
@@ -87,7 +89,7 @@
 							ret[roleID] = { ...change.value, _local: true };
 							break;
 						case 'delete':
-							delete ret[roleID];
+							// delete ret[roleID];
 							break;
 						case 'color':
 							ret[roleID].color = change.value;
@@ -101,6 +103,9 @@
 		}
 		return ret;
 	});
+	const sortedRoleIDs = $derived(
+		Object.keys(roles).sort((a, b) => (roles[b]?.ordinal ?? 0) - (roles[a]?.ordinal ?? 0)),
+	);
 
 	const pushChange = (roleID: string, action: RenameAction_t | ColorAction_t | OrdinalAction_t) => {
 		changes[roleID] = changes[roleID] || [];
@@ -174,7 +179,7 @@
 				return;
 			}
 
-			// otherwise, push a new RENAME
+			// otherwise, push a new action
 			// eslint-disable-next-line no-console
 			console.debug(
 				...debugPrefix,
@@ -224,6 +229,47 @@
 		console.debug(...debugPrefix, logFriendly(instanceID), 'adding DELETE for role', roleID);
 		changes[roleID].push({ action: 'delete' });
 	};
+	// NOT looking forward to recreating this for channel ordinals
+	const rebalanceOrdinals = () => {
+		const start = [] as { roleID: string; o: number }[];
+		for (const roleID of Object.keys(roles)) {
+			start.push({
+				roleID,
+				o: roles[roleID]?.ordinal ?? 0,
+			});
+		}
+		// ascending (!) sort
+		start.sort((a, b) => a.o - b.o);
+		for (let i = 0; i < start.length; i++) {
+			const _role = start[i];
+			// i is desired order (o)
+			if (sunburn[instanceID].servers[serverID].roles[_role.roleID].record.ordinal === i) {
+				// role is back to original ordinal; delete ORDINAL change
+				const changeIndex = (changes[start[i].roleID] || []).findIndex(
+					(c) => c.action === 'ordinal',
+				);
+				if (changeIndex > -1) {
+					changes[start[i].roleID].splice(changeIndex, 1);
+					continue;
+				}
+			}
+
+			if (_role.o !== i) {
+				changes[_role.roleID] = changes[_role.roleID] || [];
+				// if there's an existing ordinal change, reuse it
+				const changeIndex = changes[_role.roleID].findIndex((c) => c.action === 'ordinal');
+				if (changeIndex > -1) {
+					(changes[_role.roleID][changeIndex] as OrdinalAction_t).value = i;
+				} else {
+					// otherwise, push a new change
+					changes[_role.roleID].push({
+						action: 'ordinal',
+						value: i,
+					} as OrdinalAction_t);
+				}
+			}
+		}
+	};
 
 	saveChanges = async () => {
 		for (const roleID of Object.keys(changes)) {
@@ -258,17 +304,38 @@
 </script>
 
 <li class="menu-title" id="roles">Roles</li>
-{#each Object.keys(roles).sort((a, b) => (roles[b]?.ordinal || 0) - (roles[a]?.ordinal || 0)) as roleID (roleID)}
-	{#if !(changes[roleID] || []).find((c) => c.action === 'delete')}
+{#each sortedRoleIDs as roleID, index (roleID)}
+	<li
+		animate:flip={{ duration: 150, easing: cubicInOut }}
+		class={[
+			(changes[roleID] || []).find((c) => c.action === 'delete')
+				? 'line-through'
+				: changes[roleID]?.length > 0 && 'italic',
+		]}
+	>
 		<RoleEditor
 			role={roles[roleID]}
 			rename={(roleID, value) => pushChange(roleID, { action: 'rename', value })}
 			color={(roleID, value) => pushChange(roleID, { action: 'color', value })}
-			ordinal={(roleID, value) => pushChange(roleID, { action: 'ordinal', value })}
-			{del}
-			dirty={(changes[roleID]?.length || 0) > 0}
+			ordinal={(roleID, dir) => {
+				pushChange(roleID, {
+					action: 'ordinal',
+					value: (roles[roleID]?.ordinal ?? 0) + dir * 1.5,
+				});
+				rebalanceOrdinals();
+			}}
+			del={(roleID) => {
+				const delIndex = (changes[roleID] || []).findIndex((c) => c.action === 'delete');
+				if (delIndex > -1) {
+					changes[roleID].splice(delIndex, 1);
+				} else {
+					del(roleID);
+				}
+			}}
+			atTop={index === 0}
+			atBottom={index >= sortedRoleIDs.length - 1}
 		/>
-	{/if}
+	</li>
 {/each}
 <li>
 	{#if creatingRole}
@@ -279,6 +346,7 @@
 					return;
 				}
 				create(newName, newColor, newOrdinal);
+				rebalanceOrdinals();
 				creatingRole = false;
 				newName = '';
 				newColor = '#000000';
@@ -302,7 +370,7 @@
 				class="btn btn-square btn-outline btn-sm"
 				onclick={() => {
 					creatingRole = false;
-					newOrdinal = 0;
+					newOrdinal = 0.5;
 					newColor = '#000000';
 					newName = '';
 				}}

@@ -183,12 +183,19 @@
 			})}
 		</li>
 	</ul>
+
+	<p aria-hidden class="h-14.5 w-full text-center text-base-300">
+		You found the secret anti-layout-shift filler!
+	</p>
 </div>
 {#if dirty}
 	<div
 		in:fade={{ duration: 150 }}
 		out:fade={{ duration: 150 }}
-		class="sticky bottom-4 mt-8 w-full rounded-box border border-base-content/50 bg-base-200 px-3 py-2 drop-shadow-md"
+		class={[
+			'mt-8 w-2xl max-w-11/12 rounded-box border border-base-content/50 bg-base-200 px-3 py-2 drop-shadow-md',
+			'absolute bottom-4 left-1/2 -translate-x-1/2',
+		]}
 	>
 		<div class="flex items-center justify-between">
 			<h3 class="font-bold">Unsaved Changes</h3>
