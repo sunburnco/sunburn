@@ -346,11 +346,11 @@
 					return;
 				}
 				create(newName, newColor, newOrdinal);
-				rebalanceOrdinals();
 				creatingRole = false;
 				newName = '';
 				newColor = '#000000';
 				newOrdinal = 0;
+				rebalanceOrdinals();
 			}}
 			class="flex justify-between gap-1 active:bg-inherit active:text-current"
 		>
