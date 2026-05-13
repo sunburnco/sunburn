@@ -2,7 +2,6 @@
 	import { LucideLoaderCircle, LucideLogOut } from '@lucide/svelte';
 	import type { BeforeNavigate } from '@sveltejs/kit';
 	import { type Component } from 'svelte';
-	import { fade } from 'svelte/transition';
 
 	import { beforeNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -18,7 +17,10 @@
 
 	import Channels from './Channels.svelte';
 	import Meta from './Meta.svelte';
+	import RolePermissions from './RolePermissions.svelte';
 	import Roles from './Roles.svelte';
+
+	// TODO add ctrl+enter shortcut to save
 
 	let confirmDialog: HTMLDialogElement;
 	let nav = $state<BeforeNavigate | null>(null);
@@ -30,6 +32,7 @@
 		meta: false,
 		channels: false,
 		roles: false,
+		rolePermissions: false,
 	});
 	const dirty = $derived(
 		Object.keys(dirtySections).some((k) => dirtySections[k as keyof typeof dirtySections]),
@@ -42,6 +45,9 @@
 			return;
 		},
 		roles: async () => {
+			return;
+		},
+		rolePermissions: async () => {
 			return;
 		},
 	});
@@ -95,6 +101,11 @@
 				console.debug(...debugPrefix, logFriendly(instanceID), 'saving roles');
 				await saveFunctions.roles();
 			}
+			if (dirtySections.rolePermissions) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving role permissions');
+				await saveFunctions.rolePermissions();
+			}
 
 			if (nav) {
 				// eslint-disable-next-line no-console
@@ -119,6 +130,7 @@
 			dirtySections.meta = false;
 			dirtySections.channels = false;
 			dirtySections.roles = false;
+			dirtySections.rolePermissions = false;
 			// eslint-disable-next-line no-console
 			console.debug(...debugPrefix, logFriendly(instanceID), 'resuming navigation');
 			// thanks @rchaoz https://discord.com/channels/457912077277855764/1023340103071965194/threads/1270482626502983680
@@ -154,7 +166,7 @@
 	</form>
 </dialog>
 
-<div class="my-4 flex flex-col gap-2">
+<div class="my-10 flex flex-col gap-2">
 	<h1 class="font-display text-xl font-bold">Server Settings</h1>
 
 	<div class="divider"></div>
@@ -172,6 +184,13 @@
 			<Roles bind:dirty={dirtySections.roles} bind:saveChanges={saveFunctions.roles} />
 		{/if}
 
+		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_ROLE_PERMISSIONS)}
+			<RolePermissions
+				bind:dirty={dirtySections.rolePermissions}
+				bind:saveChanges={saveFunctions.rolePermissions}
+			/>
+		{/if}
+
 		<li class="mt-4 menu-title" id="danger">Danger Zone</li>
 		<li class="w-full">
 			{@render ButtonSetting({
@@ -184,35 +203,30 @@
 		</li>
 	</ul>
 
-	<p aria-hidden class="h-14.5 w-full text-center text-base-300">
+	<!-- <p aria-hidden class="h-14.5 w-full text-center text-base-300">
 		You found the secret anti-layout-shift filler!
-	</p>
+	</p> -->
 </div>
-{#if dirty}
-	<div
-		in:fade={{ duration: 150 }}
-		out:fade={{ duration: 150 }}
-		class={[
-			'mt-8 w-2xl max-w-11/12 rounded-box border border-base-content/50 bg-base-200 px-3 py-2 drop-shadow-md',
-			'absolute bottom-4 left-1/2 -translate-x-1/2',
-		]}
-	>
-		<div class="flex items-center justify-between">
-			<h3 class="font-bold">Unsaved Changes</h3>
-			<button
-				disabled={saving}
-				class={['btn btn-primary', saving && 'btn-square']}
-				onclick={saveAll}
-			>
-				{#if saving}
-					<LucideLoaderCircle class="size-4 animate-spin" />
-				{:else}
-					Save
-				{/if}
-			</button>
-		</div>
+<div
+	class={[
+		'w-full rounded-box border border-base-content/50 bg-base-200 px-3 py-2 drop-shadow-md',
+		// 'absolute bottom-4 left-1/2 -translate-x-1/2',
+		'sticky bottom-4',
+		'transition-opacity duration-150',
+		dirty ? 'opacity-100' : 'opacity-0',
+	]}
+>
+	<div class="flex items-center justify-between">
+		<h3 class="font-bold">Unsaved Changes</h3>
+		<button disabled={saving} class={['btn btn-primary', saving && 'btn-square']} onclick={saveAll}>
+			{#if saving}
+				<LucideLoaderCircle class="size-4 animate-spin" />
+			{:else}
+				Save
+			{/if}
+		</button>
 	</div>
-{/if}
+</div>
 
 {#snippet ButtonSetting(setting: ButtonSetting_t)}
 	<label class="flex w-full hover:bg-transparent active:bg-transparent active:text-current">

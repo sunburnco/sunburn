@@ -25,7 +25,7 @@
 	const serverID = $derived(page.params.serverID || '');
 
 	let creatingRole = $state(false);
-	let newColor = $state('#000000');
+	let newColor = $state('#00000000');
 	let newName = $state('');
 	let newOrdinal = $state(0.5);
 
@@ -243,7 +243,10 @@
 		for (let i = 0; i < start.length; i++) {
 			const _role = start[i];
 			// i is desired order (o)
-			if (sunburn[instanceID].servers[serverID].roles[_role.roleID].record.ordinal === i) {
+			if (
+				!roles[_role.roleID]?._local &&
+				sunburn[instanceID].servers[serverID].roles[_role.roleID].record.ordinal === i
+			) {
 				// role is back to original ordinal; delete ORDINAL change
 				const changeIndex = (changes[start[i].roleID] || []).findIndex(
 					(c) => c.action === 'ordinal',
@@ -256,6 +259,14 @@
 
 			if (_role.o !== i) {
 				changes[_role.roleID] = changes[_role.roleID] || [];
+				// if the role is local, change the CREATE action
+				if (roles[_role.roleID]?._local) {
+					const changeIndex = changes[_role.roleID].findIndex((c) => c.action === 'create');
+					if (changeIndex > -1) {
+						(changes[_role.roleID][changeIndex] as CreateAction_t).value.ordinal = i;
+					}
+					continue;
+				}
 				// if there's an existing ordinal change, reuse it
 				const changeIndex = changes[_role.roleID].findIndex((c) => c.action === 'ordinal');
 				if (changeIndex > -1) {
@@ -283,10 +294,13 @@
 						updatedFields.color = action.value;
 						break;
 					case 'ordinal':
-						updatedFields.ordinal = action.value;
+						updatedFields.ordinal = action.value - 0.5;
 						break;
 					case 'create':
-						await createRole(instanceID, action.value);
+						await createRole(instanceID, {
+							...action.value,
+							ordinal: (action.value.ordinal ?? 0) - 0.5,
+						});
 						break;
 					case 'delete':
 						await deleteRole(instanceID, roleID);
@@ -308,9 +322,8 @@
 	<li
 		animate:flip={{ duration: 150, easing: cubicInOut }}
 		class={[
-			(changes[roleID] || []).find((c) => c.action === 'delete')
-				? 'line-through'
-				: changes[roleID]?.length > 0 && 'italic',
+			(changes[roleID] || []).find((c) => c.action === 'delete') && 'line-through',
+			changes[roleID]?.length > 0 && 'italic',
 		]}
 	>
 		<RoleEditor
@@ -348,7 +361,7 @@
 				create(newName, newColor, newOrdinal);
 				creatingRole = false;
 				newName = '';
-				newColor = '#000000';
+				newColor = '#00000000';
 				newOrdinal = 0;
 				rebalanceOrdinals();
 			}}
@@ -357,6 +370,7 @@
 			<input
 				type="color"
 				title="Role Color"
+				defaultValue="#00000000"
 				bind:value={newColor}
 				class="input input-sm aspect-square w-min px-0.5 py-0"
 			/>
@@ -371,7 +385,7 @@
 				onclick={() => {
 					creatingRole = false;
 					newOrdinal = 0.5;
-					newColor = '#000000';
+					newColor = '#00000000';
 					newName = '';
 				}}
 			>

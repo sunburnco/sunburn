@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { LucideCheck, LucidePlus, LucideX } from '@lucide/svelte';
 	import { DateTime } from 'luxon';
+	import { flip } from 'svelte/animate';
+	import { cubicInOut } from 'svelte/easing';
 
 	import { page } from '$app/state';
 	import { ChannelType } from '$lib/constants';
@@ -83,7 +85,7 @@
 							ret[channelID] = { ...change.value, _local: true };
 							break;
 						case 'delete':
-							delete ret[channelID];
+							// delete ret[channelID];
 							break;
 						case 'ordinal':
 							// TODO implement
@@ -182,10 +184,27 @@
 			return;
 		}
 
-		// for other channels, push the change
-		// eslint-disable-next-line no-console
-		console.debug(...debugPrefix, logFriendly(instanceID), 'adding DELETE for channel', channelID);
-		changes[channelID].push({ action: 'delete' });
+		// for other channels, toggle the change
+		const changeIndex = changes[channelID].findIndex((c) => c.action === 'delete');
+		if (changeIndex > -1) {
+			// eslint-disable-next-line no-console
+			console.debug(
+				...debugPrefix,
+				logFriendly(instanceID),
+				'removing DELETE for channel',
+				channelID,
+			);
+			changes[channelID].splice(changeIndex, 1);
+		} else {
+			// eslint-disable-next-line no-console
+			console.debug(
+				...debugPrefix,
+				logFriendly(instanceID),
+				'adding DELETE for channel',
+				channelID,
+			);
+			changes[channelID].push({ action: 'delete' });
+		}
 	};
 
 	saveChanges = async () => {
@@ -213,14 +232,15 @@
 
 <li class="menu-title" id="channels">Channels</li>
 {#each Object.keys(channels) as channelID (channelID)}
-	{#if !(changes[channelID] || []).find((c) => c.action === 'delete')}
-		<ChannelEditor
-			channel={channels[channelID]}
-			{rename}
-			{del}
-			dirty={(changes[channelID]?.length || 0) > 0}
-		/>
-	{/if}
+	<li
+		animate:flip={{ duration: 150, easing: cubicInOut }}
+		class={[
+			(changes[channelID] || []).find((c) => c.action === 'delete') && 'line-through',
+			changes[channelID]?.length > 0 && 'italic',
+		]}
+	>
+		<ChannelEditor channel={channels[channelID]} {rename} {del} />
+	</li>
 {/each}
 <li>
 	{#if creatingChannel}

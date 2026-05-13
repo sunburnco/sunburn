@@ -35,6 +35,7 @@ export const createServer = async (instanceID: string, serverName: string) => {
 		server: serverID,
 		name: 'everyone',
 		ordinal: 0,
+		color: '#00000000',
 	} as ServerRolesRecord);
 
 	for (const permission of [

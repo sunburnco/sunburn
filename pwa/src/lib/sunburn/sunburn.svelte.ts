@@ -1,6 +1,7 @@
 import type { DateTime } from 'luxon';
 import { type SvelteSet } from 'svelte/reactivity';
 
+import type { Permissions } from '$lib/constants';
 import type {
 	ChannelsRecord,
 	MessagesRecord,
@@ -21,7 +22,7 @@ export type ChannelMessage_t = WithRequired<Omit<MessagesRecord, 'to'>, 'channel
 
 export type Role_t = {
 	record: ServerRolesRecord;
-	permissions: SvelteSet<string>;
+	permissions: SvelteSet<Permissions>;
 };
 
 export type Channel_t = {

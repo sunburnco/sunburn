@@ -56,11 +56,14 @@
 			ondblclick={() => {
 				editing = true;
 			}}
-			class="group flex w-full flex-row justify-between gap-1 active:bg-inherit active:text-current"
+			class="group flex w-full flex-row items-center justify-between gap-1 active:bg-inherit active:text-current"
 		>
 			<div
-				class="size-4 rounded-box border border-base-content/50"
-				style:background-color={roleColor}
+				class="aspect-square size-4 rounded-box border border-base-content/50"
+				{@attach (node) => {
+					// stop CSS injection
+					node.style.backgroundColor = roleColor;
+				}}
 			></div>
 			<div class="grow">{roleName}</div>
 			<button
@@ -105,6 +108,7 @@
 			<input
 				type="color"
 				title="Role Color"
+				defaultValue="#00000000"
 				bind:value={roleColor}
 				class="input input-sm aspect-square w-min px-0.5 py-0"
 			/>
@@ -136,10 +140,10 @@
 				onclick={() => {
 					editing = false;
 					roleName = role.name;
-					roleColor = role.color || '#000000';
+					roleColor = role.color || '#00000000';
 					// no ordinal because ordinal is managed by drag and drop
 					rename(role.id, role.name);
-					color(role.id, role.color || '#000000');
+					color(role.id, role.color || '#00000000');
 				}}
 				class="btn btn-square btn-outline btn-sm"
 			>

@@ -1,4 +1,5 @@
-import type { ChannelsRecord, ServerRolesRecord } from '$lib/pb-types';
+import type { Permissions } from '$lib/constants';
+import type { ChannelsRecord, ServerRolePermissionsRecord, ServerRolesRecord } from '$lib/pb-types';
 import { type Channel_t, type Instance_t, type Role_t, sunburn } from '$lib/sunburn/sunburn.svelte';
 
 import { debugPrefix } from './logPrefixes';
@@ -48,4 +49,38 @@ export const createRole = async (instanceID: Instance_t['id'], role: ServerRoles
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'creating role', role.id);
 	await sunburn[instanceID].pb.collection('serverRoles').create(role);
+};
+
+export const grantPermissionForRole = async (
+	instanceID: Instance_t['id'],
+	roleID: Role_t['record']['id'],
+	permission: Permissions,
+) => {
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), `granting ${permission} to role`, roleID);
+	await sunburn[instanceID].pb.collection('serverRolePermissions').create({
+		role: roleID,
+		permission,
+	} as ServerRolePermissionsRecord);
+};
+export const revokePermissionForRole = async (
+	instanceID: Instance_t['id'],
+	roleID: Role_t['record']['id'],
+	permission: Permissions,
+) => {
+	// eslint-disable-next-line no-console
+	console.debug(
+		...debugPrefix,
+		logFriendly(instanceID),
+		`revoking ${permission} from role`,
+		roleID,
+	);
+	// TODO I feel like there's a way to do this with one request
+	const rec = await sunburn[instanceID].pb.collection('serverRolePermissions').getFirstListItem(
+		sunburn[instanceID].pb.filter('role = {:roleID} && permission = {:permission}', {
+			roleID,
+			permission,
+		}),
+	);
+	await sunburn[instanceID].pb.collection('serverRolePermissions').delete(rec.id);
 };

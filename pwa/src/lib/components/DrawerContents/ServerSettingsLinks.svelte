@@ -36,6 +36,10 @@
 		<li><a href="#roles">Roles</a></li>
 	{/if}
 
+	{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_ROLE_PERMISSIONS)}
+		<li><a href="#permissions">Role Permissions</a></li>
+	{/if}
+
 	<li>
 		<a href="#danger">Danger Zone</a>
 	</li>

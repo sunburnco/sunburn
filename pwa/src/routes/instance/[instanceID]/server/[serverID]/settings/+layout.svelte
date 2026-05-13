@@ -30,10 +30,8 @@
 		</div>
 	</header>
 	<content class="relative flex grow items-center justify-center overflow-y-auto">
-		<div class="max-h-full overflow-y-auto">
-			<div class="mx-auto w-2xl max-w-11/12">
-				{@render children()}
-			</div>
+		<div class="mx-auto max-h-full w-2xl max-w-11/12">
+			{@render children()}
 		</div>
 	</content>
 </section>
