@@ -76,7 +76,12 @@
 <!-- TODO use env() and CSS safe areas -->
 <div class="drawer grow md:drawer-open">
 	<input id="rootDrawerInput" type="checkbox" class="drawer-toggle" />
-	<div class="drawer-content flex h-dvh flex-col items-center justify-center bg-base-300">
+	<div
+		class={[
+			'drawer-content flex h-dvh flex-col items-center justify-center',
+			'border-b border-base-content/50 bg-base-300 sm:border-0',
+		]}
+	>
 		{@render children()}
 		<div class="absolute top-0 left-0">
 			<label for="rootDrawerInput" class="drawer-button btn btn-square btn-ghost btn-sm md:hidden">
