@@ -99,6 +99,7 @@
 
 				'flex size-full items-center justify-center',
 				'col-start-1 row-start-1',
+				// 'transition-colors duration-700 ease-linear',
 
 				fallbackClassName,
 			]}

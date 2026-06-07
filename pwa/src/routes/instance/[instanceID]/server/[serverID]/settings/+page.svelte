@@ -19,6 +19,7 @@
 	import Meta from './Meta.svelte';
 	import RolePermissions from './RolePermissions.svelte';
 	import Roles from './Roles.svelte';
+	import Users from './Users.svelte';
 
 	// TODO add ctrl+enter shortcut to save
 
@@ -33,6 +34,7 @@
 		channels: false,
 		roles: false,
 		rolePermissions: false,
+		users: false,
 	});
 	const dirty = $derived(
 		Object.keys(dirtySections).some((k) => dirtySections[k as keyof typeof dirtySections]),
@@ -48,6 +50,9 @@
 			return;
 		},
 		rolePermissions: async () => {
+			return;
+		},
+		users: async () => {
 			return;
 		},
 	});
@@ -106,6 +111,11 @@
 				console.debug(...debugPrefix, logFriendly(instanceID), 'saving role permissions');
 				await saveFunctions.rolePermissions();
 			}
+			if (dirtySections.users) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), `saving users`);
+				await saveFunctions.users();
+			}
 
 			if (nav) {
 				// eslint-disable-next-line no-console
@@ -131,6 +141,7 @@
 			dirtySections.channels = false;
 			dirtySections.roles = false;
 			dirtySections.rolePermissions = false;
+			dirtySections.users = false;
 			// eslint-disable-next-line no-console
 			console.debug(...debugPrefix, logFriendly(instanceID), 'resuming navigation');
 			// thanks @rchaoz https://discord.com/channels/457912077277855764/1023340103071965194/threads/1270482626502983680
@@ -191,6 +202,10 @@
 			/>
 		{/if}
 
+		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_MEMBERS)}
+			<Users bind:dirty={dirtySections.users} bind:saveChanges={saveFunctions.users} />
+		{/if}
+
 		<li class="mt-4 menu-title" id="danger">Danger Zone</li>
 		<li class="w-full">
 			{@render ButtonSetting({
@@ -210,7 +225,6 @@
 <div
 	class={[
 		'w-full rounded-box border border-base-content/50 bg-base-200 px-3 py-2 drop-shadow-md',
-		// 'absolute bottom-4 left-1/2 -translate-x-1/2',
 		'sticky bottom-4',
 		'transition-opacity duration-150',
 		dirty ? 'opacity-100' : 'opacity-0',

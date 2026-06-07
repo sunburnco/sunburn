@@ -87,7 +87,7 @@
 </script>
 
 <div class="p-2">
-	<input class="input" placeholder="Search for a user..." bind:value={dmSearch} />
+	<input type="search" class="input" placeholder="Search for a user..." bind:value={dmSearch} />
 </div>
 
 <ul class="menu w-full">

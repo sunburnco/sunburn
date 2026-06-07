@@ -5,34 +5,36 @@
 import type PocketBase from 'pocketbase';
 import type { RecordService } from 'pocketbase';
 
-export enum Collections {
-	Authorigins = '_authOrigins',
-	Externalauths = '_externalAuths',
-	Mfas = '_mfas',
-	Otps = '_otps',
-	Permissions = '_permissions',
-	Superusers = '_superusers',
-	ChannelRoleAssignments = 'channelRoleAssignments',
-	Channels = 'channels',
-	CumulativeChannelPermissions = 'cumulativeChannelPermissions',
-	CumulativeServerPermissions = 'cumulativeServerPermissions',
-	Deleted = 'deleted',
-	DmListFrom = 'dmListFrom',
-	DmListTo = 'dmListTo',
-	Invites = 'invites',
-	MaxOrdinal = 'maxOrdinal',
-	Messages = 'messages',
-	PinnedDMs = 'pinnedDMs',
-	PinnedServers = 'pinnedServers',
-	ServerCounts = 'serverCounts',
-	ServerQuotas = 'serverQuotas',
-	ServerRoleAssignments = 'serverRoleAssignments',
-	ServerRolePermissions = 'serverRolePermissions',
-	ServerRoles = 'serverRoles',
-	Servers = 'servers',
-	Users = 'users',
-	VoiceParticipants = 'voiceParticipants',
-}
+export const Collections = {
+	Authorigins: '_authOrigins',
+	Externalauths: '_externalAuths',
+	Mfas: '_mfas',
+	Otps: '_otps',
+	Permissions: '_permissions',
+	Superusers: '_superusers',
+	ChannelRoleAssignments: 'channelRoleAssignments',
+	Channels: 'channels',
+	CumulativeChannelPermissions: 'cumulativeChannelPermissions',
+	CumulativeServerPermissions: 'cumulativeServerPermissions',
+	Deleted: 'deleted',
+	DmListFrom: 'dmListFrom',
+	DmListTo: 'dmListTo',
+	Invites: 'invites',
+	MaxOrdinal: 'maxOrdinal',
+	Messages: 'messages',
+	PinnedDMs: 'pinnedDMs',
+	PinnedServers: 'pinnedServers',
+	ServerCounts: 'serverCounts',
+	ServerMembers: 'serverMembers',
+	ServerQuotas: 'serverQuotas',
+	ServerRoleAssignments: 'serverRoleAssignments',
+	ServerRolePermissions: 'serverRolePermissions',
+	ServerRoles: 'serverRoles',
+	Servers: 'servers',
+	Users: 'users',
+	VoiceParticipants: 'voiceParticipants',
+} as const;
+export type Collections = (typeof Collections)[keyof typeof Collections];
 
 // Alias types for improved usability
 export type IsoDateString = string;
@@ -174,7 +176,6 @@ export type InvitesRecord = {
 	created: IsoAutoDateString;
 	id: string;
 	server: RecordIdString;
-	slug: string;
 	updated: IsoAutoDateString;
 };
 
@@ -216,6 +217,13 @@ export type ServerCountsRecord = {
 	id: string;
 	serverCount?: number;
 	user: RecordIdString;
+};
+
+export type ServerMembersRecord<Tpermissions = unknown> = {
+	id: string;
+	permissions?: null | Tpermissions;
+	server: RecordIdString;
+	user?: RecordIdString;
 };
 
 export type ServerQuotasRecord = {
@@ -333,6 +341,10 @@ export type PinnedServersResponse<Texpand = unknown> = Required<PinnedServersRec
 	BaseSystemFields<Texpand>;
 export type ServerCountsResponse<Texpand = unknown> = Required<ServerCountsRecord> &
 	BaseSystemFields<Texpand>;
+export type ServerMembersResponse<Tpermissions = unknown, Texpand = unknown> = Required<
+	ServerMembersRecord<Tpermissions>
+> &
+	BaseSystemFields<Texpand>;
 export type ServerQuotasResponse<Texpand = unknown> = Required<ServerQuotasRecord> &
 	BaseSystemFields<Texpand>;
 export type ServerRoleAssignmentsResponse<Texpand = unknown> =
@@ -369,6 +381,7 @@ export type CollectionRecords = {
 	pinnedDMs: PinnedDMsRecord;
 	pinnedServers: PinnedServersRecord;
 	serverCounts: ServerCountsRecord;
+	serverMembers: ServerMembersRecord;
 	serverQuotas: ServerQuotasRecord;
 	serverRoleAssignments: ServerRoleAssignmentsRecord;
 	serverRolePermissions: ServerRolePermissionsRecord;
@@ -398,6 +411,7 @@ export type CollectionResponses = {
 	pinnedDMs: PinnedDMsResponse;
 	pinnedServers: PinnedServersResponse;
 	serverCounts: ServerCountsResponse;
+	serverMembers: ServerMembersResponse;
 	serverQuotas: ServerQuotasResponse;
 	serverRoleAssignments: ServerRoleAssignmentsResponse;
 	serverRolePermissions: ServerRolePermissionsResponse;

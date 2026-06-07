@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { cubicOut } from 'svelte/easing';
 	import { SvelteSet } from 'svelte/reactivity';
+	import { fade } from 'svelte/transition';
 
 	import { page } from '$app/state';
 	import { Permissions } from '$lib/constants';
@@ -67,7 +69,7 @@
 		),
 	);
 
-	const onEdit = (roleID: string, permission: Permissions, checked: boolean) => {
+	const onEdit = (roleID: Role_t['record']['id'], permission: Permissions, checked: boolean) => {
 		changes[roleID] = changes[roleID] ?? [];
 		if (checked) {
 			// if the role originally had the permission, and it's trying to be readded, remove the REVOKE change
@@ -183,6 +185,7 @@
 				</label>
 			{/each}
 		</div>
+
 		<div
 			class={[
 				'max-h-[90dvh] overflow-y-auto rounded-box border border-base-content/50',
@@ -193,6 +196,7 @@
 		>
 			{#if !activeRoleID}
 				<div
+					out:fade={{ duration: 150, easing: cubicOut }}
 					class="absolute inset-0 flex items-center justify-center bg-base-300 text-base-content/50 select-none"
 				>
 					Choose a role
