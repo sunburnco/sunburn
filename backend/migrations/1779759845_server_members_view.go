@@ -14,12 +14,16 @@ func init() {
 		collection := core.NewViewCollection("serverMembers")
 		collection.ViewQuery = `SELECT
   (ROW_NUMBER() OVER(
-  	ORDER BY
-   		CASE WHEN u.name IS NULL OR u.name = "" THEN u.handle
-     	ELSE u.name
-    END)
-  ) AS id,
+    ORDER BY
+    CASE
+      WHEN u.name IS NULL OR u.name = "" THEN u.handle
+      ELSE u.name
+      END
+    ASC
+  )) AS id,
   u.id user,
+  u.name name,
+  u.handle handle,
   csp.server,
   csp.permissions
 FROM
