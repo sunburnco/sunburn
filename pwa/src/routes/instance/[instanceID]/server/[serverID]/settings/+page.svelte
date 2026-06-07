@@ -206,7 +206,7 @@
 			<Users bind:dirty={dirtySections.users} bind:saveChanges={saveFunctions.users} />
 		{/if}
 
-		<li class="mt-4 menu-title" id="danger">Danger Zone</li>
+		<li class="mt-4 menu-title first:mt-0" id="danger">Danger Zone</li>
 		<li class="w-full">
 			{@render ButtonSetting({
 				name: 'Leave Server',

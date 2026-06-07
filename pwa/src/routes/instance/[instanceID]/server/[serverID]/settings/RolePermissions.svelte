@@ -141,7 +141,7 @@
 	};
 </script>
 
-<li class="menu-title" id="permissions">Role Permissions</li>
+<li class="mt-4 menu-title first:mt-0" id="permissions">Role Permissions</li>
 <li>
 	<div
 		class="grid cursor-default grid-cols-2 grid-rows-1 items-stretch gap-2 hover:bg-inherit active:bg-inherit active:text-current"

@@ -317,7 +317,7 @@
 	};
 </script>
 
-<li class="menu-title" id="roles">Roles</li>
+<li class="mt-4 menu-title first:mt-0" id="roles">Roles</li>
 {#each sortedRoleIDs as roleID, index (roleID)}
 	<li
 		animate:flip={{ duration: 150, easing: cubicInOut }}

@@ -158,7 +158,7 @@
 	};
 </script>
 
-<li class="menu-title">Users</li>
+<li class="mt-4 menu-title first:mt-0">Users</li>
 <li>
 	<div class="flex w-full hover:bg-inherit active:bg-inherit active:text-current">
 		<input
@@ -187,6 +187,7 @@
 					Loading <LucideLoaderCircle class="size-3 animate-spin" />
 				</div>
 			{:then memberList}
+				<!-- TODO does this need virtual list? -->
 				{#each memberList as member (member.user)}
 					<label
 						class={[

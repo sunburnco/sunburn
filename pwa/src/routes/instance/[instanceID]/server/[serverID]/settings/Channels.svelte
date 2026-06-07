@@ -230,7 +230,7 @@
 	};
 </script>
 
-<li class="menu-title" id="channels">Channels</li>
+<li class="mt-4 menu-title first:mt-0" id="channels">Channels</li>
 {#each Object.keys(channels) as channelID (channelID)}
 	<li
 		animate:flip={{ duration: 150, easing: cubicInOut }}
