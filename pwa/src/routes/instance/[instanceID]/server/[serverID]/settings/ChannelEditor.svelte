@@ -37,7 +37,12 @@
 
 {#if channel}
 	{#if !editing}
-		<div class="flex w-full flex-row justify-between gap-1 active:bg-inherit active:text-current">
+		<div
+			ondblclick={() => {
+				editing = true;
+			}}
+			class="flex w-full flex-row justify-between gap-1 active:bg-inherit active:text-current"
+		>
 			{#if channel.type === ChannelType.TEXT}
 				<LucideHash class="inline size-4" />
 			{:else if channel.type === ChannelType.VOICE}

@@ -158,7 +158,7 @@
 	};
 </script>
 
-<li class="mt-4 menu-title first:mt-0">Users</li>
+<li class="mt-4 menu-title first:mt-0" id="users">Users</li>
 <li>
 	<div class="flex w-full hover:bg-inherit active:bg-inherit active:text-current">
 		<input

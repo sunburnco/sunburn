@@ -16,6 +16,7 @@
 	import { logFriendly } from '$lib/utils/username';
 
 	import Channels from './Channels.svelte';
+	import Invites from './Invites.svelte';
 	import Meta from './Meta.svelte';
 	import RolePermissions from './RolePermissions.svelte';
 	import Roles from './Roles.svelte';
@@ -31,6 +32,7 @@
 
 	const dirtySections = $state({
 		meta: false,
+		invites: false,
 		channels: false,
 		roles: false,
 		rolePermissions: false,
@@ -41,6 +43,9 @@
 	);
 	const saveFunctions = $state({
 		meta: async () => {
+			return;
+		},
+		invites: async () => {
 			return;
 		},
 		channels: async () => {
@@ -96,6 +101,11 @@
 				console.debug(...debugPrefix, logFriendly(instanceID), 'saving meta');
 				await saveFunctions.meta();
 			}
+			if (dirtySections.invites) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving invites');
+				await saveFunctions.invites();
+			}
 			if (dirtySections.channels) {
 				// eslint-disable-next-line no-console
 				console.debug(...debugPrefix, logFriendly(instanceID), 'saving channels');
@@ -138,6 +148,7 @@
 	const exitWithoutSaving = () => {
 		if (nav) {
 			dirtySections.meta = false;
+			dirtySections.invites = false;
 			dirtySections.channels = false;
 			dirtySections.roles = false;
 			dirtySections.rolePermissions = false;
@@ -185,6 +196,15 @@
 	<ul class="menu m-0 w-full p-0">
 		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_SERVER)}
 			<Meta bind:dirty={dirtySections.meta} />
+		{/if}
+
+		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_SERVER, Permissions.CREATE_INVITES)}
+			<Invites
+				bind:dirty={dirtySections.invites}
+				bind:saveChanges={saveFunctions.invites}
+				showList={isOwner(instanceID, serverID) ||
+					hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_SERVER)}
+			/>
 		{/if}
 
 		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_CHANNELS)}
