@@ -230,6 +230,7 @@
 		changes[roleID].push({ action: 'delete' });
 	};
 	// NOT looking forward to recreating this for channel ordinals
+	// TODO ts is so wonky -- rewrite
 	const rebalanceOrdinals = () => {
 		const start = [] as { roleID: string; o: number }[];
 		for (const roleID of Object.keys(roles)) {

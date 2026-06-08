@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import type { RecordSubscription } from 'pocketbase';
 
 import type {
@@ -55,6 +56,9 @@ export const onMessage = (
 		if (record.to) {
 			const recipientID = record.to === sunburn[instanceID].myID ? record.from : record.to;
 			// dm
+			if (action === 'create') {
+				sunburn[instanceID].dms[recipientID].updated = DateTime.now();
+			}
 			setDMMessages(instanceID, recipientID, [record]);
 		} else if (record.channel) {
 			// channel

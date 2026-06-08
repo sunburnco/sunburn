@@ -195,7 +195,7 @@
 
 	<ul class="menu m-0 w-full p-0">
 		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_SERVER)}
-			<Meta bind:dirty={dirtySections.meta} />
+			<Meta bind:dirty={dirtySections.meta} bind:saveChanges={saveFunctions.meta} />
 		{/if}
 
 		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_SERVER, Permissions.CREATE_INVITES)}

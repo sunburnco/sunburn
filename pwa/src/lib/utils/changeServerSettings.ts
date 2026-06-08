@@ -9,12 +9,23 @@ import {
 	type Channel_t,
 	type Instance_t,
 	type Role_t,
+	type Server_t,
 	type ServerMember_t,
 	sunburn,
 } from '$lib/sunburn/sunburn.svelte';
 
 import { debugPrefix } from './logPrefixes';
 import { logFriendly } from './username';
+
+export const saveServersRecord = async (
+	instanceID: Instance_t['id'],
+	server: Server_t['record'],
+	icon?: File,
+) => {
+	// eslint-disable-next-line no-console
+	console.debug(...debugPrefix, logFriendly(instanceID), 'saving server record');
+	await sunburn[instanceID].pb.collection('servers').update(server.id, { ...server, icon });
+};
 
 // TODO none of these requests explicitly set `requestKey` to `null` -- this may cause issues
 export const renameChannel = async (

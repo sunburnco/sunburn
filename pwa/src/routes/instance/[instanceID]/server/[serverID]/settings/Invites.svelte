@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { LucideLoaderCircle, LucidePlus } from '@lucide/svelte';
+	import {
+		LucideCheck,
+		LucideCopy,
+		LucideLoaderCircle,
+		LucidePlus,
+		LucideUserPlus,
+	} from '@lucide/svelte';
 
 	import { page } from '$app/state';
 	import type { InvitesRecord } from '$lib/pb-types';
@@ -21,6 +27,7 @@
 	} = $props();
 
 	let inviteLoading = $state(false);
+	let localInviteCopied = $state(false);
 
 	const instanceID = $derived(page.params.instanceID || '');
 	const serverID = $derived(page.params.serverID || '');
@@ -153,29 +160,55 @@
 	{/await}
 {/if}
 <li>
-	<button
-		class="flex w-full justify-center disabled:pointer-events-none"
-		disabled={inviteLoading}
-		onclick={async () => {
-			inviteLoading = true;
-			const rec = await createInvite(instanceID, serverID);
-			if (rec) {
-				changes[rec.id] = [
-					{
-						action: 'created',
-						value: rec,
-					},
-				];
-			}
-			inviteLoading = false;
-		}}
-	>
-		{#if !inviteLoading}
-			<LucidePlus class="size-4" />
-			Add Invite
-		{:else}
-			Loading
-			<LucideLoaderCircle class="size-4 animate-spin" />
-		{/if}
-	</button>
+	{#if !showList && Object.keys(changes).filter((inviteID) => changes[inviteID].findIndex((c) => c.action === 'created') > -1).length > 0}
+		{@const inviteID = Object.keys(changes).filter(
+			(inviteID) => changes[inviteID].findIndex((c) => c.action === 'created') > -1,
+		)[0]}
+		<!-- if the user created an invite and doesn't have MANAGE_SERVER (i.e., can't see list of invites), replace the create button with the invite they made -->
+		<div class="flex w-full flex-row justify-between gap-1 active:bg-inherit active:text-current">
+			<LucideUserPlus class="inline size-4" />
+			<p class="grow">{inviteID}</p>
+			<button
+				title="Copy"
+				class="btn btn-square btn-sm"
+				onclick={() => {
+					localInviteCopied = true;
+					setTimeout(() => (localInviteCopied = false), 450);
+					navigator.clipboard.writeText(`${instanceID}/${inviteID}`);
+				}}
+			>
+				{#if !localInviteCopied}
+					<LucideCopy class="size-4" />
+				{:else}
+					<LucideCheck class="size-4" />
+				{/if}
+			</button>
+		</div>
+	{:else}
+		<button
+			class="flex w-full justify-center disabled:pointer-events-none"
+			disabled={inviteLoading}
+			onclick={async () => {
+				inviteLoading = true;
+				const rec = await createInvite(instanceID, serverID);
+				if (rec) {
+					changes[rec.id] = [
+						{
+							action: 'created',
+							value: rec,
+						},
+					];
+				}
+				inviteLoading = false;
+			}}
+		>
+			{#if !inviteLoading}
+				<LucidePlus class="size-4" />
+				Add Invite
+			{:else}
+				Loading
+				<LucideLoaderCircle class="size-4 animate-spin" />
+			{/if}
+		</button>
+	{/if}
 </li>
