@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { LucideLoaderCircle, LucideLogOut } from '@lucide/svelte';
+	import { LucideLoaderCircle } from '@lucide/svelte';
 	import type { BeforeNavigate } from '@sveltejs/kit';
-	import { type Component } from 'svelte';
 
 	import { beforeNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -16,6 +15,7 @@
 	import { logFriendly } from '$lib/utils/username';
 
 	import Channels from './Channels.svelte';
+	import Danger from './Danger.svelte';
 	import Invites from './Invites.svelte';
 	import Meta from './Meta.svelte';
 	import RolePermissions from './RolePermissions.svelte';
@@ -68,14 +68,6 @@
 			? new Set()
 			: cumulativeServerPermissions(instanceID, serverID, sunburn[instanceID].myID),
 	);
-
-	type ButtonSetting_t = {
-		name: string;
-		description?: string;
-		icon?: Component;
-		onclick: (() => void) | (() => Promise<void>);
-		color?: 'btn-neutral' | 'btn-error';
-	};
 
 	beforeNavigate((navigation) => {
 		if (dirty) {
@@ -168,18 +160,19 @@
 <dialog class="modal" bind:this={confirmDialog}>
 	<div class="modal-box flex flex-col gap-2">
 		{#if saving}
-			<h1 class="text-xl font-bold">Unsaved Changes</h1>
+			<h1 class="font-display text-xl font-bold">Unsaved Changes</h1>
 			<div class="mt-2 flex items-center gap-2">
 				Saving <LucideLoaderCircle class="inline size-4 animate-spin" />
 			</div>
-		{:else}<h1 class="text-xl font-bold">Unsaved Changes</h1>
+		{:else}
+			<h1 class="font-display text-xl font-bold">Unsaved Changes</h1>
 			<p>You have unsaved changes. What do you want to do?</p>
 			<div class="mt-2 flex flex-col items-stretch justify-end gap-2 sm:flex-row">
-				<button class="btn btn-primary" onclick={saveAll}>Save and Exit</button>
-				<button class="btn btn-outline" onclick={exitWithoutSaving}>Discard Changes</button>
 				<form method="dialog">
-					<button class="btn w-full btn-outline" onclick={() => (nav = null)}>Cancel</button>
+					<button class="btn w-full" onclick={() => (nav = null)}>Cancel</button>
 				</form>
+				<button class="btn" onclick={exitWithoutSaving}>Discard Changes</button>
+				<button class="btn btn-primary" onclick={saveAll}>Save and Exit</button>
 			</div>
 		{/if}
 	</div>
@@ -226,16 +219,7 @@
 			<Users bind:dirty={dirtySections.users} bind:saveChanges={saveFunctions.users} />
 		{/if}
 
-		<li class="mt-4 menu-title first:mt-0" id="danger">Danger Zone</li>
-		<li class="w-full">
-			{@render ButtonSetting({
-				name: 'Leave Server',
-				description: 'You cannot rejoin without an invite',
-				onclick: () => alert('hi'),
-				color: 'btn-error',
-				icon: LucideLogOut,
-			})}
-		</li>
+		<Danger />
 	</ul>
 
 	<!-- <p aria-hidden class="h-14.5 w-full text-center text-base-300">
@@ -261,21 +245,3 @@
 		</button>
 	</div>
 </div>
-
-{#snippet ButtonSetting(setting: ButtonSetting_t)}
-	<label class="flex w-full hover:bg-transparent active:bg-transparent active:text-current">
-		<label class="flex grow cursor-pointer items-center justify-between gap-4">
-			<div class="min-w-1/2">
-				<p class="font-bold text-wrap select-none">{setting.name}</p>
-				{#if setting.description}
-					<p class="text-wrap opacity-60 select-none">
-						{setting.description}
-					</p>
-				{/if}
-			</div>
-			<button class={['btn btn-square', setting.color]} onclick={setting.onclick}>
-				<setting.icon class="size-4" />
-			</button>
-		</label>
-	</label>
-{/snippet}
