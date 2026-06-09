@@ -78,11 +78,15 @@ func main() {
 	})
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
-		// TODO move to /api/sb/...
+		// TODO deprecate these first two
 		se.Router.POST("/lkwebhook", livekit.LiveKitWebhook)
 		se.Router.POST("/lk/{channel}/token", livekit.LiveKitToken)
 
+		se.Router.POST("/api/sb/lkwebhook", livekit.LiveKitWebhook)
+		se.Router.POST("/api/sb/lk/{channel}/token", livekit.LiveKitToken)
+
 		se.Router.POST("/api/sb/acceptInvite/{slug}", handlers.AcceptInvite)
+		se.Router.POST("/api/sb/servers/{serverID}/leave", handlers.LeaveServer)
 
 		return se.Next()
 	})
