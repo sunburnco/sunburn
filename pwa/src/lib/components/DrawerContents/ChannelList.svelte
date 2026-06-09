@@ -9,8 +9,14 @@
 	import { ConnectionState } from 'livekit-client';
 	import { DateTime } from 'luxon';
 
-	import { ChannelType } from '$lib/constants';
+	import { ChannelType, Permissions } from '$lib/constants';
 	import { call } from '$lib/sunburn/call.svelte';
+	import {
+		cumulativeChannelPermissions,
+		cumulativeServerPermissions,
+		hasPerm,
+		isOwner,
+	} from '$lib/sunburn/cumulativePermissions';
 	import { type Channel_t, sunburn } from '$lib/sunburn/sunburn.svelte';
 	import { nameOrHandle } from '$lib/utils/username';
 
@@ -29,9 +35,27 @@
 		}
 
 		const ret: { instanceID: string; channelID: string; record: Channel_t['record'] }[] = [];
+		const csp = cumulativeServerPermissions(instanceID, serverID, sunburn[instanceID].myID);
 
 		for (const channelID of Object.keys(sunburn[instanceID].servers[serverID].channels)) {
 			if (!(channelID in sunburn[instanceID].servers[serverID].channels)) {
+				continue;
+			}
+			// although users with `MANAGE_CHANNEL` perm can "see" the channel for the sake of management, they may not be able to read messages
+			// skip returning channels with inadequate permissions
+			const ccp = cumulativeChannelPermissions(
+				instanceID,
+				serverID,
+				channelID,
+				sunburn[instanceID].myID,
+			);
+			if (
+				!(
+					isOwner(instanceID, serverID) ||
+					hasPerm(ccp, Permissions.CHANNEL_READ) ||
+					hasPerm(csp, Permissions.ADMINISTRATOR)
+				)
+			) {
 				continue;
 			}
 			ret.push({

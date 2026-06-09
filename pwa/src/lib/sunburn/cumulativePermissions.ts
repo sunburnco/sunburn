@@ -48,8 +48,7 @@ export const cumulativeChannelPermissions = (
 
 	for (const roleID of commonRoleIDs) {
 		for (const permissionID of sunburn[instanceID].servers[serverID].roles[roleID].permissions) {
-			if (sunburn[instanceID].permissionDefinitions[permissionID].isServerPermission)
-				perms.add(permissionID);
+			perms.add(permissionID);
 		}
 	}
 
