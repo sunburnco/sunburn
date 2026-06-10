@@ -1,5 +1,6 @@
 import type { Permissions } from '$lib/constants';
 import type {
+	ChannelRoleAssignmentsRecord,
 	ChannelsRecord,
 	ServerRoleAssignmentsRecord,
 	ServerRolePermissionsRecord,
@@ -144,4 +145,43 @@ export const removeRoleFromUser = async (
 		}),
 	);
 	await sunburn[instanceID].pb.collection('serverRoleAssignments').delete(rec.id);
+};
+
+export const assignRoleToChannel = async (
+	instanceID: Instance_t['id'],
+	channelID: Channel_t['record']['id'],
+	roleID: Role_t['record']['id'],
+) => {
+	// eslint-disable-next-line no-console
+	console.debug(
+		...debugPrefix,
+		logFriendly(instanceID),
+		`assigning role ${roleID} to channel`,
+		channelID,
+	);
+	await sunburn[instanceID].pb.collection('channelRoleAssignments').create({
+		channel: channelID,
+		role: roleID,
+	} as ChannelRoleAssignmentsRecord);
+};
+export const removeRoleFromChannel = async (
+	instanceID: Instance_t['id'],
+	channelID: Channel_t['record']['id'],
+	roleID: Role_t['record']['id'],
+) => {
+	// eslint-disable-next-line no-console
+	console.debug(
+		...debugPrefix,
+		logFriendly(instanceID),
+		`removing role ${roleID} from channel`,
+		channelID,
+	);
+	// TODO single request?
+	const rec = await sunburn[instanceID].pb.collection('channelRoleAssignments').getFirstListItem(
+		sunburn[instanceID].pb.filter('channel = {:channelID} && role = {:roleID}', {
+			channelID,
+			roleID,
+		}),
+	);
+	await sunburn[instanceID].pb.collection('channelRoleAssignments').delete(rec.id);
 };

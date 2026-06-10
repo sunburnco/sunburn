@@ -34,6 +34,7 @@
 
 	{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_CHANNELS)}
 		<li><a href="#channels">Channels</a></li>
+		<li><a href="#channelAccess">Channel Access</a></li>
 	{/if}
 
 	{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_ROLES)}

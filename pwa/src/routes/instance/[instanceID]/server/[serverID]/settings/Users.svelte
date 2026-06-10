@@ -176,7 +176,7 @@
 	>
 		<div
 			class={[
-				'max-h-[90dvh] overflow-y-auto rounded-box border border-base-content/50',
+				'max-h-[90dvh] min-h-36 overflow-y-auto rounded-box border border-base-content/50',
 				'shadow-[inset_0_0_0.5rem_rgba(0,0,0,0.5)]',
 				'flex flex-col gap-1 p-1',
 				'has-focus:ring-2',

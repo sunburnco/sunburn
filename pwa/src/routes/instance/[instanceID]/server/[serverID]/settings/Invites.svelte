@@ -148,14 +148,14 @@
 				pendingDelete={(changes[invite.id] || []).find((c) => c.action === 'pendingDelete') !==
 					undefined}
 			/>
-		{:else}
+			<!-- {:else}
 			<li>
 				<p
 					class="text-base-content/50 flex justify-center hover:bg-inherit active:bg-inherit active:text-current pointer-events-none"
 				>
 					Nothing to display
 				</p>
-			</li>
+			</li> -->
 		{/each}
 	{/await}
 {/if}

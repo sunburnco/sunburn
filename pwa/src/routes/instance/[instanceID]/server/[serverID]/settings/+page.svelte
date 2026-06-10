@@ -14,6 +14,7 @@
 	import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
 	import { logFriendly } from '$lib/utils/username';
 
+	import ChannelAccess from './ChannelAccess.svelte';
 	import Channels from './Channels.svelte';
 	import Danger from './Danger.svelte';
 	import Invites from './Invites.svelte';
@@ -34,6 +35,7 @@
 		meta: false,
 		invites: false,
 		channels: false,
+		channelAccess: false,
 		roles: false,
 		rolePermissions: false,
 		users: false,
@@ -49,6 +51,9 @@
 			return;
 		},
 		channels: async () => {
+			return;
+		},
+		channelAccess: async () => {
 			return;
 		},
 		roles: async () => {
@@ -103,6 +108,11 @@
 				console.debug(...debugPrefix, logFriendly(instanceID), 'saving channels');
 				await saveFunctions.channels();
 			}
+			if (dirtySections.channelAccess) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving channel access');
+				await saveFunctions.channelAccess();
+			}
 			if (dirtySections.roles) {
 				// eslint-disable-next-line no-console
 				console.debug(...debugPrefix, logFriendly(instanceID), 'saving roles');
@@ -142,6 +152,7 @@
 			dirtySections.meta = false;
 			dirtySections.invites = false;
 			dirtySections.channels = false;
+			dirtySections.channelAccess = false;
 			dirtySections.roles = false;
 			dirtySections.rolePermissions = false;
 			dirtySections.users = false;
@@ -202,6 +213,10 @@
 
 		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_CHANNELS)}
 			<Channels bind:dirty={dirtySections.channels} bind:saveChanges={saveFunctions.channels} />
+			<ChannelAccess
+				bind:dirty={dirtySections.channelAccess}
+				bind:saveChanges={saveFunctions.channelAccess}
+			/>
 		{/if}
 
 		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_ROLES)}
