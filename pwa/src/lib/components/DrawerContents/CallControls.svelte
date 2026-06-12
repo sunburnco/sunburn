@@ -67,9 +67,9 @@
 		>
 			<div class="text-base-content group-disabled:opacity-20">
 				{#if call.me?.screenShareUnmuted}
-					<LucideMonitorUp class="size-5" />
-				{:else}
 					<LucideMonitorX class="size-5" />
+				{:else}
+					<LucideMonitorUp class="size-5" />
 				{/if}
 			</div>
 		</button>
@@ -79,7 +79,7 @@
 			onclick={disconnect}
 			title="Disconnect"
 		>
-			<div class="text-base-content group-disabled:opacity-20">
+			<div class="group-disabled:text-base-content group-disabled:opacity-20">
 				<LucidePhoneMissed class="size-5" />
 			</div>
 		</button>

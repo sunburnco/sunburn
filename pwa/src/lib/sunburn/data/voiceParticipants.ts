@@ -1,5 +1,6 @@
 import { ClientResponseError } from 'pocketbase';
 
+import { ChannelType } from '$lib/constants';
 import type { VoiceParticipantsRecord, VoiceParticipantsResponse } from '$lib/pb-types';
 import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
 import { logFriendly } from '$lib/utils/username';
@@ -64,6 +65,10 @@ export const fetchVoiceParticipantsForChannel = async (
 
 	if (!(channelID in sunburn[instanceID].servers[serverID].channels)) {
 		await fetchChannel(instanceID, serverID, channelID, null);
+	}
+
+	if (sunburn[instanceID].servers[serverID].channels[channelID].record.type === ChannelType.TEXT) {
+		return;
 	}
 
 	try {

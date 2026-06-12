@@ -71,22 +71,22 @@
 		</div>
 		{#if cameraTrack}
 			<button
-				class="group/btn btn hidden btn-square btn-sm btn-secondary group-hover:flex group-focus:flex"
+				class="group/btn btn hidden btn-square btn-sm btn-primary group-hover:flex group-focus:flex"
 				onclick={() => {
 					setFocusedTracks(participantID, cameraTrack.trackSid);
 				}}
-				title={`Focus ${nameOrHandle(call.instanceID, participantID)}'s camera`}
+				title={`Focus ${nameOrHandle(call.instanceID, participantID, true)}'s camera`}
 			>
 				<LucideEye class="size-5" />
 			</button>
 		{/if}
 		{#if ssVideoTrack}
 			<button
-				class="group/btn btn hidden btn-square btn-sm btn-secondary group-hover:flex group-focus:flex"
+				class="group/btn btn hidden btn-square btn-sm btn-primary group-hover:flex group-focus:flex"
 				onclick={() => {
 					setFocusedTracks(participantID, ssVideoTrack.trackSid, ssAudioTrack?.trackSid);
 				}}
-				title={`Focus ${nameOrHandle(call.instanceID, participantID)}'s screen`}
+				title={`Focus ${nameOrHandle(call.instanceID, participantID, true)}'s screen`}
 			>
 				<LucideWallpaper class="size-5" />
 			</button>
