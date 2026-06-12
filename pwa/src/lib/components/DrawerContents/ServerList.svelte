@@ -3,6 +3,7 @@
 	import { ConnectionState } from 'livekit-client';
 
 	import { call } from '$lib/sunburn/call.svelte';
+	import { loadServer } from '$lib/sunburn/data/server';
 	import { type Server_t, sunburn } from '$lib/sunburn/sunburn.svelte';
 
 	import PBAvatar from '../PBAvatar.svelte';
@@ -23,27 +24,26 @@
 		return ret;
 	});
 
-	// loading is done by instance/[instanceID]/server/[serverID]/+layout.ts
-	// $effect(() => {
-	// 	if (!drawerState.instanceID || !drawerState.serverID) {
-	// 		return;
-	// 	}
+	$effect(() => {
+		if (!drawerState.instanceID || !drawerState.serverID) {
+			return;
+		}
 
-	// 	if (
-	// 		!(drawerState.instanceID in sunburn) ||
-	// 		!(drawerState.serverID in sunburn[drawerState.instanceID].servers)
-	// 	) {
-	// 		return;
-	// 	}
+		if (
+			!(drawerState.instanceID in sunburn) ||
+			!(drawerState.serverID in sunburn[drawerState.instanceID].servers)
+		) {
+			return;
+		}
 
-	// 	if (!sunburn[drawerState.instanceID].ready) {
-	// 		return;
-	// 	}
+		if (!sunburn[drawerState.instanceID].ready) {
+			return;
+		}
 
-	// 	if (!sunburn[drawerState.instanceID].servers[drawerState.serverID].loaded) {
-	// 		loadServer(drawerState.instanceID, drawerState.serverID, drawerState.serverID);
-	// 	}
-	// });
+		if (!sunburn[drawerState.instanceID].servers[drawerState.serverID].loaded) {
+			loadServer(drawerState.instanceID, drawerState.serverID, drawerState.serverID);
+		}
+	});
 </script>
 
 {#each serverList as server (server.serverID)}
