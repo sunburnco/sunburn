@@ -3,6 +3,7 @@ RUN npm install -g pnpm
 WORKDIR /app
 COPY ./pwa/package.json ./
 COPY ./pwa/pnpm-lock.yaml ./
+COPY ./pwa/pnpm-workspace.yaml ./
 RUN pnpm install
 COPY ./pwa .
 RUN pnpm run build
