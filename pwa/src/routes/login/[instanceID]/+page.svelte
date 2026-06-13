@@ -2,8 +2,8 @@
 	import { LucideCheck, LucideCloudAlert, LucideRedo2 } from '@lucide/svelte';
 	import { LucideLock } from '@lucide/svelte';
 	import { LucideLockOpen } from '@lucide/svelte';
-	import { type AuthMethodsList, BaseAuthStore, ClientResponseError } from 'pocketbase';
 	import PocketBase from 'pocketbase';
+	import { type AuthMethodsList, BaseAuthStore, ClientResponseError } from 'pocketbase';
 	import { onMount } from 'svelte';
 
 	import { goto } from '$app/navigation';
