@@ -70,7 +70,7 @@
 		"remark-parse": "^11.0.0",
 		"remark-rehype": "^11.1.2",
 		"runed": "^0.37.1",
-		"theme-change": "^3.0.3",
+		"theme-change": "=2.5.2",
 		"tiny-markdown-editor": "^0.2.28",
 		"tldts": "^7.4.2",
 		"unified": "^11.0.5",

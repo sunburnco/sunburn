@@ -1,3 +1,5 @@
+import { localSettings, saveLocalSettings } from '$lib/sunburn/localSettings.svelte';
+
 export const setTheme = (theme: string) => {
 	if (!window || !Document) {
 		return;
@@ -7,6 +9,8 @@ export const setTheme = (theme: string) => {
 		return;
 	}
 
+	localSettings.appearance.settings.theme.stringValue = theme;
+	saveLocalSettings();
 	window.localStorage.setItem('theme', theme);
 	document.documentElement.setAttribute('data-theme', theme);
 };
