@@ -223,7 +223,7 @@ Alice doesn't have access to our server yet because she's not a member.
 
 ![alice no servers](.images/alicenoservers.png)
 
-To give Alice membership, she needs to accept an invite to the server we just created. Use the "Server Settings" button below the channe list to create an invite.
+To give Alice membership, she needs to accept an invite to the server we just created. Use the "Server Settings" button below the channel list to create an invite.
 
 ![make invite](.images/makeinvite.png)
 
@@ -269,7 +269,7 @@ The server owner has access to all the channels, Employee Bob has access to `#wo
 
 You can also test to make sure calling is working. Here are some implementation and troubleshooting notes.
 
-- In the above configuration, LiveKit hosts a TURN server at port 5349. Traefik uses its existing TCP connection at 443 to listen for a HostSNI match, then terminates the TLS and forwards the packets to the LiveKit container's port 5349. Therefore, the only port you need to have open if 443.
+- In the above configuration, LiveKit hosts a TURN server at port 5349. Traefik uses its existing TCP connection at 443 to listen for a HostSNI match, then terminates the TLS and forwards the packets to the LiveKit container's port 5349. Therefore, the only port you need to have open is 443.
 - You can verify Traefik is routing traffic appropriately by doing the following.
   1. Change `traefik.tcp.services.lkdocs.loadbalancer.server.port=` to be a new port (e.g. `15349`). Make sure to `expose` that port in the `docker-compose.yml`.
   2. In the container, run a `nc` server at the new port. For example, `nc -l -p 15349`.
