@@ -1,4 +1,4 @@
-onlyBuiltDependencies:
-  - core-js
-  - esbuild
-  - sqlite3
+allowBuilds:
+  core-js: true
+minimumReleaseAgeExclude:
+  - tailwindcss@4.3.1
