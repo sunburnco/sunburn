@@ -44,6 +44,9 @@ func main() {
 	app.Cron().Add("cleanSoftDelete", "0 0 * * *", func() {
 		hooks.CronCleanSoftDeletes(app)
 	})
+	app.Cron().Add("checkForUpdates", "0 2 * * *", func() {
+		hooks.CronCheckVersion(app)
+	})
 
 	// require auth
 	app.OnRecordsListRequest().BindFunc(hooks.RequireAuthForListRequestEvent)
