@@ -2,6 +2,76 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.7.0 - 2026-06-13
+#### Features
+- (**backend**) add version check - (bb45e3b) - twopyramids
+- (**backend**) add endpoint to leave server - (4495ba0) - twopyramids
+- (**backend**) migrations for user settings - (972365c) - twopyramids
+- (**backend**) server invites - (04a908b) - twopyramids
+- (**backend**) add route and tests to accept invites - (eecccbe) - twopyramids
+- (**backend**) add handler to accept invites - (cc3ea74) - twopyramids
+- (**backend**) add tests for invites - (73fe03c) - twopyramids
+- <span style="background-color: #d73a49; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 0.85em;">BREAKING</span>(**backend**) create migration - (a0d70f6) - twopyramids
+- (**backend**) add channel type validator - (b56a7d4) - twopyramids
+- <span style="background-color: #d73a49; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 0.85em;">BREAKING</span>(**backend**) channel type migration - (8a2f756) - twopyramids
+- (**pwa**) channel role assignment mgmt - (399b7fa) - twopyramids
+- (**pwa**) leave server button works - (678f9cc) - twopyramids
+- (**pwa**) server invite mgmt - (1acca49) - twopyramids
+- (**pwa**) add server role assignment management - (818f68c) - twopyramids
+- (**pwa**) assign permissions to roles - (2883432) - twopyramids
+- (**pwa**) role ordinals - (eca4f3e) - twopyramids
+- (**pwa**) role creation and editing in UI, need ordinals - (8a66c3a) - twopyramids
+- (**pwa**) add warning banner for unsaved server changes - (002b25f) - twopyramids
+- (**pwa**) save channel settings - (3ad39e4) - twopyramids
+- (**pwa**) server settings track dirty state, has list of channel changes - (2eda083) - twopyramids
+- (**pwa**) start server settings - (83e6cf4) - twopyramids
+- (**pwa**) server creation - (6b05686) - twopyramids
+- (**pwa**) add server creation menu - (611eff6) - twopyramids
+- <span style="background-color: #d73a49; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 0.85em;">BREAKING</span>(**pwa**) update frontend to use new channel type column - (5820f64) - twopyramids
+- pr #49 - (6cee2d6) - twopyramids
+- <span style="background-color: #d73a49; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 0.85em;">BREAKING</span>server creation and server invites - (8d32dde) - twopyramids
+- can accept invites - (35b2aff) - twopyramids
+- <span style="background-color: #d73a49; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 0.85em;">BREAKING</span>channel types - (f8ae3a0) - twopyramids
+#### Bug Fixes
+- (**backend**) change checks for listing channels and cra; update tests - (6f9d853) - twopyramids
+- (**backend**) invite slug length - (1b8e7a8) - twopyramids
+- (**backend**) more fields in server member view - (364dd2c) - twopyramids
+- (**backend**) allow temporary negative ordinals) - (802c46a) - twopyramids
+- (**backend**) return e.Next(), not nil, on hook success - (3bbe84b) - twopyramids
+- (**backend**) allow listing invites - (3423762) - twopyramids
+- (**backend**) update test data with new channel type column - (43c8762) - twopyramids
+- (**backend**) update tests to include channel type field - (38c57e5) - twopyramids
+- (**pwa**) update UI to reflect changes to checks for listing channels - (e7ab95b) - twopyramids
+- (**pwa**) save meta changes, add meta icon upload, tweak invite mgmt for CREATE_INVITE w/o MANAGE_SERVER - (5b78602) - twopyramids
+- (**pwa**) add gap between settings headings - (f2f78a3) - twopyramids
+- (**pwa**) do not show users in sra mgmt 20 times - (3e239cc) - twopyramids
+- (**pwa**) add bottom border on app for mobile - (cb9acfb) - twopyramids
+- (**pwa**) reset new role form after creating role - (51f1de0) - twopyramids
+- (**pwa**) account ready check - (e48414d) - twopyramids
+- (**pwa**) account ready check - (5d6e5cb) - twopyramids
+- (**pwa**) remove unnecessary effects - (ba4e481) - twopyramids
+- copy pnpm-workspace.yaml to build context - (3246cbd) - twopyramids
+- remove unnecessary effects - (6c9f564) - twopyramids
+#### Revert
+- (**pwa**) load server from drawer components - (363b256) - twopyramids
+#### Continuous Integration
+- change node to 24 - (6d7f3b8) - twopyramids
+- change node to lts - (0d1d5dd) - twopyramids
+#### Refactoring
+- (**pwa**) move server creation function to lib - (4906b9a) - twopyramids
+#### Miscellaneous Chores
+- (**backend**) update deps - (ffa5fa3) - twopyramids
+- (**pwa**) revert some dep upgrades to comply with pnpm publish age policy - (2fdca03) - twopyramids
+- (**pwa**) revert some dep upgrades to comply with pnpm publish age policy - (592fefa) - twopyramids
+- (**pwa**) update deps - (f14bac2) - twopyramids
+- (**pwa**) update deps to latest minor version - (d86bbb8) - twopyramids
+- (**pwa**) clean up call buttons - (477d53a) - twopyramids
+- (**pwa**) remove old components - (d6e607b) - twopyramids
+- (**pwa**) refactor drawer component - (9e5f217) - twopyramids
+- remove app and .vscode dirs - (058dc8d) - twopyramids
+
+- - -
+
 ## v0.6.0 - 2026-03-02
 #### Features
 - (**pwa**) virtual list - (e231a2a) - twopyramids
