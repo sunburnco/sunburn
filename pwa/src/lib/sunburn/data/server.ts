@@ -73,6 +73,50 @@ export const fetchServer = async (
 	}
 };
 
+/**
+ * Use this function to fetch from the LIST endpoint, which will reflect membership.
+ * The VIEW endpoint allows all users to see all servers so they can fetch metadata when previewing an invite.
+ */
+export const fetchServerUsingList = async (
+	instanceID: Instance_t['id'],
+	serverID: Server_t['record']['id'],
+	_requestKey?: string | null,
+) => {
+	try {
+		const server = await sunburn[instanceID].pb
+			.collection('servers')
+			.getFirstListItem<
+				ServersResponse<ServersRecord>
+			>(sunburn[instanceID].pb.filter('id = {:serverID}', { serverID }), { requestKey: null });
+		setServerRecord(instanceID, serverID, server);
+	} catch (err) {
+		if (err instanceof ClientResponseError && err.status === 0) {
+			// eslint-disable-next-line no-console
+			console.debug(
+				...debugPrefix,
+				logFriendly(instanceID),
+				'duplicate fetch request aborted for server',
+				serverID,
+				_requestKey,
+			);
+			return;
+		} else if (err instanceof ClientResponseError && err.status >= 400 && err.status < 500) {
+			clearServerRecord(instanceID, serverID);
+			return;
+		}
+
+		// eslint-disable-next-line no-console
+		console.error(
+			...errorPrefix,
+			logFriendly(instanceID),
+			'error fetching server',
+			serverID,
+			'\n',
+			err,
+		);
+	}
+};
+
 export const fetchServersForInstance = async (
 	instanceID: Instance_t['id'],
 	_requestKey?: string | null,

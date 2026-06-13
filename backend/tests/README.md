@@ -46,13 +46,13 @@ utilization/quota: owner 1/2, others 0/0
 | ------------------------------------------ | :------: | :--------: | :------: | :--------: | :--------: | :-------------: | :---------------: | :------------------: |
 | (1) Create a server                        |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (2) Create a server with a different owner |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     ⛔     |       ⛔        |        ⛔         |          ⛔          |
-| (3) See server                             |    ⛔    |     🟩     |    🟩    |     🟩     |     🟩     |       🟩        |        🟩         |          🟩          |
+| (3) See server                             |    🟩    |     🟩     |    🟩    |     🟩     |     🟩     |       🟩        |        🟩         |          🟩          |
 | (4) Rename server                          |    ⛔    |     ⛔     |    🟩    |     🟩     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (5) Change server owner                    |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 | (6) Delete server                          |    ⛔    |     ⛔     |    ⛔    |     ⛔     |     🟩     |       ⛔        |        ⛔         |          ⛔          |
 
-🟩 x13<br />
-⛔ x35
+🟩 x14<br />
+⛔ x34
 
 ## Servers (Messages)
 

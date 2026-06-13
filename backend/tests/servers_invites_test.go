@@ -87,7 +87,7 @@ func TestServersInvites(t *testing.T) {
 			return &tests.ApiScenario{
 				Name:   fmt.Sprintf("%d.%d View an invite", testID+1, testColumn+1),
 				Method: http.MethodGet,
-				URL:    fmt.Sprintf("/api/collections/invites/records?filter=(slug='%s')", INVITE_MAIN_SLUG),
+				URL:    fmt.Sprintf("/api/collections/invites/records/%s", INVITE_MAIN_SLUG),
 				Headers: map[string]string{
 					"Authorization": authToken,
 				},
@@ -107,7 +107,6 @@ func TestServersInvites(t *testing.T) {
 				},
 				Body: rprintf(`{
 					"id": "%s",
-					"slug": "deleteme",
 					"server": "%s"
 				}`, DUMMY_IDA, SERVER_MAIN),
 				ExpectedStatus:  expectedStatuses[testID][testColumn],
@@ -127,7 +126,6 @@ func TestServersInvites(t *testing.T) {
 				},
 				Body: rprintf(`{
 							"id": "%s",
-							"slug": "deleteme",
 							"server": "%s"
 						}`, DUMMY_IDA, SERVER_MAIN),
 				ExpectedStatus:  expectedStatuses[testID][testColumn],

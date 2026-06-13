@@ -4,7 +4,6 @@
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { drawerState } from '$lib/drawerState.svelte';
 	import { type Instance_t, sunburn } from '$lib/sunburn/sunburn.svelte';
 	import { createServer } from '$lib/utils/createServer';
 	import { errorPrefix } from '$lib/utils/logPrefixes';
@@ -34,10 +33,6 @@
 			const { serverID } = await createServer(instanceID, serverName);
 
 			goto(`/instance/${instanceID}/server/${serverID}`);
-			drawerState.activeChannelID = '';
-			drawerState.activeDMID = '';
-			drawerState.activeInstanceID = instanceID;
-			drawerState.activeServerID = serverID;
 		} catch (err) {
 			serverCreationError = true;
 			// eslint-disable-next-line no-console

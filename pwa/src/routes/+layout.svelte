@@ -8,12 +8,9 @@
 
 	import { LucideMenu } from '@lucide/svelte';
 	import { Track } from 'livekit-client';
-	import { onMount } from 'svelte';
 	import { themeChange } from 'theme-change';
 
-	import { page } from '$app/state';
 	import AudioTrackPlayer from '$lib/components/AudioTrackPlayer.svelte';
-	import { drawerState } from '$lib/drawerState.svelte';
 	import { applicationStart } from '$lib/sunburn/applicationStart';
 	import { call, type CallUserID_t } from '$lib/sunburn/call.svelte';
 	import { localSettings } from '$lib/sunburn/localSettings.svelte';
@@ -23,19 +20,6 @@
 	import DrawerContents from './DrawerContents.svelte';
 
 	let { children } = $props();
-
-	onMount(() => {
-		drawerState.activeInstanceID = page.params.instanceID || '';
-		drawerState.activeServerID = page.params.serverID
-			? page.params.serverID
-			: page.route.id === '/settings'
-				? 'settings'
-				: page.route.id === '/new'
-					? 'new'
-					: 'dms';
-		drawerState.activeChannelID = page.params.channelID || '';
-		drawerState.activeDMID = page.params.dmID || '';
-	});
 
 	themeChange(false);
 	applicationStart();
@@ -92,7 +76,12 @@
 <!-- TODO use env() and CSS safe areas -->
 <div class="drawer grow md:drawer-open">
 	<input id="rootDrawerInput" type="checkbox" class="drawer-toggle" />
-	<div class="drawer-content flex h-dvh flex-col items-center justify-center bg-base-300">
+	<div
+		class={[
+			'drawer-content flex h-dvh flex-col items-center justify-center',
+			'border-b border-base-content/50 bg-base-300 sm:border-0',
+		]}
+	>
 		{@render children()}
 		<div class="absolute top-0 left-0">
 			<label for="rootDrawerInput" class="drawer-button btn btn-square btn-ghost btn-sm md:hidden">

@@ -235,7 +235,7 @@
 				<input
 					type="checkbox"
 					name={setting.name}
-					class="checkbox"
+					class="toggle"
 					bind:checked={setting.boolValue}
 					onchange={saveLocalSettings}
 				/>
@@ -259,7 +259,7 @@
 			{#if 'boolValue' in setting}
 				<input
 					name={setting.name}
-					class="checkbox"
+					class="toggle"
 					type="checkbox"
 					bind:checked={setting.boolValue}
 					onchange={saveLocalSettings}

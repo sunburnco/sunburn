@@ -2,8 +2,6 @@ import type { PermissionsRecord, UsersRecord } from '$lib/pb-types';
 
 import { type Channel_t, type Instance_t, type Server_t, sunburn } from './sunburn.svelte';
 
-// TODO test these functions
-
 export const cumulativeServerPermissions = (
 	instanceID: Instance_t['id'],
 	serverID: Server_t['record']['id'],
@@ -50,10 +48,22 @@ export const cumulativeChannelPermissions = (
 
 	for (const roleID of commonRoleIDs) {
 		for (const permissionID of sunburn[instanceID].servers[serverID].roles[roleID].permissions) {
-			if (sunburn[instanceID].permissionDefinitions[permissionID].isServerPermission)
-				perms.add(permissionID);
+			perms.add(permissionID);
 		}
 	}
 
 	return perms;
 };
+
+// HAAAANK!
+// HANK, DON'T ABBREVIATE `cumulativePermissions`
+// HAAAANK!
+//
+// youtu.be/S2U2vkXmJ54
+export const hasPerm = (cumulativePermissions: Set<string>, ...perms: string[]) =>
+	cumulativePermissions.intersection(new Set(perms)).size > 0;
+
+export const isOwner = (instanceID: Instance_t['id'], serverID: Server_t['record']['id']) =>
+	instanceID in sunburn &&
+	serverID in sunburn[instanceID].servers &&
+	sunburn[instanceID].servers[serverID].record.owner === sunburn[instanceID].myID;

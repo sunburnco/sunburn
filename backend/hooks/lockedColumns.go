@@ -12,7 +12,7 @@ func checkLockedColumns(lockedColumns []string, e *core.RecordEvent) error {
 			return fmt.Errorf("%s cannot be updated", col)
 		}
 	}
-	return nil
+	return e.Next()
 }
 
 func LockedColumns_ChannelRoleAssignments(e *core.RecordEvent) error {

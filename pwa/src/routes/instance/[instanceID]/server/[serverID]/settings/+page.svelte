@@ -1,0 +1,262 @@
+<script lang="ts">
+	import { LucideLoaderCircle } from '@lucide/svelte';
+	import type { BeforeNavigate } from '@sveltejs/kit';
+
+	import { beforeNavigate, goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import { Permissions } from '$lib/constants';
+	import {
+		cumulativeServerPermissions,
+		hasPerm,
+		isOwner,
+	} from '$lib/sunburn/cumulativePermissions';
+	import { sunburn } from '$lib/sunburn/sunburn.svelte';
+	import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
+	import { logFriendly } from '$lib/utils/username';
+
+	import ChannelAccess from './ChannelAccess.svelte';
+	import Channels from './Channels.svelte';
+	import Danger from './Danger.svelte';
+	import Invites from './Invites.svelte';
+	import Meta from './Meta.svelte';
+	import RolePermissions from './RolePermissions.svelte';
+	import Roles from './Roles.svelte';
+	import Users from './Users.svelte';
+
+	// TODO add ctrl+enter shortcut to save
+
+	let confirmDialog: HTMLDialogElement;
+	let nav = $state<BeforeNavigate | null>(null);
+
+	const instanceID = $derived(page.params.instanceID || '');
+	const serverID = $derived(page.params.serverID || '');
+
+	const dirtySections = $state({
+		meta: false,
+		invites: false,
+		channels: false,
+		channelAccess: false,
+		roles: false,
+		rolePermissions: false,
+		users: false,
+	});
+	const dirty = $derived(
+		Object.keys(dirtySections).some((k) => dirtySections[k as keyof typeof dirtySections]),
+	);
+	const saveFunctions = $state({
+		meta: async () => {
+			return;
+		},
+		invites: async () => {
+			return;
+		},
+		channels: async () => {
+			return;
+		},
+		channelAccess: async () => {
+			return;
+		},
+		roles: async () => {
+			return;
+		},
+		rolePermissions: async () => {
+			return;
+		},
+		users: async () => {
+			return;
+		},
+	});
+	let saving = $state(false);
+
+	const serverPermissions = $derived<Set<string>>(
+		!instanceID || !serverID
+			? new Set()
+			: cumulativeServerPermissions(instanceID, serverID, sunburn[instanceID].myID),
+	);
+
+	beforeNavigate((navigation) => {
+		if (dirty) {
+			navigation.cancel();
+			nav = navigation;
+			// eslint-disable-next-line no-console
+			console.debug(
+				...debugPrefix,
+				logFriendly(instanceID),
+				'cancelled navigation because one or more sections are dirty',
+				$state.snapshot(dirtySections),
+			);
+			confirmDialog.showModal();
+		}
+	});
+
+	const saveAll = async () => {
+		saving = true;
+		try {
+			// must await so dependency chains can resolve (e.g. channels -> roles -> CRA -> SRP)
+			if (dirtySections.meta) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving meta');
+				await saveFunctions.meta();
+			}
+			if (dirtySections.invites) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving invites');
+				await saveFunctions.invites();
+			}
+			if (dirtySections.channels) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving channels');
+				await saveFunctions.channels();
+			}
+			if (dirtySections.channelAccess) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving channel access');
+				await saveFunctions.channelAccess();
+			}
+			if (dirtySections.roles) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving roles');
+				await saveFunctions.roles();
+			}
+			if (dirtySections.rolePermissions) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'saving role permissions');
+				await saveFunctions.rolePermissions();
+			}
+			if (dirtySections.users) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), `saving users`);
+				await saveFunctions.users();
+			}
+
+			if (nav) {
+				// eslint-disable-next-line no-console
+				console.debug(...debugPrefix, logFriendly(instanceID), 'resuming navigation');
+				// https://discord.com/channels/457912077277855764/1023340103071965194/threads/1270482626502983680
+				if (nav.delta) {
+					history.go(nav.delta);
+				} else if (nav.to?.url) {
+					goto(nav.to?.url);
+				}
+			}
+		} catch (err) {
+			// eslint-disable-next-line no-console
+			console.error(...errorPrefix, 'one or more errors occurred while saving changes\n', err);
+		} finally {
+			saving = false;
+		}
+	};
+
+	const exitWithoutSaving = () => {
+		if (nav) {
+			dirtySections.meta = false;
+			dirtySections.invites = false;
+			dirtySections.channels = false;
+			dirtySections.channelAccess = false;
+			dirtySections.roles = false;
+			dirtySections.rolePermissions = false;
+			dirtySections.users = false;
+			// eslint-disable-next-line no-console
+			console.debug(...debugPrefix, logFriendly(instanceID), 'resuming navigation');
+			// thanks @rchaoz https://discord.com/channels/457912077277855764/1023340103071965194/threads/1270482626502983680
+			if (nav.delta) {
+				history.go(nav.delta);
+			} else if (nav.to?.url) {
+				goto(nav.to?.url);
+			}
+		}
+	};
+</script>
+
+<dialog class="modal" bind:this={confirmDialog}>
+	<div class="modal-box flex flex-col gap-2">
+		{#if saving}
+			<h1 class="font-display text-xl font-bold">Unsaved Changes</h1>
+			<div class="mt-2 flex items-center gap-2">
+				Saving <LucideLoaderCircle class="inline size-4 animate-spin" />
+			</div>
+		{:else}
+			<h1 class="font-display text-xl font-bold">Unsaved Changes</h1>
+			<p>You have unsaved changes. What do you want to do?</p>
+			<div class="mt-2 flex flex-col items-stretch justify-end gap-2 sm:flex-row">
+				<form method="dialog">
+					<button class="btn w-full" onclick={() => (nav = null)}>Cancel</button>
+				</form>
+				<button class="btn" onclick={exitWithoutSaving}>Discard Changes</button>
+				<button class="btn btn-primary" onclick={saveAll}>Save and Exit</button>
+			</div>
+		{/if}
+	</div>
+	<form method="dialog" class="modal-backdrop">
+		<button onclick={() => (nav = null)}>close</button>
+	</form>
+</dialog>
+
+<div class="my-10 flex flex-col gap-2">
+	<h1 class="font-display text-xl font-bold">Server Settings</h1>
+
+	<div class="divider"></div>
+
+	<ul class="menu m-0 w-full p-0">
+		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_SERVER)}
+			<Meta bind:dirty={dirtySections.meta} bind:saveChanges={saveFunctions.meta} />
+		{/if}
+
+		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_SERVER, Permissions.CREATE_INVITES)}
+			<Invites
+				bind:dirty={dirtySections.invites}
+				bind:saveChanges={saveFunctions.invites}
+				showList={isOwner(instanceID, serverID) ||
+					hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_SERVER)}
+			/>
+		{/if}
+
+		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_CHANNELS)}
+			<Channels bind:dirty={dirtySections.channels} bind:saveChanges={saveFunctions.channels} />
+			<ChannelAccess
+				bind:dirty={dirtySections.channelAccess}
+				bind:saveChanges={saveFunctions.channelAccess}
+			/>
+		{/if}
+
+		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_ROLES)}
+			<Roles bind:dirty={dirtySections.roles} bind:saveChanges={saveFunctions.roles} />
+		{/if}
+
+		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_ROLE_PERMISSIONS)}
+			<RolePermissions
+				bind:dirty={dirtySections.rolePermissions}
+				bind:saveChanges={saveFunctions.rolePermissions}
+			/>
+		{/if}
+
+		{#if isOwner(instanceID, serverID) || hasPerm(serverPermissions, Permissions.ADMINISTRATOR, Permissions.MANAGE_MEMBERS)}
+			<Users bind:dirty={dirtySections.users} bind:saveChanges={saveFunctions.users} />
+		{/if}
+
+		<Danger />
+	</ul>
+
+	<!-- <p aria-hidden class="h-14.5 w-full text-center text-base-300">
+		You found the secret anti-layout-shift filler!
+	</p> -->
+</div>
+<div
+	class={[
+		'w-full rounded-box border border-base-content/50 bg-base-200 px-3 py-2 drop-shadow-md',
+		'sticky bottom-4',
+		'transition-opacity duration-150',
+		dirty ? 'opacity-100' : 'opacity-0',
+	]}
+>
+	<div class="flex items-center justify-between">
+		<h3 class="font-bold">Unsaved Changes</h3>
+		<button disabled={saving} class={['btn btn-primary', saving && 'btn-square']} onclick={saveAll}>
+			{#if saving}
+				<LucideLoaderCircle class="size-4 animate-spin" />
+			{:else}
+				Save
+			{/if}
+		</button>
+	</div>
+</div>

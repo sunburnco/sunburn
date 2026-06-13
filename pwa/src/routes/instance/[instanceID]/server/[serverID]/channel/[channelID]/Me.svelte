@@ -103,7 +103,7 @@
 	</button>
 	{#if call.me?.cameraUnmuted}
 		<button
-			class="group/btn group-focus:flex, btn hidden btn-square btn-sm btn-secondary group-hover:flex"
+			class="group/btn group-focus:flex, btn hidden btn-square btn-sm btn-primary group-hover:flex"
 			onclick={() => {
 				if (!call.me) {
 					return;
@@ -137,15 +137,15 @@
 	>
 		<div class="group-disabled/btn:opacity-70">
 			{#if call.me?.screenShareUnmuted}
-				<LucideMonitorUp class="size-5" />
-			{:else}
 				<LucideMonitorX class="size-5 stroke-base-content" />
+			{:else}
+				<LucideMonitorUp class="size-5" />
 			{/if}
 		</div>
 	</button>
 	{#if call.me?.screenShareUnmuted}
 		<button
-			class="group/btn group-focus:flex, btn hidden btn-square btn-sm btn-secondary group-hover:flex"
+			class="group/btn group-focus:flex, btn hidden btn-square btn-sm btn-primary group-hover:flex"
 			onclick={() => {
 				if (!call.me) {
 					return;

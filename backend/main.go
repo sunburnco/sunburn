@@ -44,6 +44,9 @@ func main() {
 	app.Cron().Add("cleanSoftDelete", "0 0 * * *", func() {
 		hooks.CronCleanSoftDeletes(app)
 	})
+	app.Cron().Add("checkForUpdates", "0 2 * * *", func() {
+		hooks.CronCheckVersion(app)
+	})
 
 	// require auth
 	app.OnRecordsListRequest().BindFunc(hooks.RequireAuthForListRequestEvent)
@@ -78,11 +81,15 @@ func main() {
 	})
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
-		// TODO move to /api/sb/...
+		// TODO deprecate these first two
 		se.Router.POST("/lkwebhook", livekit.LiveKitWebhook)
 		se.Router.POST("/lk/{channel}/token", livekit.LiveKitToken)
 
+		se.Router.POST("/api/sb/lkwebhook", livekit.LiveKitWebhook)
+		se.Router.POST("/api/sb/lk/{channel}/token", livekit.LiveKitToken)
+
 		se.Router.POST("/api/sb/acceptInvite/{slug}", handlers.AcceptInvite)
+		se.Router.POST("/api/sb/servers/{serverID}/leave", handlers.LeaveServer)
 
 		return se.Next()
 	})

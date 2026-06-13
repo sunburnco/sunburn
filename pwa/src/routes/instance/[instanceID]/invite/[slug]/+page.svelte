@@ -5,7 +5,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import { drawerState } from '$lib/drawerState.svelte';
 	import type { ServersRecord } from '$lib/pb-types';
 	import { fetchUser } from '$lib/sunburn/data/users';
 	import { sunburn } from '$lib/sunburn/sunburn.svelte';
@@ -17,6 +16,8 @@
 	let server = $state<ServersRecord | null>(null);
 	let error = $state<null | 'notfound' | 'joining'>(null);
 	let loading = $state(false);
+
+	let copied = $state(false);
 
 	onMount(async () => {
 		if (!instanceID || !slug) {
@@ -64,10 +65,6 @@
 			return;
 		}
 
-		drawerState.activeChannelID = '';
-		drawerState.activeDMID = '';
-		drawerState.activeInstanceID = instanceID;
-		drawerState.activeServerID = server?.id || '';
 		goto(`/instance/${instanceID}/server/${server?.id || ''}`);
 	};
 </script>
@@ -91,7 +88,9 @@
 	{:else}
 		<h1 class="font-display text-xl font-bold">Accept Invite</h1>
 		<p>You have been invited to join this server</p>
-		<div class="flex items-center gap-2 rounded-box border border-base-content/50 bg-base-100 p-2">
+		<div
+			class="mt-4 flex items-center gap-2 rounded-box border border-base-content/50 bg-base-100 p-2"
+		>
 			<PBAvatar
 				className="max-h-min"
 				size="msg"
@@ -116,8 +115,22 @@
 				</p>
 			</div>
 		</div>
-		<div class="mt-4 flex w-full gap-2">
-			<a href="/new" class="btn grow btn-outline">Go Back</a>
+		<div class="mt-4 flex w-full flex-col-reverse gap-2 sm:flex-row">
+			<a href="/new" class="btn grow">Go Back</a>
+			<button
+				onclick={() => {
+					copied = true;
+					setTimeout(() => (copied = false), 450);
+					navigator.clipboard.writeText(`${instanceID}/${slug}`);
+				}}
+				class="btn grow"
+			>
+				{#if !copied}
+					Copy Invite
+				{:else}
+					Copied!
+				{/if}
+			</button>
 			<button onclick={acceptInvite} disabled={loading} class="btn grow btn-primary">
 				{#if loading}
 					<LucideLoaderCircle class="animate-spin" />

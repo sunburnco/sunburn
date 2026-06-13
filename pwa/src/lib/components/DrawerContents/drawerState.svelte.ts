@@ -7,8 +7,13 @@
 // since Sunburn uses no SSR, shared global state is easier
 
 export const drawerState = $state({
-	activeInstanceID: '',
-	activeServerID: '',
-	activeChannelID: '',
-	activeDMID: '',
+	instanceID: '',
+	serverID: '',
+	channelID: '',
+	dmID: '',
+} as {
+	instanceID: string;
+	serverID: 'dms' | 'new' | 'settings' | string;
+	channelID: string;
+	dmID: string;
 });

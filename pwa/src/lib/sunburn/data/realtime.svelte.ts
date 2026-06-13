@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import type { RecordSubscription } from 'pocketbase';
 
 import type {
@@ -34,7 +35,12 @@ import {
 import { setDMMessages } from './dmMessages';
 import { clearRoleAssignment, setRoleAssignment } from './roleAssignments';
 import { clearRolePermission, clearRoleRecord, setRolePermission, setRoleRecord } from './roles';
-import { clearServerRecord, fetchServer, fetchServersForInstance, setServerRecord } from './server';
+import {
+	clearServerRecord,
+	fetchServersForInstance,
+	fetchServerUsingList,
+	setServerRecord,
+} from './server';
 import { setUserRecord } from './users';
 import { clearVoiceParticipant, setVoiceParticipant } from './voiceParticipants';
 
@@ -55,6 +61,9 @@ export const onMessage = (
 		if (record.to) {
 			const recipientID = record.to === sunburn[instanceID].myID ? record.from : record.to;
 			// dm
+			if (action === 'create') {
+				sunburn[instanceID].dms[recipientID].updated = DateTime.now();
+			}
 			setDMMessages(instanceID, recipientID, [record]);
 		} else if (record.channel) {
 			// channel
@@ -105,7 +114,10 @@ export const onServerRole = (
 ) => {
 	const { action, record } = e;
 
-	if (!(record.server in sunburn[instanceID].servers) || !sunburn[instanceID].servers.loaded) {
+	if (
+		!(record.server in sunburn[instanceID].servers) ||
+		!sunburn[instanceID].servers[record.server].loaded
+	) {
 		return;
 	}
 
@@ -360,7 +372,9 @@ export const onServerRoleAssignment = (
 			sunburn[instanceID].myID === record.user &&
 			roleHasPermission(instanceID, serverID, record.role, 'SERVER_MEMBER')
 		) {
-			fetchServer(instanceID, serverID, null);
+			// when leaving a server, the serverID is cleared from memory
+			// since all users can "see" all servers (for the purposes of invites), we need to clarify to refetch with the LIST endpoint to use membership check
+			fetchServerUsingList(instanceID, serverID, null);
 		}
 	}
 };

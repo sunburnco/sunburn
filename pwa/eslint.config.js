@@ -36,6 +36,7 @@ export default defineConfig(
 			'simple-import-sort/imports': 'error',
 			'simple-import-sort/exports': 'error',
 			'no-unused-vars': 'off',
+			'no-useless-assignment': 'off',
 			'@typescript-eslint/no-unused-vars': 'off',
 			'unused-imports/no-unused-imports': 'error',
 			'unused-imports/no-unused-vars': [
