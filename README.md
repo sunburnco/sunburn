@@ -40,6 +40,7 @@ Environment variables:
 - `LIVEKIT_API_SECRET`: the other one
 - `LIVEKIT_BASE_URL`: the address of your LiveKit server (2nd record)
 - `USER_DEFAULT_MAX_SERVERS`: how many servers (terminology below) each user is allowed to create by default. `-1` to disable. I recommend `0` if you have any untrusted users on your instance
+- `SKIP_VERSION_CHECK`: `1` to skip the daily version check (not recommended)
 
 ```
 # .env
@@ -48,11 +49,18 @@ LIVEKIT_API_KEY=APIK...
 LIVEKIT_API_SECRET=changeme
 LIVEKIT_BASE_URL=https://docs-rtc.sunburn.gg
 USER_DEFAULT_MAX_SERVERS=0
+SKIP_VERSION_CHECK=0
 ```
 
 ### LiveKit
 
-Run `livekit/livekit-server:latest` (available on Docker Hub). We only need to expose port `5349`, but we'll also need to pass in a config file to `/etc/livekit.yaml`, then run the server with the `command` `--config /etc/livekit.yaml`.
+Run `livekit/livekit-server:v1.11` (available on Docker Hub). We only need to expose port `5349`, but we'll also need to pass in a config file to `/etc/livekit.yaml`, then run the server with the `command` `--config /etc/livekit.yaml`.
+
+> [!NOTE]
+> There seems to have been a regression in LiveKit's built-in TURN server with tag `v1.12` and later. I'm working on troubleshooting the problem.
+
+> [!NOTE]
+> Shoutout the LiveKit team for including `nc` in their containers so I could verify the `HostSNI` matching was working. I literally spent hours banging my head against the wall because I thought I was experiencing a routing issue from Traefik. Eventually, I had the idea to use `nc` to verify I could reach all the way through the proxy into the container.
 
 We also must set up the reverse proxy to expect traffic on layer 4. I did that, along with TLS termination, with the `traefik.*` labels below.
 
@@ -60,24 +68,26 @@ We also must set up the reverse proxy to expect traffic on layer 4. I did that, 
 # livekit.yaml
 port: 7880 # management API
 bind_addresses:
-    - ""
+    - "0.0.0.0" # new from last time
 turn:
     enabled: true
     domain: docs-rtc-turn.sunburn.gg # changeme
     tls_port: 5349
-    udp_port: 3478
     external_tls: true
 keys:
     APIK<openssl rand -hex 16>: <openssl rand -hex 16> # changeme
 webhook:
   api_key: 'APIK...' # generated above
   urls:
-    - 'https://docs.sunburn.gg/lkwebhook' # changeme
+    - 'https://docs.sunburn.gg/api/sb/lkwebhook' # changeme
 ```
 
 ### Docker Compose
 
-**The router name (`traefik.tcp.routers.NAME`) must be unique for all LiveKit servers running behind your reverse proxy.** Ask me how I know.
+> [!NOTE]
+> The router name (`traefik.tcp.routers.NAME`) must be unique for all LiveKit servers running behind your reverse proxy. Ask me how I know.
+
+You can change the name of `traefik.tcp.routers.<routername>` and `traefik.tcp.services.<servicename>`. The important thing is to remember the penultimate line should be `traefik.tcp.routers.<routername>.service=<servicename>`.
 
 ```yaml
 services:
@@ -94,6 +104,7 @@ services:
       - 'LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET}'
       - 'LIVEKIT_BASE_URL=${LIVEKIT_BASE_URL}'
       - 'USER_DEFAULT_MAX_SERVERS=${USER_DEFAULT_MAX_SERVERS}'
+      - 'SKIP_VERSION_CHECK=${SKIP_VERSION_CHECK}'
   livekit:
     image: 'livekit/livekit-server:latest'
     command: '--config /etc/livekit.yaml'
@@ -134,8 +145,6 @@ Once you're done, you should be in the dashboard.
 
 ![dashboard](.images/dashboard.png)
 
-Since the UI is still in early development, we'll need to do some manual setup in the dashboard before our users can start sending messages. In the future, everything will be configurable from the UI.
-
 ### Terminology
 
 - An **instance** refers to a Docker container hosting Sunburn. 
@@ -156,8 +165,6 @@ Begin by making yourself a user. You can reuse your email and/or your password f
 
 ### Granular Permissions
 
-I recently added granular permissions to Sunburn. Unfortunately, it's a lot of records to manually configure it, but thankfully, it's one-and-done.
-
 There are two types of `_permissions`: server permissions and channel permissions.
 
 - Each **server** has zero or more **roles** in the `serverRoles` collection
@@ -166,35 +173,19 @@ There are two types of `_permissions`: server permissions and channel permission
 - Every **channel** can be assigned zero or more roles, defined in the `channelRoleAssignments` (cra) collection. This is how channel access is determined (note the `CHANNEL_READ` `_permission`)
 - Use the `cumulative*Permissions` views when debugging permissions
 
-Although the UI can't benefit from these permissions yet, there are fully functional API rules (PocketBase equivalent of row-level security) written around this permission system, and a full test suite for these rules in `backend/`.
+There are fully functional API rules (PocketBase equivalent of row-level security) written around this permission system, and a full test suite for these rules in `backend/`.
 
 Server owners have permanent admin permissions to their servers.
 
 ### The Good Stuff
 
-Enough nerd talk. Let's set up a server with 3 channels: `#general`, `#ownerOnly`, and `#work`. Everyone should be allowed to access `#general`, but only people with the `employee` role should be allowed in `#work`. This guide is idential for voice channels; just enable the `voice` column.
+Enough nerd talk. Let's set up a server with 3 channels: `#general`, `#ownerOnly`, and `#work`. Everyone should be allowed to access `#general`, but only people with the `employees` role should be allowed in `#work`.
 
 Begin by making your userbase. I'm adding `alice` and `employeeBob`.
 
 ![alice and bob](.images/aliceandbob.png)
 
-And we'll need a server. Make sure to set yourself as the owner.
-
-![server](.images/server.png)
-
-In the future, the UI will automatically create the `everyone` role with ordinal `0` and no permissions. It's not a hard requirement to have this role.
-
-While we're here, let's also make the `employee` role. If you set a fractional ordinal, all other ordinals in the server will be rebalanced on insert.
-
-![roles](.images/roles.png)
-
-For now, let's just put `SERVER_MEMBER` on the `everyone` role using the `serverRolePermissions` collection.
-
-Make the channels in the `channels` collection.
-
-![channels](.images/channels.png)
-
-Let's go see what our users can see. In a new tab, go to your Sunburn instance's UI (the first domain) and log in with your email and password. Remember, you may have reused the email from the superuser account with a different password.
+Now, we'll make a server. In a new tab, go to your Sunburn instance's UI (the first domain) and log in with your email and password. Remember, you may have reused the email from the superuser account with a different password.
 
 *I'm keeping my account `twopyramids` on the "day" theme, but Alice will be on "lilac" and Employee Bob will be on "oasis" for clarity.*
 
@@ -214,6 +205,14 @@ I'll just accept the default of `docs.sunburn.gg`. At this point, the Sunburn cl
 
 ![successful login](.images/tplogin.png)
 
+Make a new server by clicking the "+" button on the sidebar. I set `USER_DEFAULT_MAX_SERVERS` to `0`, so the option to create a server on `docs.sunburn.gg` is grayed out as I've already reached my quota. Head back to the dashboard and change the `serverQuotas` value for your user to a natural number, or `-1` for unlimited servers. Refresh the client to see the updated value.
+
+![maxed quota](.images/maxedquota.png)
+
+![setting quota](.images/setquota.png)
+
+![unlimited quota](.images/unlimitedquota.png)
+
 Notice how the server list auto-populated. The server list shows all the servers you have access to, across all instances.
 
 Each server has all the channels we can access. As server owner, you have access to all channels.
@@ -224,42 +223,71 @@ Alice doesn't have access to our server yet because she's not a member.
 
 ![alice no servers](.images/alicenoservers.png)
 
-To give Alice membership, she needs a role with the `SERVER_MEMBER` permission. Since we gave `SERVER_MEMBER` to the `everyone` role earlier, we can just give Alice the `everyone` role and she'll become a member. Use the `serverRoleAssignments` table.
+To give Alice membership, she needs to accept an invite to the server we just created. Use the "Server Settings" button below the channe list to create an invite.
 
-![alice no channels](.images/alicenochannels.png)
+![make invite](.images/makeinvite.png)
 
-Unfortunately, she still has no access to any channels. We need to assign the `CHANNEL_READ` permission to `everyone` (`serverRolePermissions`), then assign the `everyone` role to `#general` (`channelRoleAssignments`).
+Alice must use the "+" button on the sidebar to accept the invite.
+
+![alice invite 1](.images/aliceinvite1.png)
+
+![alice invite 2](.images/aliceinvite2.png)
+
+Alice is in! Repeat these steps with Bob to give him access.
 
 ![alice general access](.images/alicegeneralaccess.png)
 
-She still can't send messages, however, because the `everyone` role is missing the `CHANNEL_SEND` permission. Use the `serverRolePermissions` collection to add `CHANNEL_SEND` to `everyone`.
+Let's make the other two channels: `#ownerOnly` and `#work`. I'm using the first account to access server settings and adding channels with the "+ Add Channel" button. Pending changes are marked in italic.
 
-![alice can chat](.images/alicecanchat.png)
+![pending channels](.images/pendingchannels.png)
 
-Now let's get Employee Bob set up. Bob needs the `everyone` role so he can get the `SERVER_MEMBER` permission. We'll also need to set the `employee` role to have `CHANNEL_READ` and `CHANNEL_SEND`, then assign the `employee` role to `#work`.
+While we're at it, let's also make the `employees` role. Bob is a good employee, so I'm going to make the role green. Save the changes.
 
-![bob at work](.images/bobatwork.png)
+![pending roles](.images/pendingroles.png)
 
-Finally, let's make a voice channel for everyone to talk in. Make a new channel with the `voice` column set to `true`.
+Now, we need to attach the new role to the `#work` channel so Bob can access `#work`. Choose `#work` in "Channel Access," then toggle on the `employees` role.
 
-![make voice channel](.images/makevoicechannel.png)
+![pending cra](.images/pendingcra.png)
 
-We'll add the `everyone` role to the channel, so if you can see `#general`, you can see `voice`.
+However, the role doesn't have permission to view the channels it's attached to. Select the `employees` role in "Role Permissions" and give it the `CHANNEL_READ` and `CHANNEL_SEND` permissions.
 
-![voice channel role assignment](.images/voicecra.png)
+![pending srp](.images/pendingsrp.png)
+
+Finally, we need to assign the role to Bob by selecting him in the "Users" section and adding the `employees` role. Save the changes.
+
+![pending sra](.images/pendingsra.png)
+
+The server owner has access to all the channels, Employee Bob has access to `#work`, and Alice only has access to `#general`.
+
+![final owner](.images/finalowner.png)
+
+![final bob](.images/finalbob.png)
+
+![final alice](.images/finalalice.png)
+
+### Calling
+
+You can also test to make sure calling is working. Here are some implementation and troubleshooting notes.
+
+- In the above configuration, LiveKit hosts a TURN server at port 5349. Traefik uses its existing TCP connection at 443 to listen for a HostSNI match, then terminates the TLS and forwards the packets to the LiveKit container's port 5349. Therefore, the only port you need to have open if 443.
+- You can verify Traefik is routing traffic appropriately by doing the following.
+  1. Change `traefik.tcp.services.lkdocs.loadbalancer.server.port=` to be a new port (e.g. `15349`). Make sure to `expose` that port in the `docker-compose.yml`.
+  2. In the container, run a `nc` server at the new port. For example, `nc -l -p 15349`.
+  3. From another computer, initiate a TCP connection with `openssl s_client -connect docs-rtc-turn.sunburn.gg:443 -servername docs-rtc-turn.sunburn.gg` (change the hostname to match what you've been working on)
+  4. Type a message and press Enter. You should see your message appear in the container's `nc` server.
+- There seems to be a regression in LiveKit's TURN server with tag `v1.12`. `v1.11` works for me.
+- You can use [LiveKit's connection tester](https://livekit.com/webrtc/connection-test) by generating a token with the following command: `lk --url https://docs-rtc.sunburn.gg --api-key APIK... --api-secret ... token create -r test -i conntest --valid-for 24h`, replacing `docs-rtc.sunburn.gg` with what you've been working on.
+
+### A Note on Multiple Accounts
 
 The frontend saves connection information in a key/value store, where the key is the instance URL. This means you can't use the same frontend for two accounts on the same instance URL.
 
 - `alice@sunburn.gg` and `alice@docs.sunburn.gg`: good
 - `alice@sunburn.gg` and `bob@sunburn.gg`: bad
-- `alice@sunburn.gg` and `alice@sunburn-but-its-the-same-instance-behind-the-proxy.gg`: good
+- `alice@sunburn.gg` and `bob@sunburn-but-its-the-same-instance-behind-the-proxy.gg`: good
 
 You can test two accounts on the same instance with one of these methods:
 
 - Private browsing
 - Browser profiles
-- Use your frontend for `alice` and [sunburn.gg](https://sunburn.gg) for `bob`
-
-![call connected](.images/calling.png)
-
-At this point, you should have a Sunburn instance configured with chat and video calling.
+- Use your frontend for `alice` and [sunburn.gg](https://sunburn.gg) for `employee_bob`
