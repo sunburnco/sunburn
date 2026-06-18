@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.7.2 - 2026-06-18
+#### Bug Fixes
+- (**backend**) version check - (7b34532) - twopyramids
+- (**backend**) add ca certs - (12c4f2b) - twopyramids
+- (**backend**) print header on startup - (a50db91) - twopyramids
+- (**backend**) warn on version mismatch - (0608485) - twopyramids
+- (**backend**) add ca certs - (17fecf7) - twopyramids
+
+- - -
+
 ## v0.7.1 - 2026-06-13
 #### Bug Fixes
 - (**pwa**) theme change inconsistencies - (e6062ce) - twopyramids
