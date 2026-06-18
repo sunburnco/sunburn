@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"sunburn.co/backend/handlers"
 	"sunburn.co/backend/hooks"
+	"sunburn.co/backend/lib"
 	"sunburn.co/backend/livekit"
 
 	"github.com/joho/godotenv"
@@ -18,6 +20,29 @@ import (
 
 func main() {
 	godotenv.Load(".env")
+
+	fmt.Printf(`
+
+  .d88888b                    dP
+  88.    "'                   88
+  'Y88888b. no    no .od888b. 88.d88b. no    no .od888b. .od888b.
+        '8b 88    88 88'  '88 88'  '88 88    88 88'  'dP 88'  '88
+  d8'   .8P 88.  .88 88    88 88.  .88 88.  .88 88       88    88
+   Y88888P  '88888P' dB    dB '8Y8888' '88888P' dB       dB    dB
+
+                                                  Version %s
+
+  .--------------------------------------------------------------.
+  |                                                              |
+  |  Your feedback inspires the developer to keep building new   |
+  |  features! Please consider sending your setup experience,    |
+  |  use case, feature requests, pain points, or a quick hello.  |
+  |                                                              |
+  |               >>>    hello@sunburn.co    <<<                 |
+  |                                                              |
+  '--------------------------------------------------------------'
+
+`, lib.VERSION)
 
 	app := pocketbase.New()
 
