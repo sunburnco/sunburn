@@ -39,6 +39,6 @@ func CronCheckVersion(app *pocketbase.PocketBase) {
 	}
 
 	if lib.VERSION != versionResponse.Version {
-		app.Logger().Info("a new version of Sunburn is available", "v", versionResponse.Version)
+		app.Logger().Warn("a new version of Sunburn is available", "v", versionResponse.Version)
 	}
 }
