@@ -98,6 +98,7 @@ func main() {
 	app.OnRecordValidate("channels").BindFunc(hooks.Channels_ValidTypes)
 	app.OnRecordAfterCreateSuccess("serverRoles").BindFunc(hooks.AdjustRoleOrdinals)
 	app.OnRecordAfterUpdateSuccess("serverRoles").BindFunc(hooks.AdjustRoleOrdinals)
+	app.OnRecordAfterDeleteSuccess("serverRoles").BindFunc(hooks.AdjustRoleOrdinals)
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		se.Router.BindFunc(hooks.SendVersionHeader)
