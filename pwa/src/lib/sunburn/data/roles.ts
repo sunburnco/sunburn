@@ -1,6 +1,7 @@
 import { ClientResponseError } from 'pocketbase';
 import { SvelteSet } from 'svelte/reactivity';
 
+import type { Permissions } from '$lib/constants';
 import type {
 	ServerRolePermissionsRecord,
 	ServerRolePermissionsResponse,
@@ -153,7 +154,7 @@ export const setRolePermission = (
 		return;
 	}
 
-	sunburn[instanceID].servers[serverID].roles[roleID].permissions.add(permission);
+	sunburn[instanceID].servers[serverID].roles[roleID].permissions.add(permission as Permissions);
 };
 
 export const clearRolePermission = (
@@ -169,7 +170,7 @@ export const clearRolePermission = (
 		return;
 	}
 
-	sunburn[instanceID].servers[serverID].roles[roleID].permissions.delete(permission);
+	sunburn[instanceID].servers[serverID].roles[roleID].permissions.delete(permission as Permissions);
 };
 
 export const fetchPermissionsForRole = async (

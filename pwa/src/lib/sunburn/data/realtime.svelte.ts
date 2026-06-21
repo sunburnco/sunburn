@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 import type { RecordSubscription } from 'pocketbase';
 
+import type { Permissions } from '$lib/constants';
 import type {
 	ChannelRoleAssignmentsRecord,
 	ChannelRoleAssignmentsResponse,
@@ -48,11 +49,22 @@ import { clearVoiceParticipant, setVoiceParticipant } from './voiceParticipants'
 // I absolutely did not need to do ts for early developments
 // Hopefully users will tell me when the sync doesn't load something properly so I can troubleshoot
 
+const isOutOfOrder = (newTS: string, oldTS?: string) => {
+	if (oldTS === undefined) {
+		return false;
+	}
+
+	return DateTime.fromSQL(newTS).diff(DateTime.fromSQL(oldTS)).toMillis() < 0;
+};
+
 export const onMessage = (
 	instanceID: Instance_t['id'],
 	e: RecordSubscription<MessagesResponse>,
 ) => {
 	const { action, record } = e;
+
+	// no out-of-order checks for messages
+	// it should only become a problem if bots are making multiple edits to the same message in quick succession
 
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onMessage', action, record);
@@ -98,6 +110,10 @@ export const onMessage = (
 export const onServer = (instanceID: Instance_t['id'], e: RecordSubscription<ServersResponse>) => {
 	const { action, record } = e;
 
+	if (isOutOfOrder(record.updated, sunburn[instanceID].servers[record.id]?.record.updated)) {
+		return;
+	}
+
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onServer', action, record);
 
@@ -117,6 +133,15 @@ export const onServerRole = (
 	if (
 		!(record.server in sunburn[instanceID].servers) ||
 		!sunburn[instanceID].servers[record.server].loaded
+	) {
+		return;
+	}
+
+	if (
+		isOutOfOrder(
+			record.updated,
+			sunburn[instanceID].servers[record.server].roles[record.id]?.record.updated,
+		)
 	) {
 		return;
 	}
@@ -163,7 +188,9 @@ const roleHasPermission = (
 		return false;
 	}
 
-	return sunburn[instanceID].servers[serverID].roles[roleID].permissions.has(permission);
+	return sunburn[instanceID].servers[serverID].roles[roleID].permissions.has(
+		permission as Permissions,
+	);
 };
 
 export const onServerRolePermission = (
@@ -176,6 +203,9 @@ export const onServerRolePermission = (
 	if (!serverID || !sunburn[instanceID].servers[serverID].loaded) {
 		return;
 	}
+
+	// no out-of-order checks because UPDATEs technically don't exist for SRP
+	// most of this code is boilerplate
 
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onServerRolePermission', action, record);
@@ -223,6 +253,15 @@ export const onChannel = (
 		return;
 	}
 
+	if (
+		isOutOfOrder(
+			record.updated,
+			sunburn[instanceID].servers[record.server].channels[record.id]?.record.updated,
+		)
+	) {
+		return;
+	}
+
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onChannel', action, record);
 
@@ -252,6 +291,8 @@ export const onChannelRoleAssignment = (
 	) {
 		return;
 	}
+
+	// again, no out-of-order checks because CRAs can't be UPDATEd
 
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onChannelRoleAssignment', action, record);
@@ -299,6 +340,8 @@ export const onVoiceParticipant = (
 		return;
 	}
 
+	// no out-of-order checks because voice participants can't be UPDATEd
+
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onVoiceParticipant', action, record);
 
@@ -322,6 +365,8 @@ export const onServerRoleAssignment = (
 	if (!serverID) {
 		return;
 	}
+
+	// no out-of-order checks because CRAs can't be UPDATEd
 
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onServerRoleAssignment', action, record);
@@ -381,6 +426,10 @@ export const onServerRoleAssignment = (
 
 export const onUser = (instanceID: Instance_t['id'], e: RecordSubscription<UsersResponse>) => {
 	const { action, record } = e;
+
+	if (isOutOfOrder(record.updated, sunburn[instanceID].users[record.id]?.updated)) {
+		return;
+	}
 
 	// eslint-disable-next-line no-console
 	console.debug(...debugPrefix, logFriendly(instanceID), 'onUser', action, record);
