@@ -2,44 +2,74 @@ package hooks
 
 import (
 	"math"
+	"slices"
 
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
 )
 
 func AdjustRoleOrdinals(e *core.RecordEvent) error {
-	ord := e.Record.GetFloat("ordinal")
-
-	// no decimal point
-	if ord == math.Round(ord) {
-		return e.Next()
-	}
-
 	server := e.Record.GetString("server")
 
-	/**
-	BEGIN TRANSACTION;
-		UPDATE serverRoles
-		SET ordinal = (ROW_NUMBER() OVER()) + 1000000
-		FROM (
-			SELECT id, ordinal + 1000000
-			FROM serverRoles
-			WHERE server = {:server}
-			ORDER BY ordinal
-		) t1
-		WHERE t1.id = serverRoles.id;
-		UPDATE serverRoles
-		SET ordinal = ordinal - 1000001
-		WHERE server = {:server};
-		COMMIT;
-	*/
-	if res, err := e.App.DB().NewQuery("BEGIN TRANSACTION; UPDATE serverRoles SET ordinal = (ROW_NUMBER() OVER()) + 1000000 FROM (SELECT id, ordinal + 1000000 FROM serverRoles WHERE server = {:server} ORDER BY ordinal) t1 WHERE t1.id = serverRoles.id; UPDATE serverRoles SET ordinal = ordinal - 1000001 WHERE server = {:server}; COMMIT;").
-		Bind(dbx.Params{
-			"server": server,
-		}).Execute(); err != nil {
-		return err
-	} else {
-		e.App.Logger().Info("res", "res", res)
+	txErr := e.App.RunInTransaction(func(txApp core.App) error {
+		collection, err := txApp.FindCollectionByNameOrId("serverRoles")
+		if err != nil {
+			return err
+		}
+
+		roles, err := txApp.FindAllRecords(collection,
+			dbx.NewExp("server = {:server}", dbx.Params{"server": server}))
+		if err != nil {
+			return err
+		}
+
+		slices.SortFunc(roles, func(a *core.Record, b *core.Record) int {
+			res := b.GetFloat("ordinal") - a.GetFloat("ordinal")
+			if res < 0 {
+				return -1
+			} else if res > 0 {
+				return 0
+			} else {
+				return 0
+			}
+		})
+		if len(roles) == 0 {
+			return nil
+		}
+
+		maxOrdinal := len(roles) - 1
+		offset := int(math.Ceil(math.Abs(roles[0].GetFloat("ordinal")) + float64(maxOrdinal) + 99))
+		// set ordinals twice -- once to the correct order but ridiculously high, then once to bring it back to the correct range
+		// this results in 2n UPDATE triggers when this trigger exits, where n is the number of roles in the server
+		// using raw SQL could probably cut the number down to n
+		// however, role reordering is a rare operation, and the resulting triggers exit very quickly
+		//
+		// technically, this trigger is O(mn), where m is the number of updates and n is the number of rows
+		// again though, most triggers will exit quickly if the roles are already in order
+		for i, role := range roles {
+			if role.GetFloat("ordinal") == float64(maxOrdinal-i) {
+				continue
+			}
+			role.Set("ordinal", maxOrdinal-i+offset)
+			if err := txApp.Save(role); err != nil {
+				return err
+			}
+		}
+
+		for i, role := range roles {
+			if role.GetFloat("ordinal") == float64(maxOrdinal-i) {
+				continue
+			}
+			role.Set("ordinal", maxOrdinal-i)
+			if err := txApp.Save(role); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+	if txErr != nil {
+		return txErr
 	}
 
 	return e.Next()

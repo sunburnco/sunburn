@@ -27,7 +27,6 @@
 	let creatingRole = $state(false);
 	let newColor = $state('#00000000');
 	let newName = $state('');
-	let newOrdinal = $state(0.5);
 
 	type RenameAction_t = {
 		action: 'rename';
@@ -69,6 +68,7 @@
 
 		// no checks for instance or server existence because that's handled by +layout.svelte
 		for (const roleID of Object.keys(sunburn[instanceID].servers[serverID].roles)) {
+			// const _ = sunburn[instanceID].servers[serverID].roles[roleID].record.ordinal;
 			ret[roleID] = { ...sunburn[instanceID].servers[serverID].roles[roleID].record };
 		}
 
@@ -229,62 +229,12 @@
 		console.debug(...debugPrefix, logFriendly(instanceID), 'adding DELETE for role', roleID);
 		changes[roleID].push({ action: 'delete' });
 	};
-	// NOT looking forward to recreating this for channel ordinals
-	// TODO ts is so wonky -- rewrite
-	const rebalanceOrdinals = () => {
-		const start = [] as { roleID: string; o: number }[];
-		for (const roleID of Object.keys(roles)) {
-			start.push({
-				roleID,
-				o: roles[roleID]?.ordinal ?? 0,
-			});
-		}
-		// ascending (!) sort
-		start.sort((a, b) => a.o - b.o);
-		for (let i = 0; i < start.length; i++) {
-			const _role = start[i];
-			// i is desired order (o)
-			if (
-				!roles[_role.roleID]?._local &&
-				sunburn[instanceID].servers[serverID].roles[_role.roleID].record.ordinal === i
-			) {
-				// role is back to original ordinal; delete ORDINAL change
-				const changeIndex = (changes[start[i].roleID] || []).findIndex(
-					(c) => c.action === 'ordinal',
-				);
-				if (changeIndex > -1) {
-					changes[start[i].roleID].splice(changeIndex, 1);
-					continue;
-				}
-			}
-
-			if (_role.o !== i) {
-				changes[_role.roleID] = changes[_role.roleID] || [];
-				// if the role is local, change the CREATE action
-				if (roles[_role.roleID]?._local) {
-					const changeIndex = changes[_role.roleID].findIndex((c) => c.action === 'create');
-					if (changeIndex > -1) {
-						(changes[_role.roleID][changeIndex] as CreateAction_t).value.ordinal = i;
-					}
-					continue;
-				}
-				// if there's an existing ordinal change, reuse it
-				const changeIndex = changes[_role.roleID].findIndex((c) => c.action === 'ordinal');
-				if (changeIndex > -1) {
-					(changes[_role.roleID][changeIndex] as OrdinalAction_t).value = i;
-				} else {
-					// otherwise, push a new change
-					changes[_role.roleID].push({
-						action: 'ordinal',
-						value: i,
-					} as OrdinalAction_t);
-				}
-			}
-		}
-	};
 
 	saveChanges = async () => {
-		for (const roleID of Object.keys(changes)) {
+		for (const roleID of sortedRoleIDs) {
+			if (!(roleID in changes)) {
+				continue;
+			}
 			const updatedFields = {} as Partial<ServerRolesRecord>;
 			for (const action of changes[roleID]) {
 				switch (action.action) {
@@ -295,12 +245,12 @@
 						updatedFields.color = action.value;
 						break;
 					case 'ordinal':
-						updatedFields.ordinal = action.value - 0.5;
+						updatedFields.ordinal = action.value;
 						break;
 					case 'create':
 						await createRole(instanceID, {
 							...action.value,
-							ordinal: (action.value.ordinal ?? 0) - 0.5,
+							ordinal: action.value.ordinal ?? 0,
 						});
 						break;
 					case 'delete':
@@ -332,11 +282,45 @@
 			rename={(roleID, value) => pushChange(roleID, { action: 'rename', value })}
 			color={(roleID, value) => pushChange(roleID, { action: 'color', value })}
 			ordinal={(roleID, dir) => {
-				pushChange(roleID, {
-					action: 'ordinal',
-					value: (roles[roleID]?.ordinal ?? 0) + dir * 1.5,
-				});
-				rebalanceOrdinals();
+				let value = NaN;
+
+				if (dir === -1) {
+					// roles are sorted in descending ordinal
+					const maxIndex = sortedRoleIDs.length - 1;
+					if (index === maxIndex) {
+						// already lowest; return
+						return;
+					} else if (index === maxIndex - 1) {
+						// put one below lowest ordinal
+						// roles[sortedRoleIDs[n]] can never be undefined
+						value = (roles[sortedRoleIDs[maxIndex]]?.ordinal ?? 0) - 1;
+					} else {
+						// average the next two lowest ordinals
+						const a = roles[sortedRoleIDs[index + 1]]?.ordinal ?? 0;
+						const b = roles[sortedRoleIDs[index + 2]]?.ordinal ?? 0;
+						value = (a + b) / 2;
+					}
+				} else if (dir === 1) {
+					if (index === 0) {
+						// already at top; return
+						return;
+					} else if (index === 1) {
+						// put one above highest ordinal (el 0)
+						value = (roles[sortedRoleIDs[0]]?.ordinal ?? 0) + 1;
+					} else {
+						// average the next two highest ordinals
+						const a = roles[sortedRoleIDs[index - 1]]?.ordinal ?? 0;
+						const b = roles[sortedRoleIDs[index - 2]]?.ordinal ?? 0;
+						value = (a + b) / 2;
+					}
+				}
+
+				if (!Number.isNaN(value)) {
+					pushChange(roleID, {
+						action: 'ordinal',
+						value,
+					});
+				}
 			}}
 			del={(roleID) => {
 				const delIndex = (changes[roleID] || []).findIndex((c) => c.action === 'delete');
@@ -359,12 +343,22 @@
 				if (newName === '') {
 					return;
 				}
+
+				let newOrdinal = 0;
+				if (sortedRoleIDs.length === 0) {
+					newOrdinal = 0;
+				} else if (sortedRoleIDs.length === 1) {
+					newOrdinal = (roles[sortedRoleIDs[0]]?.ordinal || 0) + 1;
+				} else {
+					const maxIndex = sortedRoleIDs.length - 1;
+					const a = roles[sortedRoleIDs[maxIndex]]?.ordinal || 0;
+					const b = roles[sortedRoleIDs[maxIndex - 1]]?.ordinal || 0;
+					newOrdinal = (a + b) / 2;
+				}
 				create(newName, newColor, newOrdinal);
 				creatingRole = false;
 				newName = '';
 				newColor = '#00000000';
-				newOrdinal = 0;
-				rebalanceOrdinals();
 			}}
 			class="flex justify-between gap-1 active:bg-inherit active:text-current"
 		>
