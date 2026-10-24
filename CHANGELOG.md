@@ -2,6 +2,26 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.7.3 - 2026-10-24
+#### Bug Fixes
+- (**backend**) add check for ordinal of updated role record - (2d1b005) - twopyramids
+- (**backend**) better role reordering - (cb8fe70) - twopyramids
+- (**ci**) caching is a conspiracy - (92c9f0b) - twopyramids
+- (**ci**) use pnpm/setup@v3 might work - (3d839bf) - twopyramids
+- (**ci**) idk bro I hate CI - (37a654f) - twopyramids
+- (**ci**) move to pnpm/setup - (09b7b3d) - twopyramids
+- (**ci**) pnpm install - (5915fe5) - twopyramids
+- (**pwa**) update deps; use new import path syntax - (3b6f0c4) - twopyramids
+- (**pwa**) better role reordering - (04b7c8f) - twopyramids
+- role reordering - (c72f9ef) - twopyramids
+#### Miscellaneous Chores
+- (**backend**) update deps - (fd0d80b) - twopyramids
+- (**backend**) update accent color, welcome message - (c37f6d4) - twopyramids
+- (**ci**) update actions versions - (d0f4bb2) - twopyramids
+- update deps - (4e0b8ea) - twopyramids
+
+- - -
+
 ## v0.7.2 - 2026-06-18
 #### Bug Fixes
 - (**backend**) version check - (7b34532) - twopyramids
