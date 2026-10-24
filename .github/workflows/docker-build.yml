@@ -46,6 +46,7 @@ jobs:
         uses: actions/setup-go@v7
         with:
           cache: true
+          go-version-file: "./backend/go.mod"
           cache-dependency-path: "./backend/go.sum"
 
       - name: Run Go vet
