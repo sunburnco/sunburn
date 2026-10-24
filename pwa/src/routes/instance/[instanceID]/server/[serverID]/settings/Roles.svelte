@@ -4,13 +4,13 @@
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
 
+	import type { IsoAutoDateString, ServerRolesRecord } from '#lib/pb-types.ts';
+	import { type Role_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { createRole, deleteRole, editRole } from '#lib/utils/changeServerSettings.ts';
+	import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+	import { pbID } from '#lib/utils/pbID.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 	import { page } from '$app/state';
-	import type { IsoAutoDateString, ServerRolesRecord } from '$lib/pb-types';
-	import { type Role_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { createRole, deleteRole, editRole } from '$lib/utils/changeServerSettings';
-	import { debugPrefix } from '$lib/utils/logPrefixes';
-	import { pbID } from '$lib/utils/pbID';
-	import { logFriendly } from '$lib/utils/username';
 
 	import RoleEditor from './RoleEditor.svelte';
 
@@ -48,11 +48,7 @@
 		value: number;
 	};
 	type Action_t =
-		| RenameAction_t
-		| CreateAction_t
-		| DeleteAction_t
-		| ColorAction_t
-		| OrdinalAction_t;
+		RenameAction_t | CreateAction_t | DeleteAction_t | ColorAction_t | OrdinalAction_t;
 
 	const changes = $state<Record<Role_t['record']['id'], Action_t[]>>({});
 	$effect(() => {
@@ -367,10 +363,10 @@
 				title="Role Color"
 				defaultValue="#00000000"
 				bind:value={newColor}
-				class="input input-sm aspect-square w-min px-0.5 py-0"
+				class="input aspect-square w-min px-0.5 py-0 input-sm"
 			/>
-			<input title="Role Name" bind:value={newName} class="input input-sm grow" />
-			<button title="Save" type="submit" class="btn btn-square btn-sm btn-primary">
+			<input title="Role Name" bind:value={newName} class="input grow input-sm" />
+			<button title="Save" type="submit" class="btn btn-square btn-primary btn-sm">
 				<LucideCheck class="size-4" />
 			</button>
 			<button

@@ -6,8 +6,8 @@ import {
 } from 'livekit-client';
 import { tick } from 'svelte';
 
-import { debugPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly, nameOrHandle } from '$lib/utils/username';
+import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly, nameOrHandle } from '#lib/utils/username.ts';
 
 import { call } from '../call.svelte';
 

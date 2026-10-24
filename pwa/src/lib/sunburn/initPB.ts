@@ -11,9 +11,9 @@ import {
 	type TypedPocketBase,
 	type VoiceParticipantsRecord,
 	type VoiceParticipantsResponse,
-} from '$lib/pb-types';
-import { debugPrefix, errorPrefix, warnPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+} from '#lib/pb-types.ts';
+import { debugPrefix, errorPrefix, warnPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 import { fetchInitialMessagesForDM } from './data/dmMessages';
 import { fetchPermissionDefinitions } from './data/permissions';
@@ -30,7 +30,7 @@ import {
 	onUser,
 	onVoiceParticipant,
 } from './data/realtime.svelte';
-import { setServerRecord } from './data/server';
+import { setServerRecord } from './data/sbServer';
 import { sunburn } from './sunburn.svelte';
 
 // TODO why did we have onAuthChange?

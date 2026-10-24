@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { LucideArrowLeft } from '@lucide/svelte';
 
-	import { page } from '$app/state';
-	import { Permissions } from '$lib/constants';
+	import { Permissions } from '#lib/constants.ts';
 	import {
 		cumulativeServerPermissions,
 		hasPerm,
 		isOwner,
-	} from '$lib/sunburn/cumulativePermissions';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
+	} from '#lib/sunburn/cumulativePermissions.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { page } from '$app/state';
 
 	const instanceID = $derived(page.params.instanceID || '');
 	const serverID = $derived(page.params.serverID || '');

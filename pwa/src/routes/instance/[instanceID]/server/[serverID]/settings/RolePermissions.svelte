@@ -3,12 +3,15 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import { fade } from 'svelte/transition';
 
+	import { Permissions } from '#lib/constants.ts';
+	import { type Role_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import {
+		grantPermissionForRole,
+		revokePermissionForRole,
+	} from '#lib/utils/changeServerSettings.ts';
+	import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 	import { page } from '$app/state';
-	import { Permissions } from '$lib/constants';
-	import { type Role_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { grantPermissionForRole, revokePermissionForRole } from '$lib/utils/changeServerSettings';
-	import { debugPrefix } from '$lib/utils/logPrefixes';
-	import { logFriendly } from '$lib/utils/username';
 
 	let {
 		dirty = $bindable(),

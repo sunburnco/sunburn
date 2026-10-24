@@ -2,13 +2,13 @@
 	import { LucideArrowRight, LucideLoaderCircle } from '@lucide/svelte';
 	import { Debounced } from 'runed';
 
+	import { type Instance_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { createServer } from '#lib/utils/createServer.ts';
+	import { errorPrefix } from '#lib/utils/logPrefixes.ts';
+	import { parseInviteSlug } from '#lib/utils/parseInviteSlug.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { type Instance_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { createServer } from '$lib/utils/createServer';
-	import { errorPrefix } from '$lib/utils/logPrefixes';
-	import { parseInviteSlug } from '$lib/utils/parseInviteSlug';
-	import { logFriendly } from '$lib/utils/username';
 
 	import QuotaOption from './QuotaOption.svelte';
 

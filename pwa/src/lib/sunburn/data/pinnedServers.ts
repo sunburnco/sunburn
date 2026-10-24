@@ -1,8 +1,8 @@
 import { ClientResponseError } from 'pocketbase';
 
-import type { PinnedServersRecord, PinnedServersResponse } from '$lib/pb-types';
-import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+import type { PinnedServersRecord, PinnedServersResponse } from '#lib/pb-types.ts';
+import { debugPrefix, errorPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 import { type Instance_t, type Server_t, sunburn } from '../sunburn.svelte';
 

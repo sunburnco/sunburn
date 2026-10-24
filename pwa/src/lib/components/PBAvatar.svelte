@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import type { ServersRecord } from '$lib/pb-types';
-	import { fetchUser } from '$lib/sunburn/data/users';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { parseInitials } from '$lib/utils/parseInitials';
+	import type { ServersRecord } from '#lib/pb-types.ts';
+	import { fetchUser } from '#lib/sunburn/data/users.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { parseInitials } from '#lib/utils/parseInitials.ts';
 
 	type Props_t = {
 		instanceID: string;

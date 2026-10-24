@@ -1,5 +1,5 @@
-import { CompoundProcessor } from '$lib/streamProcessors/compound';
-import { localSettings } from '$lib/sunburn/localSettings.svelte';
+import { CompoundProcessor } from '#lib/streamProcessors/compound.ts';
+import { localSettings } from '#lib/sunburn/localSettings.svelte.ts';
 
 export const processor = new CompoundProcessor({
 	speexEnabled: localSettings.audio?.settings.speexEnabled.boolValue ?? false,

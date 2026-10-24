@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { LucideCheck, LucideCopy, LucideTrash, LucideUserPlus } from '@lucide/svelte';
 
+	import type { InvitesRecord } from '#lib/pb-types.ts';
 	import { page } from '$app/state';
-	import type { InvitesRecord } from '$lib/pb-types';
 
 	let copied = $state(false);
 
@@ -38,7 +38,7 @@
 				<LucideCheck class="size-4" />
 			{/if}
 		</button>
-		<button title="Delete" class="btn btn-square btn-sm btn-error" onclick={() => del(invite.id)}>
+		<button title="Delete" class="btn btn-square btn-error btn-sm" onclick={() => del(invite.id)}>
 			<LucideTrash class="size-4" />
 		</button>
 	</div>

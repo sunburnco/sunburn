@@ -6,8 +6,8 @@ import rnNoiseSimdWasmPath from '@sapphi-red/web-noise-suppressor/rnnoise_simd.w
 import rnNoiseWorkletPath from '@sapphi-red/web-noise-suppressor/rnnoiseWorklet.js?url';
 import type { AudioProcessorOptions, Track, TrackProcessor } from 'livekit-client';
 
-import { debugPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 export class RNNoiseProcessor implements TrackProcessor<Track.Kind.Audio, AudioProcessorOptions> {
 	instanceID: string;

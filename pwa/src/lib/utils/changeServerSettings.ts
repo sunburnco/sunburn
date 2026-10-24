@@ -1,11 +1,11 @@
-import type { Permissions } from '$lib/constants';
+import type { Permissions } from '#lib/constants.ts';
 import type {
 	ChannelRoleAssignmentsRecord,
 	ChannelsRecord,
 	ServerRoleAssignmentsRecord,
 	ServerRolePermissionsRecord,
 	ServerRolesRecord,
-} from '$lib/pb-types';
+} from '#lib/pb-types.ts';
 import {
 	type Channel_t,
 	type Instance_t,
@@ -13,7 +13,7 @@ import {
 	type Server_t,
 	type ServerMember_t,
 	sunburn,
-} from '$lib/sunburn/sunburn.svelte';
+} from '#lib/sunburn/sunburn.svelte.ts';
 
 import { debugPrefix } from './logPrefixes';
 import { logFriendly } from './username';

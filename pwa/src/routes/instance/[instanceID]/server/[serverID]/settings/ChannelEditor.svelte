@@ -8,8 +8,8 @@
 		LucideX,
 	} from '@lucide/svelte';
 
-	import { ChannelType } from '$lib/constants';
-	import { type Channel_t } from '$lib/sunburn/sunburn.svelte';
+	import { ChannelType } from '#lib/constants.ts';
+	import { type Channel_t } from '#lib/sunburn/sunburn.svelte.ts';
 
 	const {
 		channel,
@@ -54,7 +54,7 @@
 			</button>
 			<button
 				title="Delete"
-				class="btn btn-square btn-sm btn-error"
+				class="btn btn-square btn-error btn-sm"
 				onclick={() => del(channel.id)}
 			>
 				<LucideTrash class="size-4" />
@@ -68,8 +68,8 @@
 				onSave();
 			}}
 		>
-			<input class="input input-sm grow" bind:value={channelName} />
-			<button title="Save" type="submit" class="btn btn-square btn-sm btn-primary">
+			<input class="input grow input-sm" bind:value={channelName} />
+			<button title="Save" type="submit" class="btn btn-square btn-primary btn-sm">
 				<LucideCheck class="size-4" />
 			</button>
 			<button

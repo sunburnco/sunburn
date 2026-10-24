@@ -1,4 +1,4 @@
-import { localSettings, saveLocalSettings } from '$lib/sunburn/localSettings.svelte';
+import { localSettings, saveLocalSettings } from '#lib/sunburn/localSettings.svelte.ts';
 
 export const setTheme = (theme: string) => {
 	if (!window || !Document) {

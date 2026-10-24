@@ -9,17 +9,17 @@
 	} from 'livekit-client';
 	import { DateTime } from 'luxon';
 
+	import AudioTrackPlayer from '#lib/components/AudioTrackPlayer.svelte';
+	import PBAvatar from '#lib/components/PBAvatar.svelte';
+	import VideoTrackPlayer from '#lib/components/VideoTrackPlayer.svelte';
+	import { call, type CallTrackID_t, type CallUserID_t } from '#lib/sunburn/call.svelte.ts';
+	import { type Channel_t, type Instance_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { callVolumes } from '#lib/utils/call/callVolumes.svelte.ts';
+	import { connect } from '#lib/utils/call/connect.ts';
+	import { disconnect } from '#lib/utils/call/disconnect.ts';
+	import { debugPrefix, errorPrefix } from '#lib/utils/logPrefixes.ts';
+	import { logFriendly, nameOrHandle } from '#lib/utils/username.ts';
 	import { page } from '$app/state';
-	import AudioTrackPlayer from '$lib/components/AudioTrackPlayer.svelte';
-	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import VideoTrackPlayer from '$lib/components/VideoTrackPlayer.svelte';
-	import { call, type CallTrackID_t, type CallUserID_t } from '$lib/sunburn/call.svelte';
-	import { type Channel_t, type Instance_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { callVolumes } from '$lib/utils/call/callVolumes.svelte';
-	import { connect } from '$lib/utils/call/connect';
-	import { disconnect } from '$lib/utils/call/disconnect';
-	import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
-	import { logFriendly, nameOrHandle } from '$lib/utils/username';
 
 	import CallParticipant from './CallParticipant.svelte';
 	import Me from './Me.svelte';

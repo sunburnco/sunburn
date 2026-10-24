@@ -1,7 +1,7 @@
 import { set } from 'idb-keyval';
 import PocketBase, { LocalAuthStore } from 'pocketbase';
 
-import type { TypedPocketBase } from '$lib/pb-types';
+import type { TypedPocketBase } from '#lib/pb-types.ts';
 
 import { initPB } from './initPB';
 import { type BaseURL_t, type LocalAuthStoreKey_t, localAuthStoreKeys } from './sunburn.svelte';

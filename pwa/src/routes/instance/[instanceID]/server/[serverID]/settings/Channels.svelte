@@ -4,14 +4,14 @@
 	import { flip } from 'svelte/animate';
 	import { cubicInOut } from 'svelte/easing';
 
+	import { ChannelType } from '#lib/constants.ts';
+	import type { ChannelsRecord, IsoAutoDateString } from '#lib/pb-types.ts';
+	import { type Channel_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { createChannel, deleteChannel, renameChannel } from '#lib/utils/changeServerSettings.ts';
+	import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+	import { pbID } from '#lib/utils/pbID.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 	import { page } from '$app/state';
-	import { ChannelType } from '$lib/constants';
-	import type { ChannelsRecord, IsoAutoDateString } from '$lib/pb-types';
-	import { type Channel_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { createChannel, deleteChannel, renameChannel } from '$lib/utils/changeServerSettings';
-	import { debugPrefix } from '$lib/utils/logPrefixes';
-	import { pbID } from '$lib/utils/pbID';
-	import { logFriendly } from '$lib/utils/username';
 
 	import ChannelEditor from './ChannelEditor.svelte';
 
@@ -261,8 +261,8 @@
 				<option value={ChannelType.TEXT} label="Text"></option>
 				<option value={ChannelType.VOICE} label="Voice"></option>
 			</select>
-			<input title="Channel Name" bind:value={newName} class="input input-sm grow" />
-			<button title="Save" type="submit" class="btn btn-square btn-sm btn-primary">
+			<input title="Channel Name" bind:value={newName} class="input grow input-sm" />
+			<button title="Save" type="submit" class="btn btn-square btn-primary btn-sm">
 				<LucideCheck class="size-4" />
 			</button>
 			<button

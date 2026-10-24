@@ -1,13 +1,13 @@
 import { ClientResponseError } from 'pocketbase';
 
-import type { MessagesRecord, MessagesResponse } from '$lib/pb-types';
+import type { MessagesRecord, MessagesResponse } from '#lib/pb-types.ts';
 import {
 	type Channel_t,
 	type DM_t,
 	type Instance_t,
 	type Server_t,
 	sunburn,
-} from '$lib/sunburn/sunburn.svelte';
+} from '#lib/sunburn/sunburn.svelte.ts';
 
 import { binaryUpdateOrInsert } from './binaryArray';
 import { debugPrefix, errorPrefix } from './logPrefixes';

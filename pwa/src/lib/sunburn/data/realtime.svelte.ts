@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import type { RecordSubscription } from 'pocketbase';
 
-import type { Permissions } from '$lib/constants';
+import type { Permissions } from '#lib/constants.ts';
 import type {
 	ChannelRoleAssignmentsRecord,
 	ChannelRoleAssignmentsResponse,
@@ -18,11 +18,11 @@ import type {
 	UsersResponse,
 	VoiceParticipantsRecord,
 	VoiceParticipantsResponse,
-} from '$lib/pb-types';
-import { binaryDelete, binaryUpdateOrInsert } from '$lib/utils/binaryArray';
-import { findServerIDForChannel, findServerIDForRole } from '$lib/utils/findServerID';
-import { debugPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+} from '#lib/pb-types.ts';
+import { binaryDelete, binaryUpdateOrInsert } from '#lib/utils/binaryArray.ts';
+import { findServerIDForChannel, findServerIDForRole } from '#lib/utils/findServerID.ts';
+import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 import { type Instance_t, type Role_t, type Server_t, sunburn } from '../sunburn.svelte';
 import {
@@ -41,7 +41,7 @@ import {
 	fetchServersForInstance,
 	fetchServerUsingList,
 	setServerRecord,
-} from './server';
+} from './sbServer';
 import { setUserRecord } from './users';
 import { clearVoiceParticipant, setVoiceParticipant } from './voiceParticipants';
 

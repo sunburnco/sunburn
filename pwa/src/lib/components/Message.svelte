@@ -2,11 +2,11 @@
 	import { DateTime } from 'luxon';
 	import { onMount } from 'svelte';
 
-	import MD from '$lib/md/MD.svelte';
-	import type { MessagesRecord } from '$lib/pb-types';
-	import { fetchUser } from '$lib/sunburn/data/users';
-	import { type Instance_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { nameOrHandle } from '$lib/utils/username';
+	import MD from '#lib/md/MD.svelte';
+	import type { MessagesRecord } from '#lib/pb-types.ts';
+	import { fetchUser } from '#lib/sunburn/data/users.ts';
+	import { type Instance_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { nameOrHandle } from '#lib/utils/username.ts';
 
 	import PBAvatar from './PBAvatar.svelte';
 

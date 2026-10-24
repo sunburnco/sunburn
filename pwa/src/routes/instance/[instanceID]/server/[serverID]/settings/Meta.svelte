@@ -1,9 +1,9 @@
 <script lang="ts">
+	import { type Server_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { saveServersRecord } from '#lib/utils/changeServerSettings.ts';
+	import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 	import { page } from '$app/state';
-	import { type Server_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { saveServersRecord } from '$lib/utils/changeServerSettings';
-	import { debugPrefix } from '$lib/utils/logPrefixes';
-	import { logFriendly } from '$lib/utils/username';
 
 	let {
 		dirty = $bindable(),

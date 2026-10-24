@@ -4,18 +4,18 @@
 	import { tick } from 'svelte';
 	import { VList, type VListHandle } from 'virtua/svelte';
 
-	import { page } from '$app/state';
-	import Editor from '$lib/components/Editor.svelte';
-	import Message from '$lib/components/Message.svelte';
-	import type { MessagesRecord } from '$lib/pb-types';
-	import { createStaydown } from '$lib/staydown/staydown';
+	import Editor from '#lib/components/Editor.svelte';
+	import Message from '#lib/components/Message.svelte';
+	import type { MessagesRecord } from '#lib/pb-types.ts';
+	import { createStaydown } from '#lib/staydown/staydown.ts';
 	import {
 		type Channel_t,
 		type Instance_t,
 		type Server_t,
 		sunburn,
-	} from '$lib/sunburn/sunburn.svelte';
-	import { fetchChannelMessagesBefore } from '$lib/utils/fetchMessagesBefore';
+	} from '#lib/sunburn/sunburn.svelte.ts';
+	import { fetchChannelMessagesBefore } from '#lib/utils/fetchMessagesBefore.ts';
+	import { page } from '$app/state';
 
 	const instanceID: Instance_t['id'] = $derived(page.params.instanceID || '');
 	const serverID: Server_t['record']['id'] = $derived(page.params.serverID || '');

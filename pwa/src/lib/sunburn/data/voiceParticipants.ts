@@ -1,9 +1,9 @@
 import { ClientResponseError } from 'pocketbase';
 
-import { ChannelType } from '$lib/constants';
-import type { VoiceParticipantsRecord, VoiceParticipantsResponse } from '$lib/pb-types';
-import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+import { ChannelType } from '#lib/constants.ts';
+import type { VoiceParticipantsRecord, VoiceParticipantsResponse } from '#lib/pb-types.ts';
+import { debugPrefix, errorPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 import {
 	type Channel_t,
@@ -13,7 +13,7 @@ import {
 	sunburn,
 } from '../sunburn.svelte';
 import { fetchChannel } from './channels';
-import { fetchServer } from './server';
+import { fetchServer } from './sbServer';
 
 export const setVoiceParticipant = (
 	instanceID: Instance_t['id'],

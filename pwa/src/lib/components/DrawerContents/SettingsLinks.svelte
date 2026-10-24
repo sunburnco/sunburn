@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { localSettings } from '$lib/sunburn/localSettings.svelte';
+	import { localSettings } from '#lib/sunburn/localSettings.svelte.ts';
 </script>
 
 <header class="p-4 pb-0">

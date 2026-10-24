@@ -1,17 +1,17 @@
 <script lang="ts">
-	import CallControls from '$lib/components/DrawerContents/CallControls.svelte';
-	import ChannelList from '$lib/components/DrawerContents/ChannelList.svelte';
-	import DMList from '$lib/components/DrawerContents/DMList.svelte';
-	import { drawerState } from '$lib/components/DrawerContents/drawerState.svelte';
-	import DrawerStateUpdater from '$lib/components/DrawerContents/DrawerStateUpdater.svelte';
-	import Empty from '$lib/components/DrawerContents/Empty.svelte';
-	import ServerHeader from '$lib/components/DrawerContents/ServerHeader.svelte';
-	import ServerList from '$lib/components/DrawerContents/ServerList.svelte';
-	import ServerListExtras from '$lib/components/DrawerContents/ServerListExtras.svelte';
-	import ServerSettingsLinks from '$lib/components/DrawerContents/ServerSettingsLinks.svelte';
-	import SettingsLinks from '$lib/components/DrawerContents/SettingsLinks.svelte';
-	import LucideSunburn from '$lib/components/LucideSunburn.svelte';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
+	import CallControls from '#lib/components/DrawerContents/CallControls.svelte';
+	import ChannelList from '#lib/components/DrawerContents/ChannelList.svelte';
+	import DMList from '#lib/components/DrawerContents/DMList.svelte';
+	import { drawerState } from '#lib/components/DrawerContents/drawerState.svelte.ts';
+	import DrawerStateUpdater from '#lib/components/DrawerContents/DrawerStateUpdater.svelte';
+	import Empty from '#lib/components/DrawerContents/Empty.svelte';
+	import ServerHeader from '#lib/components/DrawerContents/ServerHeader.svelte';
+	import ServerList from '#lib/components/DrawerContents/ServerList.svelte';
+	import ServerListExtras from '#lib/components/DrawerContents/ServerListExtras.svelte';
+	import ServerSettingsLinks from '#lib/components/DrawerContents/ServerSettingsLinks.svelte';
+	import SettingsLinks from '#lib/components/DrawerContents/SettingsLinks.svelte';
+	import LucideSunburn from '#lib/components/LucideSunburn.svelte';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 </script>
 
 <!-- this component holds the effect that syncs drawerState from URL -->

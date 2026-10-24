@@ -8,7 +8,7 @@
 		LucideX,
 	} from '@lucide/svelte';
 
-	import type { Role_t } from '$lib/sunburn/sunburn.svelte';
+	import type { Role_t } from '#lib/sunburn/sunburn.svelte.ts';
 
 	const DOWN = -1;
 	const UP = 1;
@@ -93,7 +93,7 @@
 			>
 				<LucidePencil class="size-4" />
 			</button>
-			<button title="Delete" class="btn btn-square btn-sm btn-error" onclick={() => del(role.id)}>
+			<button title="Delete" class="btn btn-square btn-error btn-sm" onclick={() => del(role.id)}>
 				<LucideTrash class="size-4" />
 			</button>
 		</div>
@@ -110,9 +110,9 @@
 				title="Role Color"
 				defaultValue="#00000000"
 				bind:value={roleColor}
-				class="input input-sm aspect-square w-min px-0.5 py-0"
+				class="input aspect-square w-min px-0.5 py-0 input-sm"
 			/>
-			<input title="Role Name" bind:value={roleName} class="input input-sm grow" />
+			<input title="Role Name" bind:value={roleName} class="input grow input-sm" />
 			<button
 				title="Move up"
 				type="button"
@@ -131,7 +131,7 @@
 			>
 				<LucideChevronDown class="size-4" />
 			</button>
-			<button title="Save" type="submit" class="btn btn-square btn-sm btn-primary">
+			<button title="Save" type="submit" class="btn btn-square btn-primary btn-sm">
 				<LucideCheck class="size-4" />
 			</button>
 			<button

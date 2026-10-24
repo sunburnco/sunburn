@@ -1,21 +1,22 @@
-import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
-import { defineConfig, globalIgnores } from 'eslint/config';
+import { loadConfig } from '@sveltejs/load-config';
+import { defineConfig, globalIgnores, includeIgnoreFile } from 'eslint/config';
 import prettier from 'eslint-config-prettier';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import svelte from 'eslint-plugin-svelte';
 import unusedImports from 'eslint-plugin-unused-imports';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 
-import svelteConfig from './svelte.config.js';
+const svelteConfig = (await loadConfig('./', { traverse: false }))?.config;
 
-const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
+const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url));
 
 export default defineConfig(
-	includeIgnoreFile(gitignorePath),
+	includeIgnoreFile(gitignorePath, { gitignoreResolution: true }),
 	globalIgnores(['./src/lib/pb-types.ts']),
 	js.configs.recommended,
 	...ts.configs.recommended,
@@ -49,8 +50,15 @@ export default defineConfig(
 				},
 			],
 			'svelte/no-navigation-without-resolve': 'off',
+			'no-restricted-imports': [
+				'error',
+				{
+					patterns: ['*.js', '../../*'],
+				},
+			],
 		},
 	},
+	eslintPluginPrettierRecommended,
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js', '**/*.ts'],
 		languageOptions: {

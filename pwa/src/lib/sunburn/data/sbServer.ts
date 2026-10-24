@@ -1,8 +1,8 @@
 import { ClientResponseError } from 'pocketbase';
 
-import { type ServersRecord, type ServersResponse } from '$lib/pb-types';
-import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+import { type ServersRecord, type ServersResponse } from '#lib/pb-types.ts';
+import { debugPrefix, errorPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 import { type Instance_t, type Server_t, sunburn } from '../sunburn.svelte';
 import { fetchChannelsForServer } from './channels';
@@ -85,9 +85,10 @@ export const fetchServerUsingList = async (
 	try {
 		const server = await sunburn[instanceID].pb
 			.collection('servers')
-			.getFirstListItem<
-				ServersResponse<ServersRecord>
-			>(sunburn[instanceID].pb.filter('id = {:serverID}', { serverID }), { requestKey: null });
+			.getFirstListItem<ServersResponse<ServersRecord>>(
+				sunburn[instanceID].pb.filter('id = {:serverID}', { serverID }),
+				{ requestKey: null },
+			);
 		setServerRecord(instanceID, serverID, server);
 	} catch (err) {
 		if (err instanceof ClientResponseError && err.status === 0) {

@@ -426,9 +426,9 @@ export type CollectionResponses = {
 type ProcessCreateAndUpdateFields<T> = Omit<
 	{
 		// Omit AutoDate fields
-		[K in keyof T as Extract<T[K], IsoAutoDateString> extends never
-			? K
-			: never]: T[K] extends infer U // Convert FileNameString to File
+		[
+			K in keyof T as Extract<T[K], IsoAutoDateString> extends never ? K : never
+		]: T[K] extends infer U // Convert FileNameString to File
 			? U extends FileNameString | FileNameString[]
 				? U extends any[]
 					? File[]

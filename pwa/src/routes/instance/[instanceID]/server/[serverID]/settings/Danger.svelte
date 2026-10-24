@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { LucideLogOut } from '@lucide/svelte';
 
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { debugPrefix, errorPrefix } from '#lib/utils/logPrefixes.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
-	import { logFriendly } from '$lib/utils/username';
 
 	const instanceID = $derived(page.params.instanceID || '');
 	const serverID = $derived(page.params.serverID || '');

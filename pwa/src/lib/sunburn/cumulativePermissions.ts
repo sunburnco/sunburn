@@ -1,4 +1,4 @@
-import type { PermissionsRecord, UsersRecord } from '$lib/pb-types';
+import type { PermissionsRecord, UsersRecord } from '#lib/pb-types.ts';
 
 import { type Channel_t, type Instance_t, type Server_t, sunburn } from './sunburn.svelte';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 
 	import PBAvatar from '../PBAvatar.svelte';
 

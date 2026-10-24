@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { LucideCog } from '@lucide/svelte';
 
+	import PBAvatar from '#lib/components/PBAvatar.svelte';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 	import { page } from '$app/state';
-	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
 
 	const { children } = $props();
 

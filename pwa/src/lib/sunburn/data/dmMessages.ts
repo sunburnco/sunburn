@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon';
 import { ClientResponseError } from 'pocketbase';
 
-import type { MessagesRecord, UsersRecord } from '$lib/pb-types';
-import { binaryUpdateOrInsert } from '$lib/utils/binaryArray';
-import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+import type { MessagesRecord, UsersRecord } from '#lib/pb-types.ts';
+import { binaryUpdateOrInsert } from '#lib/utils/binaryArray.ts';
+import { debugPrefix, errorPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 import { type DM_t, type Instance_t, sunburn } from '../sunburn.svelte';
 import { fetchUser } from './users';

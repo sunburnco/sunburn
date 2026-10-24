@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	import { loadServer } from '#lib/sunburn/data/sbServer.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 	import { page } from '$app/state';
-	import { loadServer } from '$lib/sunburn/data/server';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
 
 	const { children } = $props();
 

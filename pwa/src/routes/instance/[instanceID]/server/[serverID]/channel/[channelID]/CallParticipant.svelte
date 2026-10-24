@@ -3,13 +3,13 @@
 	import { Track } from 'livekit-client';
 	import { onDestroy, onMount } from 'svelte';
 
-	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import { call, type CallTrackID_t, type CallUserID_t } from '$lib/sunburn/call.svelte';
-	import { fetchUser } from '$lib/sunburn/data/users';
-	import { localSettings, saveLocalSettings } from '$lib/sunburn/localSettings.svelte';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { callVolumes } from '$lib/utils/call/callVolumes.svelte';
-	import { handleAtHost, nameOrHandle } from '$lib/utils/username';
+	import PBAvatar from '#lib/components/PBAvatar.svelte';
+	import { call, type CallTrackID_t, type CallUserID_t } from '#lib/sunburn/call.svelte.ts';
+	import { fetchUser } from '#lib/sunburn/data/users.ts';
+	import { localSettings, saveLocalSettings } from '#lib/sunburn/localSettings.svelte.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { callVolumes } from '#lib/utils/call/callVolumes.svelte.ts';
+	import { handleAtHost, nameOrHandle } from '#lib/utils/username.ts';
 
 	type Props_t = {
 		participantID: CallUserID_t;
@@ -71,7 +71,7 @@
 		</div>
 		{#if cameraTrack}
 			<button
-				class="group/btn btn hidden btn-square btn-sm btn-primary group-hover:flex group-focus:flex"
+				class="group/btn btn hidden btn-square btn-primary btn-sm group-hover:flex group-focus:flex"
 				onclick={() => {
 					setFocusedTracks(participantID, cameraTrack.trackSid);
 				}}
@@ -82,7 +82,7 @@
 		{/if}
 		{#if ssVideoTrack}
 			<button
-				class="group/btn btn hidden btn-square btn-sm btn-primary group-hover:flex group-focus:flex"
+				class="group/btn btn hidden btn-square btn-primary btn-sm group-hover:flex group-focus:flex"
 				onclick={() => {
 					setFocusedTracks(participantID, ssVideoTrack.trackSid, ssAudioTrack?.trackSid);
 				}}

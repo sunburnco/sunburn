@@ -1,5 +1,5 @@
-import { call } from '$lib/sunburn/call.svelte';
-import { registerRoomListeners } from '$lib/sunburn/callHandlers/registerRoomListeners';
+import { call } from '#lib/sunburn/call.svelte.ts';
+import { registerRoomListeners } from '#lib/sunburn/callHandlers/registerRoomListeners.ts';
 
 import { errorPrefix, infoPrefix } from '../logPrefixes';
 import { logFriendly } from '../username';

@@ -1,8 +1,8 @@
 <script lang="ts">
+	import Filler from '#lib/components/Filler.svelte';
+	import PBAvatar from '#lib/components/PBAvatar.svelte';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 	import { page } from '$app/state';
-	import Filler from '$lib/components/Filler.svelte';
-	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
 
 	const instanceID = $derived(page.params.instanceID || '');
 	const serverID = $derived(page.params.serverID || '');

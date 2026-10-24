@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	import { fetchChannel } from '#lib/sunburn/data/channels.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 	import { page } from '$app/state';
-	import { fetchChannel } from '$lib/sunburn/data/channels';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
 
 	const { children } = $props();
 

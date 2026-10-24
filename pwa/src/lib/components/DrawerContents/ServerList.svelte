@@ -2,9 +2,9 @@
 	import { LucidePackageOpen } from '@lucide/svelte';
 	import { ConnectionState } from 'livekit-client';
 
-	import { call } from '$lib/sunburn/call.svelte';
-	import { loadServer } from '$lib/sunburn/data/server';
-	import { type Server_t, sunburn } from '$lib/sunburn/sunburn.svelte';
+	import { call } from '#lib/sunburn/call.svelte.ts';
+	import { loadServer } from '#lib/sunburn/data/sbServer.ts';
+	import { type Server_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 
 	import PBAvatar from '../PBAvatar.svelte';
 	import { drawerState } from './drawerState.svelte';
@@ -74,7 +74,7 @@
 		/>
 	</button>
 {:else}
-	<div class="opacity-50 flex select-none justify-center" title="Nothing to display">
+	<div class="flex justify-center opacity-50 select-none" title="Nothing to display">
 		<LucidePackageOpen class="size-6" />
 	</div>
 {/each}

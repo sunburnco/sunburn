@@ -4,15 +4,15 @@
 	import { tick } from 'svelte';
 	import { VList, type VListHandle } from 'virtua/svelte';
 
+	import Editor from '#lib/components/Editor.svelte';
+	import Message from '#lib/components/Message.svelte';
+	import PBAvatar from '#lib/components/PBAvatar.svelte';
+	import type { MessagesRecord } from '#lib/pb-types.ts';
+	import { createStaydown } from '#lib/staydown/staydown.ts';
+	import { type DM_t, type Instance_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { fetchDMMessagesBefore } from '#lib/utils/fetchMessagesBefore.ts';
+	import { nameOrHandle } from '#lib/utils/username.ts';
 	import { page } from '$app/state';
-	import Editor from '$lib/components/Editor.svelte';
-	import Message from '$lib/components/Message.svelte';
-	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import type { MessagesRecord } from '$lib/pb-types';
-	import { createStaydown } from '$lib/staydown/staydown';
-	import { type DM_t, type Instance_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { fetchDMMessagesBefore } from '$lib/utils/fetchMessagesBefore';
-	import { nameOrHandle } from '$lib/utils/username';
 
 	const instanceID: Instance_t['id'] = $derived(page.params.instanceID || '');
 	const dmID: DM_t['recipientID'] = $derived(page.params.dmID || '');

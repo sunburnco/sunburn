@@ -12,16 +12,16 @@
 	import { Track } from 'livekit-client';
 	import { onDestroy, onMount } from 'svelte';
 
-	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import { call, type CallTrackID_t, type CallUserID_t } from '$lib/sunburn/call.svelte';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { muteCamera } from '$lib/utils/call/muteCamera';
-	import { muteMic } from '$lib/utils/call/muteMic';
-	import { startScreenShare } from '$lib/utils/call/startScreenShare';
-	import { stopScreenShare } from '$lib/utils/call/stopScreenShare';
-	import { unmuteCamera } from '$lib/utils/call/unmuteCamera';
-	import { unmuteMic } from '$lib/utils/call/unmuteMic';
-	import { nameOrHandle } from '$lib/utils/username';
+	import PBAvatar from '#lib/components/PBAvatar.svelte';
+	import { call, type CallTrackID_t, type CallUserID_t } from '#lib/sunburn/call.svelte.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { muteCamera } from '#lib/utils/call/muteCamera.ts';
+	import { muteMic } from '#lib/utils/call/muteMic.ts';
+	import { startScreenShare } from '#lib/utils/call/startScreenShare.ts';
+	import { stopScreenShare } from '#lib/utils/call/stopScreenShare.ts';
+	import { unmuteCamera } from '#lib/utils/call/unmuteCamera.ts';
+	import { unmuteMic } from '#lib/utils/call/unmuteMic.ts';
+	import { nameOrHandle } from '#lib/utils/username.ts';
 
 	type Props_t = {
 		setFocusedTracks: (
@@ -103,7 +103,7 @@
 	</button>
 	{#if call.me?.cameraUnmuted}
 		<button
-			class="group/btn group-focus:flex, btn hidden btn-square btn-sm btn-primary group-hover:flex"
+			class="group/btn group-focus:flex, btn hidden btn-square btn-primary btn-sm group-hover:flex"
 			onclick={() => {
 				if (!call.me) {
 					return;
@@ -145,7 +145,7 @@
 	</button>
 	{#if call.me?.screenShareUnmuted}
 		<button
-			class="group/btn group-focus:flex, btn hidden btn-square btn-sm btn-primary group-hover:flex"
+			class="group/btn group-focus:flex, btn hidden btn-square btn-primary btn-sm group-hover:flex"
 			onclick={() => {
 				if (!call.me) {
 					return;

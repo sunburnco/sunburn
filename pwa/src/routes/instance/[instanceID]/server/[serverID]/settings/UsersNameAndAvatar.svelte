@@ -2,11 +2,11 @@
 	import { LucideLoaderCircle } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
+	import PBAvatar from '#lib/components/PBAvatar.svelte';
+	import { fetchUser } from '#lib/sunburn/data/users.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { nameOrHandle } from '#lib/utils/username.ts';
 	import { page } from '$app/state';
-	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import { fetchUser } from '$lib/sunburn/data/users';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { nameOrHandle } from '$lib/utils/username';
 
 	const { userID, active }: { userID: string; active: boolean } = $props();
 

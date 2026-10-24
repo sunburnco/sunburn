@@ -11,9 +11,9 @@ import speexWasmPath from '@sapphi-red/web-noise-suppressor/speex.wasm?url';
 import speexWorkletPath from '@sapphi-red/web-noise-suppressor/speexWorklet.js?url';
 import type { AudioProcessorOptions, Track, TrackProcessor } from 'livekit-client';
 
-import { call } from '$lib/sunburn/call.svelte';
-import { debugPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+import { call } from '#lib/sunburn/call.svelte.ts';
+import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 export class CompoundProcessor implements TrackProcessor<Track.Kind.Audio, AudioProcessorOptions> {
 	name: string;
