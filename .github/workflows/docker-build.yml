@@ -25,12 +25,10 @@ jobs:
       - name: Setup PNPM
         uses: pnpm/setup@v1
         with:
-          version: 11
+          version: latest
           runtime: node@22
           cache: true
-
-      - name: Install dependencies
-        run: pnpm install
+          run_install: true
 
       - name: Run lint
         run: pnpm lint
