@@ -7,12 +7,12 @@
 		LucideUserPlus,
 	} from '@lucide/svelte';
 
+	import type { InvitesRecord } from '#lib/pb-types.ts';
+	import { createInvite } from '#lib/sunburn/createInvite.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { debugPrefix, errorPrefix } from '#lib/utils/logPrefixes.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 	import { page } from '$app/state';
-	import type { InvitesRecord } from '$lib/pb-types';
-	import { createInvite } from '$lib/sunburn/createInvite';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
-	import { logFriendly } from '$lib/utils/username';
 
 	import InviteRow from './InviteRow.svelte';
 

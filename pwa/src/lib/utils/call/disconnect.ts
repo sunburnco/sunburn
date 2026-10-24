@@ -1,4 +1,4 @@
-import { call } from '$lib/sunburn/call.svelte';
+import { call } from '#lib/sunburn/call.svelte.ts';
 
 import { infoPrefix } from '../logPrefixes';
 import { logFriendly } from '../username';

@@ -3,11 +3,11 @@
 	import type { DateTime } from 'luxon';
 	import { Debounced } from 'runed';
 
-	import type { UsersRecord, UsersResponse } from '$lib/pb-types';
-	import { fetchUser } from '$lib/sunburn/data/users';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { debugPrefix } from '$lib/utils/logPrefixes';
-	import { nameOrHandle } from '$lib/utils/username';
+	import type { UsersRecord, UsersResponse } from '#lib/pb-types.ts';
+	import { fetchUser } from '#lib/sunburn/data/users.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+	import { nameOrHandle } from '#lib/utils/username.ts';
 
 	import PBAvatar from '../PBAvatar.svelte';
 	import { drawerState } from './drawerState.svelte';
@@ -114,7 +114,7 @@
 				</a>
 			</li>
 		{:else}
-			<div class="select-none opacity-50 gap-1 w-full flex items-center flex-col">
+			<div class="flex w-full flex-col items-center gap-1 opacity-50 select-none">
 				<LucidePackageOpen class="size-6" />
 				<div class="w-1/2 text-center">Nothing to display</div>
 			</div>
@@ -136,7 +136,7 @@
 				</li>
 			{/if}
 		{:else}
-			<div class="select-none opacity-50 gap-1 w-full flex items-center flex-col">
+			<div class="flex w-full flex-col items-center gap-1 opacity-50 select-none">
 				<LucidePackageOpen class="size-6" />
 				<div class="w-1/2 text-center">Nothing to display. Try searching for a user.</div>
 			</div>

@@ -1,5 +1,5 @@
-import type { UsersRecord } from '$lib/pb-types';
-import { type Instance_t, sunburn } from '$lib/sunburn/sunburn.svelte';
+import type { UsersRecord } from '#lib/pb-types.ts';
+import { type Instance_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 
 export const logFriendly = (instanceID: Instance_t['id']) => {
 	return `<${handleAtHost(instanceID)}>`;

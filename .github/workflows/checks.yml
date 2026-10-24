@@ -12,23 +12,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Setup PNPM
+        uses: pnpm/setup@v3
         with:
-          version: latest
-          run_install: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: "pnpm"
-          cache-dependency-path: "./pwa/pnpm-lock.yaml"
-
-      - name: Install dependencies
-        run: pnpm install
+          version: ^12.0.0
+          runtime: node@22
+          install: true
 
       - name: Run lint
         run: pnpm lint
@@ -41,10 +32,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
           cache: true

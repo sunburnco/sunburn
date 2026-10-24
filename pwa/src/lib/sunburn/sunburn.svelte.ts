@@ -1,7 +1,7 @@
 import type { DateTime } from 'luxon';
 import { type SvelteSet } from 'svelte/reactivity';
 
-import type { Permissions } from '$lib/constants';
+import type { Permissions } from '#lib/constants.ts';
 import type {
 	ChannelsRecord,
 	MessagesRecord,
@@ -10,8 +10,8 @@ import type {
 	ServersRecord,
 	TypedPocketBase,
 	UsersRecord,
-} from '$lib/pb-types';
-import type { WithRequired } from '$lib/utils/withRequired';
+} from '#lib/pb-types.ts';
+import type { WithRequired } from '#lib/utils/withRequired.ts';
 
 export type LocalAuthStoreKey_t = `${string}@${string}`; // x@localhost:8090
 export type BaseURL_t = string; // http://localhost:8090

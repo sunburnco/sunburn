@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 	import { page } from '$app/state';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
 
 	const { children } = $props();
 

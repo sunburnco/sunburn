@@ -1,4 +1,9 @@
-import { type Channel_t, type Instance_t, type Role_t, sunburn } from '$lib/sunburn/sunburn.svelte';
+import {
+	type Channel_t,
+	type Instance_t,
+	type Role_t,
+	sunburn,
+} from '#lib/sunburn/sunburn.svelte.ts';
 
 export const findServerIDForRole = (
 	instanceID: Instance_t['id'],

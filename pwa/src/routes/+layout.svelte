@@ -10,12 +10,12 @@
 	import { Track } from 'livekit-client';
 	import { themeChange } from 'theme-change';
 
-	import AudioTrackPlayer from '$lib/components/AudioTrackPlayer.svelte';
-	import { applicationStart } from '$lib/sunburn/applicationStart';
-	import { call, type CallUserID_t } from '$lib/sunburn/call.svelte';
-	import { localSettings } from '$lib/sunburn/localSettings.svelte';
-	import { callVolumes } from '$lib/utils/call/callVolumes.svelte';
-	import { processor } from '$lib/utils/call/processor';
+	import AudioTrackPlayer from '#lib/components/AudioTrackPlayer.svelte';
+	import { applicationStart } from '#lib/sunburn/applicationStart.ts';
+	import { call, type CallUserID_t } from '#lib/sunburn/call.svelte.ts';
+	import { localSettings } from '#lib/sunburn/localSettings.svelte.ts';
+	import { callVolumes } from '#lib/utils/call/callVolumes.svelte.ts';
+	import { processor } from '#lib/utils/call/processor.ts';
 
 	import DrawerContents from './DrawerContents.svelte';
 
@@ -84,7 +84,7 @@
 	>
 		{@render children()}
 		<div class="absolute top-0 left-0">
-			<label for="rootDrawerInput" class="drawer-button btn btn-square btn-ghost btn-sm md:hidden">
+			<label for="rootDrawerInput" class="btn btn-square btn-ghost drawer-button btn-sm md:hidden">
 				<LucideMenu class="size-4" />
 			</label>
 		</div>

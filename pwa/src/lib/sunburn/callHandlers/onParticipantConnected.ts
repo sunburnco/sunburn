@@ -1,7 +1,7 @@
 import type { RemoteParticipant } from 'livekit-client';
 
-import { debugPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly, nameOrHandle } from '$lib/utils/username';
+import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly, nameOrHandle } from '#lib/utils/username.ts';
 
 import { call } from '../call.svelte';
 import { fetchUser } from '../data/users';

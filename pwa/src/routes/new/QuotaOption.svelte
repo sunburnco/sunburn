@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { ClientResponseError } from 'pocketbase';
 
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { errorPrefix } from '$lib/utils/logPrefixes';
-	import { logFriendly } from '$lib/utils/username';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { errorPrefix } from '#lib/utils/logPrefixes.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 
 	let {
 		instanceID,

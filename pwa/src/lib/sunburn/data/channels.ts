@@ -6,10 +6,10 @@ import type {
 	ChannelRoleAssignmentsResponse,
 	ChannelsRecord,
 	ChannelsResponse,
-} from '$lib/pb-types';
-import { binaryUpdateOrInsert } from '$lib/utils/binaryArray';
-import { debugPrefix, errorPrefix, warnPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+} from '#lib/pb-types.ts';
+import { binaryUpdateOrInsert } from '#lib/utils/binaryArray.ts';
+import { debugPrefix, errorPrefix, warnPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 import {
 	type Channel_t,
@@ -18,7 +18,7 @@ import {
 	type Server_t,
 	sunburn,
 } from '../sunburn.svelte';
-import { fetchServer } from './server';
+import { fetchServer } from './sbServer';
 import { fetchVoiceParticipantsForChannel } from './voiceParticipants';
 
 export const setChannelRecord = (

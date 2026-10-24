@@ -1,9 +1,9 @@
 import { ClientResponseError } from 'pocketbase';
 import { SvelteSet } from 'svelte/reactivity';
 
-import type { ServerRoleAssignmentsRecord, ServerRoleAssignmentsResponse } from '$lib/pb-types';
-import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+import type { ServerRoleAssignmentsRecord, ServerRoleAssignmentsResponse } from '#lib/pb-types.ts';
+import { debugPrefix, errorPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 import {
 	type Instance_t,
@@ -13,7 +13,7 @@ import {
 	sunburn,
 } from '../sunburn.svelte';
 import { fetchRole } from './roles';
-import { fetchServer } from './server';
+import { fetchServer } from './sbServer';
 
 export const setRoleAssignment = (
 	instanceID: Instance_t['id'],

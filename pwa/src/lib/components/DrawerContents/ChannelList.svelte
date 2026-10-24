@@ -9,16 +9,16 @@
 	import { ConnectionState } from 'livekit-client';
 	import { DateTime } from 'luxon';
 
-	import { ChannelType, Permissions } from '$lib/constants';
-	import { call } from '$lib/sunburn/call.svelte';
+	import { ChannelType, Permissions } from '#lib/constants.ts';
+	import { call } from '#lib/sunburn/call.svelte.ts';
 	import {
 		cumulativeChannelPermissions,
 		cumulativeServerPermissions,
 		hasPerm,
 		isOwner,
-	} from '$lib/sunburn/cumulativePermissions';
-	import { type Channel_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { nameOrHandle } from '$lib/utils/username';
+	} from '#lib/sunburn/cumulativePermissions.ts';
+	import { type Channel_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { nameOrHandle } from '#lib/utils/username.ts';
 
 	import PBAvatar from '../PBAvatar.svelte';
 	import { drawerState } from './drawerState.svelte';
@@ -49,13 +49,11 @@
 				channelID,
 				sunburn[instanceID].myID,
 			);
-			if (
-				!(
-					isOwner(instanceID, serverID) ||
-					hasPerm(ccp, Permissions.CHANNEL_READ) ||
-					hasPerm(csp, Permissions.ADMINISTRATOR)
-				)
-			) {
+			if (!(
+				isOwner(instanceID, serverID) ||
+				hasPerm(ccp, Permissions.CHANNEL_READ) ||
+				hasPerm(csp, Permissions.ADMINISTRATOR)
+			)) {
 				continue;
 			}
 			ret.push({
@@ -112,7 +110,7 @@
 			{/if}
 		</li>
 	{:else}
-		<div class="select-none opacity-50 gap-1 w-full mt-2 flex items-center flex-col">
+		<div class="mt-2 flex w-full flex-col items-center gap-1 opacity-50 select-none">
 			<LucidePackageOpen class="size-6" />
 			<div class="w-1/2 text-center">Nothing to display</div>
 		</div>

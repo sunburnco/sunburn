@@ -7,12 +7,12 @@
 		type LocalSettingGroup_t,
 		localSettings,
 		saveLocalSettings,
-	} from '$lib/sunburn/localSettings.svelte';
-	import { localAuthStoreKeys, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { debugPrefix } from '$lib/utils/logPrefixes';
-	import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
-	import { setTheme } from '$lib/utils/setTheme';
-	import { logFriendly } from '$lib/utils/username';
+	} from '#lib/sunburn/localSettings.svelte.ts';
+	import { localAuthStoreKeys, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+	import { parseInstanceSlug } from '#lib/utils/parseInstanceSlug.ts';
+	import { setTheme } from '#lib/utils/setTheme.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 
 	$effect(() => setTheme(localSettings?.appearance?.settings?.theme?.stringValue ?? ''));
 

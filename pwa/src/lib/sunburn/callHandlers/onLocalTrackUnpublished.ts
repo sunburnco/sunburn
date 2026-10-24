@@ -1,6 +1,6 @@
 import { type LocalParticipant, type LocalTrackPublication, Track } from 'livekit-client';
 
-import { stopScreenShare } from '$lib/utils/call/stopScreenShare';
+import { stopScreenShare } from '#lib/utils/call/stopScreenShare.ts';
 
 export const onLocalTrackUnpublished = (
 	publication: LocalTrackPublication,

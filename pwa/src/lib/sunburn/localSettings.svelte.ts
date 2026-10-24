@@ -1,7 +1,7 @@
 import { get, set } from 'idb-keyval';
 import type { XOR } from 'ts-xor';
 
-import { debugPrefix } from '$lib/utils/logPrefixes';
+import { debugPrefix } from '#lib/utils/logPrefixes.ts';
 
 export type LocalSettingKey_t = string;
 export type LocalSettingsValue_t = XOR<

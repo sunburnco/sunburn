@@ -2,14 +2,14 @@
 	import { LucideLoaderCircle } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
+	import PBAvatar from '#lib/components/PBAvatar.svelte';
+	import type { ServersRecord } from '#lib/pb-types.ts';
+	import { fetchUser } from '#lib/sunburn/data/users.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { errorPrefix } from '#lib/utils/logPrefixes.ts';
+	import { logFriendly, nameOrHandle } from '#lib/utils/username.ts';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import type { ServersRecord } from '$lib/pb-types';
-	import { fetchUser } from '$lib/sunburn/data/users';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { errorPrefix } from '$lib/utils/logPrefixes';
-	import { logFriendly, nameOrHandle } from '$lib/utils/username';
 
 	let { instanceID, slug } = page.params;
 

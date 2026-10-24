@@ -1,2 +1,4 @@
 allowBuilds:
   core-js: true
+minimumReleaseAgeExclude:
+  - runed@0.38.0

@@ -10,14 +10,14 @@
 	} from '@lucide/svelte';
 	import { ConnectionState } from 'livekit-client';
 
-	import { call } from '$lib/sunburn/call.svelte';
-	import { disconnect } from '$lib/utils/call/disconnect';
-	import { muteCamera } from '$lib/utils/call/muteCamera';
-	import { muteMic } from '$lib/utils/call/muteMic';
-	import { startScreenShare } from '$lib/utils/call/startScreenShare';
-	import { stopScreenShare } from '$lib/utils/call/stopScreenShare';
-	import { unmuteCamera } from '$lib/utils/call/unmuteCamera';
-	import { unmuteMic } from '$lib/utils/call/unmuteMic';
+	import { call } from '#lib/sunburn/call.svelte.ts';
+	import { disconnect } from '#lib/utils/call/disconnect.ts';
+	import { muteCamera } from '#lib/utils/call/muteCamera.ts';
+	import { muteMic } from '#lib/utils/call/muteMic.ts';
+	import { startScreenShare } from '#lib/utils/call/startScreenShare.ts';
+	import { stopScreenShare } from '#lib/utils/call/stopScreenShare.ts';
+	import { unmuteCamera } from '#lib/utils/call/unmuteCamera.ts';
+	import { unmuteMic } from '#lib/utils/call/unmuteMic.ts';
 </script>
 
 <div
@@ -75,7 +75,7 @@
 		</button>
 		<button
 			disabled={call.roomState === ConnectionState.Disconnected}
-			class="group btn btn-square btn-sm btn-primary"
+			class="group btn btn-square btn-primary btn-sm"
 			onclick={disconnect}
 			title="Disconnect"
 		>

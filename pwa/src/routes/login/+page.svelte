@@ -2,8 +2,8 @@
 	import LucideLogIn from '@lucide/svelte/icons/log-in';
 	import { Debounced } from 'runed';
 
+	import { parseInstanceSlug } from '#lib/utils/parseInstanceSlug.ts';
 	import { page } from '$app/state';
-	import { parseInstanceSlug } from '$lib/utils/parseInstanceSlug';
 
 	let defaultURL = $state(page.url.host);
 	let baseHost = $state('');

@@ -5,7 +5,7 @@ import {
 	Track,
 } from 'livekit-client';
 
-import { call } from '$lib/sunburn/call.svelte';
+import { call } from '#lib/sunburn/call.svelte.ts';
 
 import { debugPrefix, errorPrefix, warnPrefix } from '../logPrefixes';
 import { logFriendly } from '../username';

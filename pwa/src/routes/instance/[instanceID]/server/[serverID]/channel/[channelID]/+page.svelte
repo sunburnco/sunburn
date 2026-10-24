@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { LucideHash, LucideVolume2 } from '@lucide/svelte';
 
-	import { page } from '$app/state';
-	import PBAvatar from '$lib/components/PBAvatar.svelte';
-	import { ChannelType } from '$lib/constants';
-	import { fetchInitialMessageForChannel } from '$lib/sunburn/data/channels';
+	import PBAvatar from '#lib/components/PBAvatar.svelte';
+	import { ChannelType } from '#lib/constants.ts';
+	import { fetchInitialMessageForChannel } from '#lib/sunburn/data/channels.ts';
 	import {
 		type Channel_t,
 		type Instance_t,
 		type Server_t,
 		sunburn,
-	} from '$lib/sunburn/sunburn.svelte';
+	} from '#lib/sunburn/sunburn.svelte.ts';
+	import { page } from '$app/state';
 
 	import CallView from './CallView.svelte';
 	import TextView from './TextView.svelte';

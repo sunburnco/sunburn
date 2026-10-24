@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { LucideLoaderCircle } from '@lucide/svelte';
-	import type { BeforeNavigate } from '@sveltejs/kit';
 
-	import { beforeNavigate, goto } from '$app/navigation';
-	import { page } from '$app/state';
-	import { Permissions } from '$lib/constants';
+	import { Permissions } from '#lib/constants.ts';
 	import {
 		cumulativeServerPermissions,
 		hasPerm,
 		isOwner,
-	} from '$lib/sunburn/cumulativePermissions';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { debugPrefix, errorPrefix } from '$lib/utils/logPrefixes';
-	import { logFriendly } from '$lib/utils/username';
+	} from '#lib/sunburn/cumulativePermissions.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { debugPrefix, errorPrefix } from '#lib/utils/logPrefixes.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
+	import { type BeforeNavigate, beforeNavigate, goto } from '$app/navigation';
+	import { page } from '$app/state';
 
 	import ChannelAccess from './ChannelAccess.svelte';
 	import Channels from './Channels.svelte';
@@ -75,6 +74,8 @@
 	);
 
 	beforeNavigate((navigation) => {
+		if (navigation.shallow && navigation.type === 'goto') return;
+
 		if (dirty) {
 			navigation.cancel();
 			nav = navigation;
@@ -133,7 +134,7 @@
 				// eslint-disable-next-line no-console
 				console.debug(...debugPrefix, logFriendly(instanceID), 'resuming navigation');
 				// https://discord.com/channels/457912077277855764/1023340103071965194/threads/1270482626502983680
-				if (nav.delta) {
+				if (nav.type === 'popstate' && nav.delta) {
 					history.go(nav.delta);
 				} else if (nav.to?.url) {
 					goto(nav.to?.url);
@@ -159,7 +160,7 @@
 			// eslint-disable-next-line no-console
 			console.debug(...debugPrefix, logFriendly(instanceID), 'resuming navigation');
 			// thanks @rchaoz https://discord.com/channels/457912077277855764/1023340103071965194/threads/1270482626502983680
-			if (nav.delta) {
+			if (nav.type === 'popstate' && nav.delta) {
 				history.go(nav.delta);
 			} else if (nav.to?.url) {
 				goto(nav.to?.url);
@@ -187,6 +188,7 @@
 			</div>
 		{/if}
 	</div>
+
 	<form method="dialog" class="modal-backdrop">
 		<button onclick={() => (nav = null)}>close</button>
 	</form>

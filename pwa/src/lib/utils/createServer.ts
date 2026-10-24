@@ -1,5 +1,5 @@
-import { ChannelType } from '$lib/constants';
-import { Permissions } from '$lib/constants';
+import { ChannelType } from '#lib/constants.ts';
+import { Permissions } from '#lib/constants.ts';
 import type {
 	ChannelRoleAssignmentsRecord,
 	ChannelsRecord,
@@ -7,8 +7,8 @@ import type {
 	ServerRolePermissionsRecord,
 	ServerRolesRecord,
 	ServersRecord,
-} from '$lib/pb-types';
-import { sunburn } from '$lib/sunburn/sunburn.svelte';
+} from '#lib/pb-types.ts';
+import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 
 import { debugPrefix } from './logPrefixes';
 import { pbID } from './pbID';

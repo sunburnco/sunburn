@@ -1,6 +1,6 @@
-import type { PermissionsRecord } from '$lib/pb-types';
-import { errorPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+import type { PermissionsRecord } from '#lib/pb-types.ts';
+import { errorPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 import { type Instance_t, sunburn } from '../sunburn.svelte';
 

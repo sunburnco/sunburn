@@ -3,8 +3,8 @@ import speexWasmPath from '@sapphi-red/web-noise-suppressor/speex.wasm?url';
 import speexWorkletPath from '@sapphi-red/web-noise-suppressor/speexWorklet.js?url';
 import type { AudioProcessorOptions, Track, TrackProcessor } from 'livekit-client';
 
-import { debugPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 export class SpeexProcessor implements TrackProcessor<Track.Kind.Audio, AudioProcessorOptions> {
 	instanceID: string;

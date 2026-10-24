@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	import { fetchInitialMessagesForDM } from '#lib/sunburn/data/dmMessages.ts';
+	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 	import { page } from '$app/state';
-	import { fetchInitialMessagesForDM } from '$lib/sunburn/data/dmMessages';
-	import { sunburn } from '$lib/sunburn/sunburn.svelte';
 
 	const { children } = $props();
 

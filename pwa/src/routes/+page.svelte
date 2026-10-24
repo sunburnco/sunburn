@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setTheme } from '$lib/utils/setTheme';
+	import { setTheme } from '#lib/utils/setTheme.ts';
 </script>
 
 {#snippet ThemeChanger(color: string)}

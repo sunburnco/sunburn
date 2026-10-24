@@ -4,12 +4,12 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import { fade } from 'svelte/transition';
 
+	import { ChannelType } from '#lib/constants.ts';
+	import { type Channel_t, type Role_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { assignRoleToChannel, removeRoleFromChannel } from '#lib/utils/changeServerSettings.ts';
+	import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 	import { page } from '$app/state';
-	import { ChannelType } from '$lib/constants';
-	import { type Channel_t, type Role_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { assignRoleToChannel, removeRoleFromChannel } from '$lib/utils/changeServerSettings';
-	import { debugPrefix } from '$lib/utils/logPrefixes';
-	import { logFriendly } from '$lib/utils/username';
 
 	let {
 		dirty = $bindable(),

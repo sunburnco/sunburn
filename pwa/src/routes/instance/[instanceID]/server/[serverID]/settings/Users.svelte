@@ -5,12 +5,12 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import { fade } from 'svelte/transition';
 
+	import { Permissions } from '#lib/constants.ts';
+	import { type Role_t, type ServerMember_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
+	import { assignRoleToUser, removeRoleFromUser } from '#lib/utils/changeServerSettings.ts';
+	import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+	import { logFriendly } from '#lib/utils/username.ts';
 	import { page } from '$app/state';
-	import { Permissions } from '$lib/constants';
-	import { type Role_t, type ServerMember_t, sunburn } from '$lib/sunburn/sunburn.svelte';
-	import { assignRoleToUser, removeRoleFromUser } from '$lib/utils/changeServerSettings';
-	import { debugPrefix } from '$lib/utils/logPrefixes';
-	import { logFriendly } from '$lib/utils/username';
 
 	import UsersNameAndAvatar from './UsersNameAndAvatar.svelte';
 
@@ -162,7 +162,7 @@
 <li>
 	<div class="flex w-full hover:bg-inherit active:bg-inherit active:text-current">
 		<input
-			class="input input-sm grow"
+			class="input grow input-sm"
 			name="userSearch"
 			placeholder="Search for a user..."
 			type="search"

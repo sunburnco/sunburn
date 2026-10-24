@@ -1,7 +1,7 @@
 import type { ConnectionState } from 'livekit-client';
 
-import { debugPrefix } from '$lib/utils/logPrefixes';
-import { logFriendly } from '$lib/utils/username';
+import { debugPrefix } from '#lib/utils/logPrefixes.ts';
+import { logFriendly } from '#lib/utils/username.ts';
 
 import { call } from '../call.svelte';
 

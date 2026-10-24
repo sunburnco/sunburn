@@ -1,8 +1,8 @@
 import { get } from 'idb-keyval';
 import PocketBase, { LocalAuthStore } from 'pocketbase';
 
-import type { TypedPocketBase } from '$lib/pb-types';
-import { infoPrefix } from '$lib/utils/logPrefixes';
+import type { TypedPocketBase } from '#lib/pb-types.ts';
+import { infoPrefix } from '#lib/utils/logPrefixes.ts';
 
 import { initPB } from './initPB';
 import { loadLocalSettings } from './localSettings.svelte';
