@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.7.4 - 2026-10-24
+#### Miscellaneous Chores
+- (**ci**) add go version - (16ef86b) - twopyramids
+- (**ci**) bump go action versions - (2ca95df) - twopyramids
+- bump go version - (c0141ea) - twopyramids
+
+- - -
+
 ## v0.7.3 - 2026-10-24
 #### Bug Fixes
 - (**backend**) add check for ordinal of updated role record - (2d1b005) - twopyramids
