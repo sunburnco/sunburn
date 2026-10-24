@@ -14,18 +14,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Setup PNPM
+        uses: pnpm/setup@v1
         with:
-          node-version: "22"
-          cache: "pnpm"
-          cache-dependency-path: "./pwa/pnpm-lock.yaml"
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: latest
-          run_install: false
+          version: 11
+          runtime: node@22
+          cache: true
 
       - name: Install dependencies
         run: pnpm install
