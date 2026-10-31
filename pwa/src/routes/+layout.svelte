@@ -74,27 +74,76 @@
 </svelte:head>
 
 <!-- TODO use env() and CSS safe areas -->
-<div class="drawer grow md:drawer-open">
-	<input id="rootDrawerInput" type="checkbox" class="drawer-toggle" />
+<div class="flex h-dvh grow items-stretch">
+	<div class="hidden md:block">
+		<DrawerContents />
+	</div>
 	<div
 		class={[
-			'drawer-content flex h-dvh flex-col items-center justify-center',
+			'flex h-dvh min-w-0 flex-1 flex-col items-center justify-center',
 			'border-b border-base-content/50 bg-base-300 sm:border-0',
 		]}
 	>
 		{@render children()}
-		<div class="absolute top-0 left-0">
-			<label for="rootDrawerInput" class="btn btn-square btn-ghost drawer-button btn-sm md:hidden">
+		<div class="absolute top-0 left-0 md:hidden">
+			<button
+				class="btn btn-square btn-ghost btn-sm"
+				style="anchor-name:--drawer-anchor"
+				popovertarget="drawer-popover"
+			>
 				<LucideMenu class="size-4" />
-			</label>
+			</button>
+
+			<div
+				popover
+				id="drawer-popover"
+				style="position-anchor:--drawer-anchor"
+				class={['max-w-75dvw h-dvh w-80 shadow-lg', 'drawerPopover']}
+			>
+				<DrawerContents />
+			</div>
 		</div>
-	</div>
-	<div class="drawer-side">
-		<label for="rootDrawerInput" aria-label="close sidebar" class="drawer-overlay"></label>
-		<DrawerContents />
 	</div>
 </div>
 
 {#each Object.keys(micTrackIDs) as participantID (participantID)}
 	{@render ParticipantMicTrack(participantID, micTrackIDs[participantID])}
 {/each}
+
+<style>
+	/* Thank you https://pawelgrzybek.com/popover-element-entry-and-exit-animations-in-a-few-lines-of-css/ */
+	.drawerPopover {
+		transition:
+			transform 200ms cubic-bezier(0.33, 1, 0.68, 1),
+			display 200ms allow-discrete,
+			overlay 200ms allow-discrete;
+
+		transform: translateX(-100%);
+
+		&::backdrop {
+			transition: opacity 200ms cubic-bezier(0.33, 1, 0.68, 1);
+			background-color: #000000;
+			opacity: 0;
+		}
+
+		&:popover-open {
+			transform: translateX(0);
+
+			@starting-style {
+				& {
+					transform: translateX(-100%);
+				}
+			}
+
+			&::backdrop {
+				opacity: 0.3;
+			}
+		}
+	}
+
+	@starting-style {
+		.drawerPopover:popover-open::backdrop {
+			opacity: 0;
+		}
+	}
+</style>

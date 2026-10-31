@@ -17,7 +17,7 @@
 <!-- this component holds the effect that syncs drawerState from URL -->
 <DrawerStateUpdater />
 
-<div class="flex h-full w-80 max-w-3/4 items-stretch md:max-w-full">
+<div class="flex h-full w-80 max-w-full items-stretch">
 	<!-- server list -->
 	<div class="flex shrink-0 flex-col gap-2 overflow-y-auto bg-base-100 p-2">
 		<a

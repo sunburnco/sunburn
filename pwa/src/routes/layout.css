@@ -173,13 +173,6 @@
 			}
 		}
 	}
-	.drawer-side,
-	.drawer-overlay {
-		transition-duration: 150ms !important;
-	}
-	.drawer-side > * {
-		transition-duration: 150ms !important;
-	}
 
 	.dots-100 {
 		background:
