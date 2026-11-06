@@ -74,10 +74,7 @@
 </svelte:head>
 
 <!-- TODO use env() and CSS safe areas -->
-<div class="flex h-dvh grow items-stretch">
-	<div class="hidden md:block">
-		<DrawerContents />
-	</div>
+<div class="flex h-dvh grow flex-row-reverse items-stretch">
 	<div
 		class={[
 			'flex h-dvh min-w-0 flex-1 flex-col items-center justify-center',
@@ -103,6 +100,9 @@
 				<DrawerContents />
 			</div>
 		</div>
+	</div>
+	<div class="hidden md:block">
+		<DrawerContents />
 	</div>
 </div>
 
