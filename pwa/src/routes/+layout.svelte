@@ -95,7 +95,7 @@
 				popover
 				id="drawer-popover"
 				style="position-anchor:--drawer-anchor"
-				class={['max-w-75dvw h-dvh w-80 shadow-lg', 'drawerPopover']}
+				class={['h-dvh w-96 max-w-[75dvw] shadow-lg', 'drawerPopover']}
 			>
 				<DrawerContents />
 			</div>
