@@ -78,11 +78,18 @@
 	<div
 		class={[
 			'flex h-dvh min-w-0 flex-1 flex-col items-center justify-center',
-			'border-b border-base-content/50 bg-base-300 sm:border-0',
+			'border-base-content/50 bg-base-300 sm:border-0',
+			localSettings.appearance.settings.infoBar.stringValue === 'top' ? 'border-b' : 'border-t',
 		]}
 	>
 		{@render children()}
-		<div class="absolute top-0 left-0 md:hidden">
+		<label
+			class={[
+				'absolute left-0 w-full cursor-pointer md:hidden',
+				localSettings.appearance.settings.infoBar.stringValue === 'top' ? 'top-0' : 'bottom-0',
+			]}
+			aria-label="open drawer"
+		>
 			<button
 				class="btn btn-square btn-ghost btn-sm"
 				style="anchor-name:--drawer-anchor"
@@ -99,7 +106,7 @@
 			>
 				<DrawerContents />
 			</div>
-		</div>
+		</label>
 	</div>
 	<div class="hidden md:block">
 		<DrawerContents />

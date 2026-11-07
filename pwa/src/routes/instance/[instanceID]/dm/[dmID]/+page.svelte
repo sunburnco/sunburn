@@ -9,6 +9,7 @@
 	import PBAvatar from '#lib/components/PBAvatar.svelte';
 	import type { MessagesRecord } from '#lib/pb-types.ts';
 	import { createStaydown } from '#lib/staydown/staydown.ts';
+	import { localSettings } from '#lib/sunburn/localSettings.svelte.ts';
 	import { type DM_t, type Instance_t, sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 	import { fetchDMMessagesBefore } from '#lib/utils/fetchMessagesBefore.ts';
 	import { nameOrHandle } from '#lib/utils/username.ts';
@@ -49,8 +50,20 @@
 	};
 </script>
 
-<div class="flex h-full w-full flex-col items-stretch">
-	<div class="w-full border-b border-base-content/50 bg-base-200 p-1 font-bold select-none">
+<div
+	class={[
+		'flex h-full w-full items-stretch',
+		localSettings.appearance.settings.infoBar.stringValue === 'top'
+			? 'flex-col'
+			: 'flex-col-reverse',
+	]}
+>
+	<header
+		class={[
+			'w-full border-base-content/50 bg-base-200 p-1 font-bold select-none',
+			localSettings.appearance.settings.infoBar.stringValue === 'top' ? 'border-b' : 'border-t',
+		]}
+	>
 		<div class="flex items-center justify-center gap-1">
 			<PBAvatar
 				size="md"
@@ -62,76 +75,80 @@
 			/>
 			{nameOrHandle(instanceID, dmID)}
 		</div>
-	</div>
+	</header>
 
-	<VList
-		class="size-full"
-		data={messages}
-		bind:this={scrollRef}
-		getKey={(item) => item.id}
-		{@attach createStaydown({ pauseOnUserScroll: true })}
-		onscroll={async () => {
-			if (scrollRef.getScrollOffset() !== 0 || noMoreMessages) {
-				return;
-			}
+	<content class="flex size-full flex-col">
+		<VList
+			class="size-full"
+			data={messages}
+			bind:this={scrollRef}
+			getKey={(item) => item.id}
+			{@attach createStaydown({ pauseOnUserScroll: true })}
+			onscroll={async () => {
+				if (scrollRef.getScrollOffset() !== 0 || noMoreMessages) {
+					return;
+				}
 
-			// 1-indexed for placeholder
-			if (messages.length === 1) {
-				noMoreMessages = true;
-				return;
-			}
+				// 1-indexed for placeholder
+				if (messages.length === 1) {
+					noMoreMessages = true;
+					return;
+				}
 
-			const count = await fetchDMMessagesBefore(instanceID, dmID, messages[1].created, null);
+				const count = await fetchDMMessagesBefore(instanceID, dmID, messages[1].created, null);
 
-			if (count === 0) {
-				noMoreMessages = true;
-			} else {
-				await tick();
-				scrollRef.scrollToIndex(count ?? 1);
-			}
-		}}
-	>
-		{#snippet children(record, i)}
-			{@const prevRecord =
-				i > 1
-					? // 1-indexed because the first item of `messages` is the placeholder item
-						sunburn[instanceID].dms[dmID].messages[i - 1 - 1]
-					: record}
-			{#if i === 0}
-				{#if messages.length === 1}
-					<div class="flex w-full flex-col items-center justify-center p-2 opacity-50 select-none">
-						<LucidePackageOpen class="size-6" />
-						<p>Nothing to display</p>
-					</div>
-				{:else if !noMoreMessages}
-					<div class="flex w-full justify-center p-2 opacity-50 select-none">
-						<LucideLoaderCircle class="size-6 animate-spin" />
-					</div>
+				if (count === 0) {
+					noMoreMessages = true;
+				} else {
+					await tick();
+					scrollRef.scrollToIndex(count ?? 1);
+				}
+			}}
+		>
+			{#snippet children(record, i)}
+				{@const prevRecord =
+					i > 1
+						? // 1-indexed because the first item of `messages` is the placeholder item
+							sunburn[instanceID].dms[dmID].messages[i - 1 - 1]
+						: record}
+				{#if i === 0}
+					{#if messages.length === 1}
+						<div
+							class="flex w-full flex-col items-center justify-center p-2 opacity-50 select-none"
+						>
+							<LucidePackageOpen class="size-6" />
+							<p>Nothing to display</p>
+						</div>
+					{:else if !noMoreMessages}
+						<div class="flex w-full justify-center p-2 opacity-50 select-none">
+							<LucideLoaderCircle class="size-6 animate-spin" />
+						</div>
+					{:else}
+						<div class="flex w-full justify-center p-2 text-sm opacity-50 select-none">
+							You&apos;ve reached the beginning of your chat with {nameOrHandle(
+								instanceID,
+								dmID,
+								true,
+							)}
+						</div>
+					{/if}
 				{:else}
-					<div class="flex w-full justify-center p-2 text-sm opacity-50 select-none">
-						You&apos;ve reached the beginning of your chat with {nameOrHandle(
-							instanceID,
-							dmID,
-							true,
-						)}
-					</div>
+					<Message
+						{instanceID}
+						{record}
+						first={i === 1}
+						cozy={i > 1 &&
+							prevRecord.from === record.from &&
+							DateTime.fromSQL(record.created)
+								.diff(DateTime.fromSQL(prevRecord.created))
+								.as('minutes') < 5}
+					/>
 				{/if}
-			{:else}
-				<Message
-					{instanceID}
-					{record}
-					first={i === 1}
-					cozy={i > 1 &&
-						prevRecord.from === record.from &&
-						DateTime.fromSQL(record.created)
-							.diff(DateTime.fromSQL(prevRecord.created))
-							.as('minutes') < 5}
-				/>
-			{/if}
-		{/snippet}
-	</VList>
+			{/snippet}
+		</VList>
 
-	<div class="w-full">
-		<Editor onSend={sendMessage} />
-	</div>
+		<div class="w-full">
+			<Editor onSend={sendMessage} />
+		</div>
+	</content>
 </div>

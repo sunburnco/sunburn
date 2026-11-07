@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Filler from '#lib/components/Filler.svelte';
+	import InfoBar from '#lib/components/InfoBar.svelte';
 	import PBAvatar from '#lib/components/PBAvatar.svelte';
 	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 	import { page } from '$app/state';
@@ -14,10 +15,8 @@
 </script>
 
 {#if ready}
-	<section class="flex size-full flex-col items-stretch bg-base-300 text-base-content">
-		<header
-			class="flex w-full items-center justify-center border-b border-base-content/50 bg-base-200 p-1 font-bold select-none"
-		>
+	<InfoBar>
+		{#snippet title()}
 			<div class="flex items-center justify-center gap-1">
 				<PBAvatar
 					size="md"
@@ -29,11 +28,9 @@
 				/>
 				{sunburn[instanceID].servers[serverID].record.name}
 			</div>
-		</header>
-		<content class="flex grow items-center justify-center overflow-y-auto">
-			<div class="max-h-full overflow-y-auto">
-				<Filler />
-			</div>
-		</content>
-	</section>
+		{/snippet}
+		<div class="max-h-full overflow-y-auto">
+			<Filler />
+		</div>
+	</InfoBar>
 {/if}

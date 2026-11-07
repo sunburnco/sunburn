@@ -14,7 +14,9 @@
 	import { setTheme } from '#lib/utils/setTheme.ts';
 	import { logFriendly } from '#lib/utils/username.ts';
 
-	$effect(() => setTheme(localSettings?.appearance?.settings?.theme?.stringValue ?? ''));
+	$effect(() =>
+		setTheme(localSettings?.appearance?.settings?.theme?.stringValue ?? '', { skipSave: true }),
+	);
 
 	const removeAccount = (localAuthStoreKey: `${string}@${string}`) => {
 		const instanceID = parseInstanceSlug(localAuthStoreKey, '');

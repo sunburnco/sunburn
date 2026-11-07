@@ -4,6 +4,7 @@
 	import PBAvatar from '#lib/components/PBAvatar.svelte';
 	import { ChannelType } from '#lib/constants.ts';
 	import { fetchInitialMessageForChannel } from '#lib/sunburn/data/channels.ts';
+	import { localSettings } from '#lib/sunburn/localSettings.svelte.ts';
 	import {
 		type Channel_t,
 		type Instance_t,
@@ -26,8 +27,20 @@
 	});
 </script>
 
-<div class="flex h-full w-full flex-col items-stretch">
-	<div class="w-full border-b border-base-content/50 bg-base-200 p-1 font-bold select-none">
+<div
+	class={[
+		'flex h-full w-full items-stretch',
+		localSettings.appearance.settings.infoBar.stringValue === 'top'
+			? 'flex-col'
+			: 'flex-col-reverse',
+	]}
+>
+	<header
+		class={[
+			'w-full border-base-content/50 bg-base-200 p-1 font-bold select-none',
+			localSettings.appearance.settings.infoBar.stringValue === 'top' ? 'border-b' : 'border-t',
+		]}
+	>
 		<div class="flex items-center justify-center gap-1">
 			<PBAvatar
 				size="md"
@@ -51,11 +64,13 @@
 				</div>
 			{/if}
 		</div>
-	</div>
+	</header>
 
-	{#if sunburn[instanceID].servers[serverID].channels[channelID].record.type === ChannelType.VOICE}
-		<CallView />
-	{:else}
-		<TextView />
-	{/if}
+	<content class="flex size-full flex-col">
+		{#if sunburn[instanceID].servers[serverID].channels[channelID].record.type === ChannelType.VOICE}
+			<CallView />
+		{:else}
+			<TextView />
+		{/if}
+	</content>
 </div>

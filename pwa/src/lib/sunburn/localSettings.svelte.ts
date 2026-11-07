@@ -55,6 +55,14 @@ export const defaultLocalSettings = {
 					{ label: 'Lilac', value: 'lilac' },
 				],
 			},
+			infoBar: {
+				name: 'Info Bar Position',
+				stringValue: 'top',
+				acceptableValues: [
+					{ label: 'Top', value: 'top' },
+					{ label: 'Bottom', value: 'bottom' },
+				],
+			},
 		},
 	},
 	audio: {
