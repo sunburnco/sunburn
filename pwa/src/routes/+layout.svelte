@@ -74,7 +74,14 @@
 </svelte:head>
 
 <!-- TODO use env() and CSS safe areas -->
-<div class="flex h-dvh grow flex-row-reverse items-stretch">
+<div
+	class={[
+		'flex h-dvh grow items-stretch',
+		localSettings.appearance.settings.drawerPos.stringValue === 'left'
+			? 'flex-row-reverse'
+			: 'flex-row',
+	]}
+>
 	<div
 		class={[
 			'flex h-dvh min-w-0 flex-1 flex-col items-center justify-center',
@@ -83,30 +90,34 @@
 		]}
 	>
 		{@render children()}
-		<label
+		<button
 			class={[
-				'absolute left-0 w-full cursor-pointer md:hidden',
+				'absolute flex w-full cursor-pointer md:hidden',
 				localSettings.appearance.settings.infoBar.stringValue === 'top' ? 'top-0' : 'bottom-0',
+				localSettings.appearance.settings.drawerPos.stringValue === 'left'
+					? 'flex-row'
+					: 'flex-row-reverse',
 			]}
 			aria-label="open drawer"
+			popovertarget="drawer-popover"
 		>
-			<button
+			<span
+				id="drawer-button"
 				class="btn btn-square btn-ghost btn-sm"
-				style="anchor-name:--drawer-anchor"
-				popovertarget="drawer-popover"
+				style="anchor-name:--drawer-anchor;"
 			>
 				<LucideMenu class="size-4" />
-			</button>
+			</span>
 
 			<div
 				popover
 				id="drawer-popover"
-				style="position-anchor:--drawer-anchor"
+				style={`position-anchor:--drawer-anchor;position-area:center;--slideFromLeft:${localSettings.appearance.settings.drawerPos.stringValue === 'left' ? 1 : -1}`}
 				class={['h-dvh w-96 max-w-[75dvw] shadow-lg', 'drawerPopover']}
 			>
 				<DrawerContents />
 			</div>
-		</label>
+		</button>
 	</div>
 	<div class="hidden md:block">
 		<DrawerContents />
@@ -125,12 +136,13 @@
 			display 200ms allow-discrete,
 			overlay 200ms allow-discrete;
 
-		transform: translateX(-100%);
+		transform: translateX(calc(var(--slideFromLeft) * -100%));
 
 		&::backdrop {
 			transition: opacity 200ms cubic-bezier(0.33, 1, 0.68, 1);
 			background-color: #000000;
 			opacity: 0;
+			pointer-events: none;
 		}
 
 		&:popover-open {
@@ -138,7 +150,7 @@
 
 			@starting-style {
 				& {
-					transform: translateX(-100%);
+					transform: translateX(calc(var(--slideFromLeft) * -100%));
 				}
 			}
 

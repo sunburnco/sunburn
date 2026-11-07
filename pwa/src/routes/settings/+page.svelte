@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { LucideLogIn, LucidePlus, LucideX } from '@lucide/svelte';
-	import { set } from 'idb-keyval';
+	import { clear, set } from 'idb-keyval';
 
 	import {
 		type LocalSetting_t,
@@ -31,6 +31,15 @@
 		}
 		delete localAuthStoreKeys[localAuthStoreKey];
 		set('sbLocalAuthStoreKeys', $state.snapshot(localAuthStoreKeys));
+	};
+
+	const clearLocalStorage = async () => {
+		if (!confirm('Are you sure you want to clear local storage?')) {
+			return;
+		}
+		localStorage.clear();
+		await clear();
+		window.location.reload();
 	};
 </script>
 
@@ -96,6 +105,31 @@
 				{@render SettingsGroup(localSettings[lsgk] as LocalSettingGroup_t)}
 			{/if}
 		{/each}
+
+		<li class="menu-title" id="danger">Danger Zone</li>
+		<li class="w-full">
+			<label class="flex w-full hover:bg-transparent active:bg-transparent active:text-current">
+				<fieldset class="fieldset w-full md:hidden">
+					<legend class="fieldset-legend">Clear Local Storage</legend>
+					<button class="btn btn-error" onclick={clearLocalStorage}>Clear Local Storage</button>
+					<p class="label text-wrap">
+						Log out of all accounts and reset local settings to default. You will need to log in
+						again.
+					</p>
+				</fieldset>
+
+				<label class="hidden grow cursor-pointer items-center justify-between gap-4 md:flex">
+					<div class="min-w-1/2">
+						<p class="font-bold text-wrap select-none">Clear Local Storage</p>
+						<p class="text-wrap opacity-60 select-none">
+							Log out of all accounts and reset local settings to default. You will need to log in
+							again.
+						</p>
+					</div>
+					<button class="btn btn-error" onclick={clearLocalStorage}>Clear Local Storage</button>
+				</label>
+			</label>
+		</li>
 	</ul>
 </div>
 
@@ -141,7 +175,7 @@
 			<div class="min-w-1/2">
 				<p class="font-bold select-none">{setting.name}</p>
 				{#if setting.description}
-					<p class="select-none">{setting.description}</p>
+					<p class="opacity-60 select-none">{setting.description}</p>
 				{/if}
 			</div>
 			{#if 'stringValue' in setting}

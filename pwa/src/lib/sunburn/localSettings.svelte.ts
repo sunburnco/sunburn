@@ -63,6 +63,15 @@ export const defaultLocalSettings = {
 					{ label: 'Bottom', value: 'bottom' },
 				],
 			},
+			drawerPos: {
+				name: 'Drawer Position',
+				description: 'This may cause odd behavior when using a right-to-left language',
+				stringValue: 'left',
+				acceptableValues: [
+					{ label: 'Left', value: 'left' },
+					{ label: 'Right', value: 'right' },
+				],
+			},
 		},
 	},
 	audio: {
