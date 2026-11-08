@@ -74,23 +74,52 @@
 </svelte:head>
 
 <!-- TODO use env() and CSS safe areas -->
-<div class="drawer grow md:drawer-open">
-	<input id="rootDrawerInput" type="checkbox" class="drawer-toggle" />
+<div
+	class={[
+		'flex h-dvh grow items-stretch',
+		localSettings.appearance.settings.drawerPos.stringValue === 'left'
+			? 'flex-row-reverse'
+			: 'flex-row',
+	]}
+>
 	<div
 		class={[
-			'drawer-content flex h-dvh flex-col items-center justify-center',
-			'border-b border-base-content/50 bg-base-300 sm:border-0',
+			'flex h-dvh min-w-0 flex-1 flex-col items-center justify-center',
+			'border-base-content/50 bg-base-300 sm:border-0',
+			localSettings.appearance.settings.infoBar.stringValue === 'top' ? 'border-b' : 'border-t',
 		]}
 	>
 		{@render children()}
-		<div class="absolute top-0 left-0">
-			<label for="rootDrawerInput" class="btn btn-square btn-ghost drawer-button btn-sm md:hidden">
+		<button
+			class={[
+				'absolute flex w-full cursor-pointer md:hidden',
+				localSettings.appearance.settings.infoBar.stringValue === 'top' ? 'top-0' : 'bottom-0',
+				localSettings.appearance.settings.drawerPos.stringValue === 'left'
+					? 'flex-row'
+					: 'flex-row-reverse',
+			]}
+			aria-label="open drawer"
+			popovertarget="drawer-popover"
+		>
+			<span
+				id="drawer-button"
+				class="btn btn-square btn-ghost btn-sm"
+				style="anchor-name:--drawer-anchor;"
+			>
 				<LucideMenu class="size-4" />
-			</label>
-		</div>
+			</span>
+
+			<div
+				popover
+				id="drawer-popover"
+				style={`position-anchor:--drawer-anchor;position-area:center;--slideFromLeft:${localSettings.appearance.settings.drawerPos.stringValue === 'left' ? 1 : -1}`}
+				class={['h-dvh w-96 max-w-[75dvw] shadow-lg', 'drawerPopover']}
+			>
+				<DrawerContents />
+			</div>
+		</button>
 	</div>
-	<div class="drawer-side">
-		<label for="rootDrawerInput" aria-label="close sidebar" class="drawer-overlay"></label>
+	<div class="hidden md:block">
 		<DrawerContents />
 	</div>
 </div>
@@ -98,3 +127,42 @@
 {#each Object.keys(micTrackIDs) as participantID (participantID)}
 	{@render ParticipantMicTrack(participantID, micTrackIDs[participantID])}
 {/each}
+
+<style>
+	/* Thank you https://pawelgrzybek.com/popover-element-entry-and-exit-animations-in-a-few-lines-of-css/ */
+	.drawerPopover {
+		transition:
+			transform 200ms cubic-bezier(0.33, 1, 0.68, 1),
+			display 200ms allow-discrete,
+			overlay 200ms allow-discrete;
+
+		transform: translateX(calc(var(--slideFromLeft) * -100%));
+
+		&::backdrop {
+			transition: opacity 200ms cubic-bezier(0.33, 1, 0.68, 1);
+			background-color: #000000;
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		&:popover-open {
+			transform: translateX(0);
+
+			@starting-style {
+				& {
+					transform: translateX(calc(var(--slideFromLeft) * -100%));
+				}
+			}
+
+			&::backdrop {
+				opacity: 0.3;
+			}
+		}
+	}
+
+	@starting-style {
+		.drawerPopover:popover-open::backdrop {
+			opacity: 0;
+		}
+	}
+</style>

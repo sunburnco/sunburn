@@ -1,6 +1,6 @@
 import { localSettings, saveLocalSettings } from '#lib/sunburn/localSettings.svelte.ts';
 
-export const setTheme = (theme: string) => {
+export const setTheme = (theme: string, opts?: Partial<{ skipSave: boolean }>) => {
 	if (!window || !Document) {
 		return;
 	}
@@ -10,7 +10,9 @@ export const setTheme = (theme: string) => {
 	}
 
 	localSettings.appearance.settings.theme.stringValue = theme;
-	saveLocalSettings();
+	if (!opts?.skipSave) {
+		saveLocalSettings();
+	}
 	window.localStorage.setItem('theme', theme);
 	document.documentElement.setAttribute('data-theme', theme);
 };

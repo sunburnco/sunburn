@@ -55,6 +55,23 @@ export const defaultLocalSettings = {
 					{ label: 'Lilac', value: 'lilac' },
 				],
 			},
+			infoBar: {
+				name: 'Info Bar Position',
+				stringValue: 'top',
+				acceptableValues: [
+					{ label: 'Top', value: 'top' },
+					{ label: 'Bottom', value: 'bottom' },
+				],
+			},
+			drawerPos: {
+				name: 'Drawer Position',
+				description: 'This may cause odd behavior when using a right-to-left language',
+				stringValue: 'left',
+				acceptableValues: [
+					{ label: 'Left', value: 'left' },
+					{ label: 'Right', value: 'right' },
+				],
+			},
 		},
 	},
 	audio: {

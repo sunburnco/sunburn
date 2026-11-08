@@ -11,13 +11,22 @@
 	import ServerSettingsLinks from '#lib/components/DrawerContents/ServerSettingsLinks.svelte';
 	import SettingsLinks from '#lib/components/DrawerContents/SettingsLinks.svelte';
 	import LucideSunburn from '#lib/components/LucideSunburn.svelte';
+	import { localSettings } from '#lib/sunburn/localSettings.svelte.ts';
 	import { sunburn } from '#lib/sunburn/sunburn.svelte.ts';
 </script>
 
 <!-- this component holds the effect that syncs drawerState from URL -->
 <DrawerStateUpdater />
 
-<div class="flex h-full w-80 max-w-3/4 items-stretch md:max-w-full">
+<div
+	class={[
+		'flex h-full max-w-full items-stretch md:w-72 lg:w-88',
+		'box-border border-y border-base-content/50 md:border-none',
+		localSettings.appearance.settings.drawerPos.stringValue === 'left'
+			? 'flex-row'
+			: 'flex-row-reverse',
+	]}
+>
 	<!-- server list -->
 	<div class="flex shrink-0 flex-col gap-2 overflow-y-auto bg-base-100 p-2">
 		<a
