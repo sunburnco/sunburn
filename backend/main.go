@@ -73,6 +73,7 @@ func main() {
 		hooks.CronCheckVersion(app)
 	})
 
+	// TODO remove these
 	// require auth
 	app.OnRecordsListRequest().BindFunc(hooks.RequireAuthForListRequestEvent)
 	app.OnRecordViewRequest().BindFunc(hooks.RequireAuthForRequestEvent)
@@ -99,6 +100,9 @@ func main() {
 	app.OnRecordAfterCreateSuccess("serverRoles").BindFunc(hooks.AdjustRoleOrdinals)
 	app.OnRecordAfterUpdateSuccess("serverRoles").BindFunc(hooks.AdjustRoleOrdinals)
 	app.OnRecordAfterDeleteSuccess("serverRoles").BindFunc(hooks.AdjustRoleOrdinals)
+
+	app.OnRealtimeConnectRequest().BindFunc(hooks.ManagePresence_ConnectRequest)
+	app.OnRealtimeSubscribeRequest().BindFunc(hooks.ManagePresence_SubscribeRequest)
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		se.Router.BindFunc(hooks.SendVersionHeader)
