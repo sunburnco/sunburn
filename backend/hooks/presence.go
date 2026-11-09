@@ -15,14 +15,12 @@ func ManagePresence_SubscribeRequest(e *core.RealtimeSubscribeRequestEvent) erro
 
 	eAuth := e.Client.Get(apis.RealtimeClientAuthKey).(*core.Record)
 	if eAuth == nil || eAuth.Id == "" {
-		e.App.Logger().Info(">>>>> early return")
 		return e.Next()
 	}
 
 	// if status is "offline" or "", set to online.
 	// otherwise, the status has been set by the client and should not be touched
 	currentPresence := eAuth.Get("presence").(string)
-	e.App.Logger().Info(">>>>> welcome user", "user", eAuth.Id, "presence", currentPresence)
 	switch currentPresence {
 	case "offline", "":
 		eAuth.Set("presence", "online")
