@@ -106,7 +106,7 @@
 			{/if}
 		{/each}
 
-		<li class="menu-title" id="danger">Danger Zone</li>
+		<li class="mt-4 menu-title" id="danger">Danger Zone</li>
 		<li class="w-full">
 			<label class="flex w-full hover:bg-transparent active:bg-transparent active:text-current">
 				<fieldset class="fieldset w-full md:hidden">
